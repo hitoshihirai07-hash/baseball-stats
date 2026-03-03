@@ -121,7 +121,7 @@
             window.pPage = 1;
             if (typeof rb === 'function') rb();
             if (typeof rp === 'function') rp();
-            if (typeof show === 'function') show('batting');
+            if (typeof show === 'function') show('home');
         }
     }
 

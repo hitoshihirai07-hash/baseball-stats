@@ -514,6 +514,72 @@
             color: #22cc66;
         }
 
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pcard {
+            background: linear-gradient(145deg, var(--bg2), var(--bg3));
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pcard:hover {
+            transform: translateY(-8px);
+            border-color: var(--ac);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, .15);
+        }
+
+        .pcard h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--ac);
+        }
+
+        .pcard p {
+            font-size: .9rem;
+            color: var(--tx2);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .pcard .badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--ac2);
+            color: white;
+            font-size: .65rem;
+            padding: .2rem .5rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pbtn {
+            background: var(--ac);
+            color: var(--bg);
+            border: none;
+            padding: .6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+
+        .pbtn:hover {
+            opacity: .9;
+        }
+
         @media(max-width:768px) {
             .st {
                 grid-template-columns: repeat(2, 1fr);
@@ -531,7 +597,8 @@
         <div class="hi">
             <div class="logo">⚾ NPB<span>Stats</span> 2020–2025</div>
             <nav>
-                <button class="active" onclick="show('batting')">打撃成績</button>
+                <button class="active" onclick="show('home')">ホーム</button>
+                <button onclick="show('batting')">打撃成績</button>
                 <button onclick="show('pitching')">投手成績</button>
                 <button onclick="show('team')">チーム成績</button>
                 <button onclick="show('records')">成績記録</button>
@@ -564,6 +631,33 @@
     </div>
 
     <div class="main">
+
+        <!-- ホーム -->
+        <div class="section active" id="section-home">
+            <div class="sh">
+                <h2 class="stitle">Predictive Analytics Hub</h2>
+            </div>
+            <div class="card-grid">
+                <div class="pcard">
+                    <span class="badge">Next Gen</span>
+                    <h3>📈 AI次世代予測モデル</h3>
+                    <p>過去6年分の膨大なスタッツから、選手の来季成績や試合展開を多角的にシミュレーション。勝敗を左右する「xFactor」を独自算出します。</p>
+                    <button class="pbtn" onclick="show('batting')">打撃分析を開始</button>
+                </div>
+                <div class="pcard">
+                    <span class="badge">Sync</span>
+                    <h3>⚡ リアルタイム判定</h3>
+                    <p>規定打席・規定投球回の自動判定はもちろん、特定条件下での数値を瞬時に再計算。独自のフィルタリングで隠れた主力選手を発掘します。</p>
+                    <button class="pbtn" onclick="show('pitching')">投手分析を開始</button>
+                </div>
+                <div class="pcard">
+                    <span class="badge">Biz</span>
+                    <h3>📊 プロフェッショナル・レポート</h3>
+                    <p>球団別勝敗トレンド、防御率相関、リーグ内戦績をビジュアル化。他社にはない「勝つためのデータ」を、収益化を目指すメディアやファンへ提供。</p>
+                    <button class="pbtn" onclick="show('team')">チーム統計を確認</button>
+                </div>
+            </div>
+        </div>
 
         <!-- 打撃 -->
         <div class="section active" id="section-batting">
@@ -716,7 +810,7 @@
 
         <!-- 歴代記録 -->
         <div class="section" id="section-records">
-            <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2010年以降）</h2>
+            <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
             <div class="cards" id="recs"></div>
             <h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数ﾈ2020〜2025）</h2>
             <div class="tw" style="padding:1.5rem">
@@ -1110,36 +1204,40 @@
             document.getElementById('section-' + id).classList.add('active');
 
             const titles = {
+                home: '⚾ NPB <em>次世代解析・予測センター</em> 2020〜2025',
                 batting: '⚾ NPB <em>打撃成績データベース</em> 2020〜2025',
                 pitching: '⚾ NPB <em>投手成績データベース</em> 2020〜2025',
                 team: '⚾ NPB <em>チーム成績データベース</em> 2020〜2025',
-                records: '⚾ NPB <em>歴代記録・分析</em> 2020〜2025'
+                records: '⚾ NPB <em>歴代最高記録・分析</em> 2020〜2025'
             };
             const subs = {
-                batting: '打率、本塁打、打点など打撃各項目を詳細に分析',
-                pitching: '防御率、奪三振、勝利数など投手各項目を詳細に分析',
-                team: '年度別順位、勝率、リーグ内戦績をビジュアル化',
-                records: '2020年〜2025年の記録をランキング形式で紹介'
+                home: 'データが導く。次の一打、次の勝利を予測する最強の野球プラットフォーム',
+                batting: '打率、本塁打、打点など打席の質と結果をマルチアングルに分析',
+                pitching: '防御率、奪三振、勝利数。投球回の重みを加味した独自レーティング',
+                team: '年度別順位、勝率、日本一回数。チームの真の実力を可視化',
+                records: '2020年〜2025年の最高峰を網羅。時代を彩るスターの軌跡'
             };
             const counts = {
+                home: 'Analytics On',
                 batting: BATTING_DATA.length + '名',
                 pitching: PITCHING_DATA.length + '名',
                 team: '12球団',
                 records: '総合データ'
             };
             const labels = {
+                home: '分析エンジン状態',
                 batting: '打撃部門 登録数',
                 pitching: '投手部門 登録数',
                 team: 'NPB球団数',
                 records: '統計解析対象'
             };
 
-            document.getElementById('hero-title').innerHTML = titles[id] || titles.batting;
-            document.getElementById('hero-sub').textContent = subs[id] || subs.batting;
+            document.getElementById('hero-title').innerHTML = titles[id] || titles.home;
+            document.getElementById('hero-sub').textContent = subs[id] || subs.home;
             document.getElementById('hero-count').textContent = counts[id] || '-';
             document.getElementById('hero-count-label').textContent = labels[id] || '登録数';
 
-            const navLabels = { batting: '打撃', pitching: '投手', team: 'チーム', records: '成績' };
+            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', team: 'チーム', records: '成績' };
             [...document.querySelectorAll('nav button')].find(b => b.textContent.includes(navLabels[id]))?.classList.add('active');
 
             if (id === 'records') renderRecords();
