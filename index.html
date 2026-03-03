@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>NPB打撃成績データベース 2020–2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --bg2: #111827;
+            --bg3: #1f2937;
+            --ac: #f59e0b;
+            --ac2: #3b82f6;
+            --gr: #10b981;
+            --re: #ef4444;
+            --tx: #f9fafb;
+            --tx2: #9ca3af;
+            --bd: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--tx);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b, #0f172a);
+            border-bottom: 2px solid var(--ac);
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .5);
+        }
+
+        .hi {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        .logo span {
+            color: var(--ac);
+        }
+
+        nav {
+            display: flex;
+            gap: .2rem;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--tx2);
+            padding: .5rem .9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: .85rem;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        nav button:hover,
+        nav button.active {
+            background: rgba(245, 158, 11, .15);
+            color: var(--ac);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: .5rem;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--tx2);
+            font-size: .9rem;
+        }
+
+        .strip {
+            background: var(--bg2);
+            border-top: 1px solid var(--bd);
+            border-bottom: 1px solid var(--bd);
+        }
+
+        .st {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .pill {
+            padding: 1rem 1.5rem;
+            text-align: center;
+            border-right: 1px solid var(--bd);
+        }
+
+        .pill:last-child {
+            border-right: none;
+        }
+
+        .pill .n {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--ac);
+        }
+
+        .pill .l {
+            font-size: .72rem;
+            color: var(--tx2);
+            margin-top: .2rem;
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .sh {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stitle {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .stitle::before {
+            content: '';
+            width: 4px;
+            height: 1.1em;
+            background: var(--ac);
+            border-radius: 2px;
+        }
+
+        .filters {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .fg {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .fg label {
+            font-size: .78rem;
+            color: var(--tx2);
+            white-space: nowrap;
+        }
+
+        select,
+        input[type=text] {
+            background: var(--bg3);
+            border: 1px solid var(--bd);
+            color: var(--tx);
+            padding: .35rem .7rem;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: .85rem;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        select:hover,
+        input[type=text]:hover {
+            border-color: var(--ac2);
+        }
+
+        select:focus,
+        input[type=text]:focus {
+            border-color: var(--ac);
+        }
+
+        .tw {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            overflow: auto;
+            margin-bottom: .75rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        thead tr {
+            background: var(--bg3);
+            border-bottom: 2px solid var(--ac);
+        }
+
+        th {
+            padding: .65rem .9rem;
+            text-align: left;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--tx2);
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: color .2s;
+        }
+
+        th:hover {
+            color: var(--ac);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--bd);
+            transition: background .15s;
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, .06);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: .65rem .9rem;
+            font-size: .85rem;
+            white-space: nowrap;
+        }
+
+        .rk {
+            font-weight: 700;
+            color: var(--tx2);
+        }
+
+        .r1 {
+            color: #fbbf24;
+        }
+
+        .r2 {
+            color: #9ca3af;
+        }
+
+        .r3 {
+            color: #cd7c2f;
+        }
+
+        .pn {
+            font-weight: 700;
+        }
+
+        .tt {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: .68rem;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .vh {
+            color: var(--gr);
+            font-weight: 700;
+        }
+
+        .vm {
+            color: var(--ac);
+        }
+
+        .pg {
+            display: flex;
+            gap: .4rem;
+            justify-content: center;
+            margin-top: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .pg button {
+            background: var(--bg3);
+            border: 1px solid var(--bd);
+            color: var(--tx);
+            padding: .35rem .65rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: .8rem;
+            transition: all .2s;
+        }
+
+        .pg button:hover,
+        .pg button.active {
+            background: var(--ac);
+            color: #000;
+            border-color: var(--ac);
+        }
+
+        .sb {
+            position: relative;
+        }
+
+        .sb input {
+            padding-left: 1.8rem;
+            min-width: 180px;
+        }
+
+        .sb::before {
+            content: '🔍';
+            position: absolute;
+            left: .5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: .75rem;
+            pointer-events: none;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            padding: 1.1rem;
+            transition: border-color .2s, transform .2s;
+        }
+
+        .card:hover {
+            border-color: var(--ac2);
+            transform: translateY(-2px);
+        }
+
+        .cl {
+            font-size: .72rem;
+            color: var(--tx2);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .cv {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--ac);
+            margin: .2rem 0;
+        }
+
+        .cn {
+            font-weight: 700;
+        }
+
+        .cd {
+            font-size: .78rem;
+            color: var(--tx2);
+            margin-top: .2rem;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: .6rem;
+        }
+
+        .bar-lbl {
+            width: 150px;
+            font-size: .78rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .bar-track {
+            flex: 1;
+            background: var(--bg3);
+            border-radius: 3px;
+            height: 18px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            padding-left: 6px;
+            font-size: .68rem;
+            font-weight: 700;
+            color: #000;
+            transition: width 1s ease;
+        }
+
+        .bar-num {
+            width: 50px;
+            text-align: right;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        /* team tags */
+        .tg-giants {
+            background: #ff6b2b22;
+            color: #ff6b2b;
+        }
+
+        .tg-tigers {
+            background: #ffe03322;
+            color: #d4a800;
+        }
+
+        .tg-dragons {
+            background: #2b8cff22;
+            color: #2b8cff;
+        }
+
+        .tg-carp {
+            background: #ff2b2b22;
+            color: #ff6b6b;
+        }
+
+        .tg-swallows {
+            background: #3bc5ff22;
+            color: #3bc5ff;
+        }
+
+        .tg-baystars {
+            background: #2b6bff22;
+            color: #648fff;
+        }
+
+        .tg-hawks {
+            background: #ffd52b22;
+            color: #c9a800;
+        }
+
+        .tg-lions {
+            background: #2bdcff22;
+            color: #2bdcff;
+        }
+
+        .tg-eagles {
+            background: #c8412222;
+            color: #e05555;
+        }
+
+        .tg-marines {
+            background: #5577ff22;
+            color: #5577ff;
+        }
+
+        .tg-fighters {
+            background: #1144aa22;
+            color: #4488ff;
+        }
+
+        .tg-buffaloes {
+            background: #00aa4422;
+            color: #22cc66;
+        }
+
+        @media(max-width:768px) {
+            .st {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="hi">
+            <div class="logo">⚾ NPB<span>Stats</span> 2020–2025</div>
+            <nav>
+                <button class="active" onclick="show('batting')">打撃成績</button>
+                <button onclick="show('pitching')">投手成績</button>
+                <button onclick="show('team')">チーム成績</button>
+                <button onclick="show('records')">成績記録</button>
+            </nav>
+        </div>
+    </header>
+    <div class="hero">
+        <h1 id="hero-title">⚾ NPB <em>打撃成績データベース</em> 2020〜2025</h1>
+        <p id="hero-sub">2020年～2025年シーズンの全選手データを詳細に収録・分析</p>
+    </div>
+    <div class="strip">
+        <div class="st">
+            <div class="pill">
+                <div class="n" id="hero-count">-</div>
+                <div class="l" id="hero-count-label">登録選手数</div>
+            </div>
+            <div class="pill">
+                <div class="n">12</div>
+                <div class="l">球団</div>
+            </div>
+            <div class="pill">
+                <div class="n">2020–2025</div>
+                <div class="l">収録期間</div>
+            </div>
+            <div class="pill">
+                <div class="n">6年分</div>
+                <div class="l">全シーズン</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- 打撃 -->
+        <div class="section active" id="section-batting">
+            <div class="sh">
+                <h2 class="stitle">シーズン打撃成績</h2>
+            </div>
+            <div class="filters">
+                <div class="fg"><label>年度</label><select id="by" onchange="fb()">
+                        <option value="">全期間</option>
+                    </select></div>
+                <div class="fg"><label>リーグ</label><select id="bl" onchange="fb()">
+                        <option value="">全リーグ</option>
+                        <option value="セ">セ・リーグ</option>
+                        <option value="パ">パ・リーグ</option>
+                    </select></div>
+                <div class="fg"><label>チーム</label><select id="bt" onchange="fb()">
+                        <option value="">全チーム</option>
+                    </select></div>
+                <div class="fg"><label>データ範囲</label><select id="bq" onchange="fb()">
+                        <option value="0">全選手表示</option>
+                        <option value="1">規定打席到達者(目安)</option>
+                    </select></div>
+                <div class="fg"><label>表示数</label><select id="br" onchange="fb()">
+                        <option value="30">30件</option>
+                        <option value="50">50件</option>
+                        <option value="100">100件</option>
+                        <option value="9999">全件</option>
+                    </select></div>
+                <div class="sb"><input type="text" id="bs" placeholder="選手名で検索" oninput="fb()" /></div>
+            </div>
+            <div class="tw">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th onclick="srt('b',0)">選手名</th>
+                            <th onclick="srt('b',1)">年度</th>
+                            <th onclick="srt('b',2)">チーム</th>
+                            <th onclick="srt('b',3)">試合</th>
+                            <th onclick="srt('b',4)">打率</th>
+                            <th onclick="srt('b',5)">HR</th>
+                            <th onclick="srt('b',6)">打点</th>
+                            <th onclick="srt('b',7)">安打</th>
+                            <th onclick="srt('b',8)">盗塁</th>
+                            <th onclick="srt('b',10)">出塁率</th>
+                            <th onclick="srt('b',11)">長打率</th>
+                            <th onclick="srt('b',9)">OPS</th>
+                            <th onclick="srt('b',12)">打席</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bb"></tbody>
+                </table>
+            </div>
+            <div class="pg" id="bpg"></div>
+        </div>
+
+        <!-- 投手 -->
+        <div class="section" id="section-pitching">
+            <div class="sh">
+                <h2 class="stitle">シーズン投手成績</h2>
+            </div>
+            <div class="filters">
+                <div class="fg"><label>年度</label><select id="py" onchange="fp()">
+                        <option value="">全期間</option>
+                    </select></div>
+                <div class="fg"><label>リーグ</label><select id="pl" onchange="fp()">
+                        <option value="">全リーグ</option>
+                        <option value="セ">セ・リーグ</option>
+                        <option value="パ">パ・リーグ</option>
+                    </select></div>
+                <div class="fg"><label>チーム</label><select id="pt" onchange="fp()">
+                        <option value="">全チーム</option>
+                    </select></div>
+                <div class="fg"><label>データ範囲</label><select id="pq" onchange="fp()">
+                        <option value="0">全選手表示</option>
+                        <option value="1">規定投球回以上</option>
+                    </select></div>
+                <div class="fg"><label>表示数</label><select id="pr" onchange="fp()">
+                        <option value="30">30件</option>
+                        <option value="50">50件</option>
+                        <option value="100">100件</option>
+                        <option value="9999">全件</option>
+                    </select></div>
+                <div class="sb"><input type="text" id="ps" placeholder="選手名で検索" oninput="fp()" /></div>
+            </div>
+            <div class="tw">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th onclick="srt('p',0)">選手名</th>
+                            <th onclick="srt('p',1)">年度</th>
+                            <th onclick="srt('p',2)">チーム</th>
+                            <th onclick="srt('p',3)">登板</th>
+                            <th onclick="srt('p',4)">勝</th>
+                            <th onclick="srt('p',5)">敗</th>
+                            <th onclick="srt('p',6)">S</th>
+                            <th onclick="srt('p',12)">HP</th>
+                            <th onclick="srt('p',7)">防御率</th>
+                            <th onclick="srt('p',8)">奪三振</th>
+                            <th onclick="srt('p',9)">勝率</th>
+                            <th onclick="srt('p',10)">投球回</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pb"></tbody>
+                </table>
+            </div>
+            <div class="pg" id="ppg"></div>
+        </div>
+
+        <!-- チーム -->
+        <div class="section" id="section-team">
+            <div class="sh">
+                <h2 class="stitle">チーム年度別成績</h2>
+            </div>
+            <div class="filters">
+                <div class="fg"><label>年度</label><select id="ty" onchange="ft()">
+                        <option value="">全期間</option>
+                    </select></div>
+                <div class="fg"><label>リーグ</label><select id="tl" onchange="ft()">
+                        <option value="">全リーグ</option>
+                        <option value="セ">セ・リーグ</option>
+                        <option value="パ">パ・リーグ</option>
+                    </select></div>
+                <div class="fg"><label>チーム</label><select id="tt" onchange="ft()">
+                        <option value="">全チーム</option>
+                    </select></div>
+            </div>
+            <div class="tw">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th onclick="srt('t',0)">チーム</th>
+                            <th onclick="srt('t',1)">年度</th>
+                            <th onclick="srt('t',2)">リーグ</th>
+                            <th onclick="srt('t',3)">勝</th>
+                            <th onclick="srt('t',4)">敗</th>
+                            <th onclick="srt('t',5)">分</th>
+                            <th onclick="srt('t',6)">勝率</th>
+                            <th onclick="srt('t',7)">順位</th>
+                            <th onclick="srt('t',8)">日本S</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb"></tbody>
+                </table>
+            </div>
+            <div class="pg" id="tpg"></div>
+        </div>
+
+        <!-- 歴代記録 -->
+        <div class="section" id="section-records">
+            <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2010年以降）</h2>
+            <div class="cards" id="recs"></div>
+            <h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数ﾈ2020〜2025）</h2>
+            <div class="tw" style="padding:1.5rem">
+                <div id="chbars"></div>
+            </div>
+        </div>
+
+        <!-- CSVインポート -->
+        <div class="section" id="section-import">
+            <h2 class="stitle" style="margin-bottom:1rem">📂 CSVデータインポート</h2>
+            <div
+                style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+                <p style="color:var(--tx2);font-size:.88rem;margin-bottom:1rem">
+                    NPB公式サイトやデータサービスからダウンロードしたCSVを読み込むと、全選手のデータを追加できます。<br>既存データと<strong
+                        style="color:var(--ac)">マージ（追記）</strong>または<strong style="color:var(--re)">置換</strong>が選択できます。
+                </p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+                    <div>
+                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">🏏 打撃成績 CSV</h3>
+                        <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
+                            選手名,年度,チーム,試合数,打率,本塁打,打点,安打,盗塁,OPS</p>
+                        <input type="file" id="bat-csv" accept=".csv" style="display:none"
+                            onchange="importCSV('batting',this)" />
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                            <button onclick="document.getElementById('bat-csv').click()"
+                                style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
+                                ファイルを選択</button>
+                            <button onclick="downloadTemplate('batting')"
+                                style="background:var(--bg3);color:var(--tx);border:1px solid var(--bd);padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:inherit">⬇
+                                テンプレート</button>
+                        </div>
+                        <div id="bat-import-msg" style="margin-top:.5rem;font-size:.8rem"></div>
+                    </div>
+                    <div>
+                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">⚾ 投手成績 CSV</h3>
+                        <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
+                            選手名,年度,チーム,登板,勝,敗,セーブ,防御率,奪三振,WHIP,リーグ</p>
+                        <input type="file" id="pit-csv" accept=".csv" style="display:none"
+                            onchange="importCSV('pitching',this)" />
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                            <button onclick="document.getElementById('pit-csv').click()"
+                                style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
+                                ファイルを選択</button>
+                            <button onclick="downloadTemplate('pitching')"
+                                style="background:var(--bg3);color:var(--tx);border:1px solid var(--bd);padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:inherit">⬇
+                                テンプレート</button>
+                        </div>
+                        <div id="pit-import-msg" style="margin-top:.5rem;font-size:.8rem"></div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:1rem">
+                    <label style="font-size:.85rem">インポートモード:</label>
+                    <label style="font-size:.85rem"><input type="radio" name="imode" value="merge" checked>
+                        マージ（追記）</label>
+                    <label style="font-size:.85rem"><input type="radio" name="imode" value="replace"> 置換</label>
+                </div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem">
+                <h3 style="font-size:.9rem;margin-bottom:1rem;color:var(--tx2)">📝 CSVフォーマット説明</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+                    <div>
+                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">打撃CSV形式</p>
+                        <pre
+                            style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,試合数,打率,HR,打点,安打,盗塁,OPS
+岡本和真,2025,読売ジャイアンツ,143,.298,42,118,148,1,.928
+丸佳浩,2025,読売ジャイアンツ,135,.271,19,75,127,1,.818</pre>
+                    </div>
+                    <div>
+                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">投手CSV形式</p>
+                        <pre
+                            style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,登板,勝,敗,S,防御率,奪三振,WHIP,リーグ
+戸郷翔征,2025,読売ジャイアンツ,27,17,6,0,2.18,185,0.94,セ
+大竹耕太郎,2025,阪神タイガース,26,14,6,0,2.65,162,1.05,セ</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main -->
+
+    <script src="data.js"></script>
+    <script src="data-loader.js"></script>
+    <script>
+        // ============================================================
+        // TEAM META
+        // ============================================================
+        const TM = {
+            '読売ジャイアンツ': { tag: 'giants', l: 'セ' },
+            '阪神タイガース': { tag: 'tigers', l: 'セ' },
+            '中日ドラゴンズ': { tag: 'dragons', l: 'セ' },
+            '広島東洋カープ': { tag: 'carp', l: 'セ' },
+            '東京ヤクルトスワローズ': { tag: 'swallows', l: 'セ' },
+            '横浜DeNAベイスターズ': { tag: 'baystars', l: 'セ' },
+            '福岡ソフトバンクホークス': { tag: 'hawks', l: 'パ' },
+            '埼玉西武ライオンズ': { tag: 'lions', l: 'パ' },
+            '東北楽天ゴールデンイーグルス': { tag: 'eagles', l: 'パ' },
+            '千葉ロッテマリーンズ': { tag: 'marines', l: 'パ' },
+            '北海道日本ハムファイターズ': { tag: 'fighters', l: 'パ' },
+            'オリックス・バファローズ': { tag: 'buffaloes', l: 'パ' },
+        };
+        function tleague(name) { return TM[name]?.l || ''; }
+        function ttag(name) {
+            const t = TM[name];
+            if (!t) return `<span class="tt" style="background:#33333322;color:#888">${name.slice(0, 4)}</span>`;
+            return `<span class="tt tg-${t.tag}">${name.slice(0, 4)}</span>`;
+        }
+
+        // STATE
+        let bF = [], pF = [], tF = [];
+        let bPage = 1, pPage = 1, tPage = 1;
+        let bSort = { c: -1, asc: false }, pSort = { c: -1, asc: false }, tSort = { c: -1, asc: false };
+
+        // ============================================================
+        // INIT: build year/team dropdowns
+        // ============================================================
+        function initDropdowns() {
+            const years = [...new Set(BATTING_DATA.map(d => d[1]))].sort((a, b) => b - a);
+            const batTeams = [...new Set(BATTING_DATA.map(d => d[2]))].sort();
+            const pitTeams = [...new Set(PITCHING_DATA.map(d => d[2]))].sort();
+            const tTeams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+            const tyears = [...new Set(TEAM_DATA.map(d => d.year))].sort((a, b) => b - a);
+            const pyears = [...new Set(PITCHING_DATA.map(d => d[1]))].sort((a, b) => b - a);
+
+            function fill(id, items) { const s = document.getElementById(id); items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); }); }
+            fill('by', years); fill('bt', batTeams);
+            fill('py', pyears); fill('pt', pitTeams);
+            fill('ty', tyears); fill('tt', tTeams);
+
+            document.getElementById('cnt-bat').textContent = BATTING_DATA.length + '件';
+            document.getElementById('cnt-pit').textContent = PITCHING_DATA.length + '件';
+        }
+
+        // ============================================================
+        // FILTER & RENDER: Batting
+        // ============================================================
+        function getQPA(year) { return year === 2020 ? 372 : 443; }
+        function getQIP(year) { return year === 2020 ? 120 : 143; }
+
+        function fb() {
+            const y = document.getElementById('by').value;
+            const l = document.getElementById('bl').value;
+            const t = document.getElementById('bt').value;
+            const q = document.getElementById('bq').value;
+            const s = document.getElementById('bs').value.trim().toLowerCase();
+            bF = BATTING_DATA.filter(d => {
+                if (y && String(d[1]) !== y) return false;
+                if (l && tleague(d[2]) !== l) return false;
+                if (t && d[2] !== t) return false;
+                if (q === '1') {
+                    const threshold = getQPA(d[1]);
+                    if (d[12] < threshold) return false;
+                }
+                if (s && !d[0].toLowerCase().includes(s)) return false;
+                return true;
+            });
+            bPage = 1; rb();
+        }
+        function rb() {
+            const rows = parseInt(document.getElementById('br').value) || 30;
+            const start = (bPage - 1) * rows;
+            const page = bF.slice(start, start + rows);
+            document.getElementById('bb').innerHTML = page.map((d, i) => {
+                const r = start + i + 1;
+                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+                const f3 = v => (typeof v === 'number' ? v.toFixed(3) : '-');
+                const avg = f3(d[4]), obp = f3(d[10]), slg = f3(d[11]), ops = f3(d[9]);
+                const avc = d[4] >= .330 ? 'vh' : d[4] >= .290 ? 'vm' : '';
+                const opc = d[9] >= .900 ? 'vh' : d[9] >= .780 ? 'vm' : '';
+                const hrc = d[5] >= 30 ? 'vh' : d[5] >= 20 ? 'vm' : '';
+                return `<tr>
+      <td class="${rc} rk">${r}</td>
+      <td class="pn">${d[0]}</td>
+      <td>${d[1]}</td>
+      <td>${ttag(d[2])}</td>
+      <td>${d[3]}</td>
+      <td class="${avc}">${avg}</td>
+      <td class="${hrc}">${d[5]}</td>
+      <td>${d[6]}</td>
+      <td>${d[7]}</td>
+      <td>${d[8]}</td>
+      <td>${obp}</td>
+      <td>${slg}</td>
+      <td class="${opc}">${ops}</td>
+      <td>${d[12]}</td>
+    </tr>`;
+            }).join('');
+            pgn('bpg', bF.length, rows, bPage, p => { bPage = p; rb(); });
+        }
+
+        // ============================================================
+        // FILTER & RENDER: Pitching
+        // ============================================================
+        function fp() {
+            const y = document.getElementById('py').value;
+            const l = document.getElementById('pl').value;
+            const t = document.getElementById('pt').value;
+            const q = document.getElementById('pq').value;
+            const s = document.getElementById('ps').value.trim().toLowerCase();
+            pF = PITCHING_DATA.filter(d => {
+                if (y && String(d[1]) !== y) return false;
+                if (l && tleague(d[2]) !== l) return false;
+                if (t && d[2] !== t) return false;
+                if (q === '1') {
+                    const threshold = getQIP(d[1]);
+                    if (d[11] < threshold) return false;
+                }
+                if (s && !d[0].toLowerCase().includes(s)) return false;
+                return true;
+            });
+            pPage = 1; rp();
+        }
+        function rp() {
+            const rows = parseInt(document.getElementById('pr').value) || 30;
+            const start = (pPage - 1) * rows;
+            const page = pF.slice(start, start + rows);
+            document.getElementById('pb').innerHTML = page.map((d, i) => {
+                const r = start + i + 1;
+                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+                const f2 = v => (typeof v === 'number' ? v.toFixed(2) : '-');
+                const f3 = v => (typeof v === 'number' ? v.toFixed(3) : '-');
+                const era = f2(d[7]), pct = f3(d[9]);
+                const ec = d[7] <= 2.50 ? 'vh' : d[7] <= 3.50 ? 'vm' : '';
+                return `<tr>
+      <td class="${rc} rk">${r}</td>
+      <td class="pn">${d[0]}</td>
+      <td>${d[1]}</td>
+      <td>${ttag(d[2])}</td>
+      <td>${d[3]}</td>
+      <td>${d[4]}</td>
+      <td>${d[5]}</td>
+      <td>${d[6]}</td>
+      <td>${d[12]}</td>
+      <td class="${ec}">${era}</td>
+      <td>${d[8]}</td>
+      <td>${pct}</td>
+      <td>${d[10]}</td>
+    </tr>`;
+            }).join('');
+            pgn('ppg', pF.length, rows, pPage, p => { pPage = p; rp(); });
+        }
+
+        // ============================================================
+        // FILTER & RENDER: Team
+        // ============================================================
+        function ft() {
+            const y = document.getElementById('ty').value;
+            const l = document.getElementById('tl').value;
+            const t = document.getElementById('tt').value;
+            tF = TEAM_DATA.filter(d => {
+                if (y && String(d.year) !== y) return false;
+                if (l && d.league !== l) return false;
+                if (t && d.team !== t) return false;
+                return true;
+            });
+            tPage = 1; rt();
+        }
+        function rt() {
+            const rows = 30;
+            const start = (tPage - 1) * rows;
+            const page = tF.slice(start, start + rows);
+            document.getElementById('tb').innerHTML = page.map((d, i) => {
+                const r = start + i + 1;
+                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+                const ch = d.nippon === '○';
+                const pc = d.pct >= .600 ? 'vh' : d.pct >= .530 ? 'vm' : '';
+                return `<tr>
+      <td class="${rc} rk">${r}</td>
+      <td>${ttag(d.team)}${d.team.slice(0, 6)}</td>
+      <td>${d.year}</td>
+      <td>${d.league}リーグ</td>
+      <td class="${d.w >= 80 ? 'vh' : d.w >= 70 ? 'vm' : ''}">${d.w}</td>
+      <td>${d.l}</td>
+      <td>${d.t}</td>
+      <td class="${pc}">${d.pct.toFixed(3)}</td>
+      <td>${d.rank}位</td>
+      <td>${ch ? '<span style="color:#fbbf24;font-weight:700">🏆 日本一</span>' : '-'}</td>
+    </tr>`;
+            }).join('');
+            pgn('tpg', tF.length, rows, tPage, p => { tPage = p; rt(); });
+        }
+
+        // ============================================================
+        // SORT
+        // ============================================================
+        function srt(type, ci) {
+            let state;
+            if (type === 'b') state = bSort;
+            if (type === 'p') state = pSort;
+            if (type === 't') state = tSort;
+            if (state.c === ci) state.asc = !state.asc; else { state.c = ci; state.asc = false; }
+
+            function cmp(a, b) {
+                let v1, v2;
+                if (type === 't') {
+                    const keys = ['team', 'year', 'league', 'w', 'l', 't', 'pct', 'rank', 'nippon'];
+                    v1 = a[keys[ci]]; v2 = b[keys[ci]];
+                } else { v1 = a[ci]; v2 = b[ci]; }
+                if (v1 == null) return 1; if (v2 == null) return -1;
+                return state.asc ? (v1 < v2 ? -1 : v1 > v2 ? 1 : 0) : (v1 > v2 ? -1 : v1 < v2 ? 1 : 0);
+            }
+            if (type === 'b') { bF.sort(cmp); bPage = 1; rb(); }
+            if (type === 'p') { pF.sort(cmp); pPage = 1; rp(); }
+            if (type === 't') { tF.sort(cmp); tPage = 1; rt(); }
+        }
+
+        // ============================================================
+        // PAGINATION
+        // ============================================================
+        function pgn(id, total, rows, current, cb) {
+            const pages = Math.ceil(total / rows);
+            const el = document.getElementById(id);
+            if (pages <= 1) { el.innerHTML = ''; return; }
+            let html = ''; const w = 5;
+            const start = Math.max(1, current - w), end = Math.min(pages, current + w);
+            if (start > 1) html += `<button onclick="(${cb})(1)">1</button>`;
+            if (start > 2) html += `<button disabled>…</button>`;
+            for (let i = start; i <= end; i++) html += `<button class="${i === current ? 'active' : ''}" onclick="(${cb})(${i})">${i}</button>`;
+            if (end < pages - 1) html += `<button disabled>…</button>`;
+            if (end < pages) html += `<button onclick="(${cb})(${pages})">${pages}</button>`;
+            el.innerHTML = html;
+        }
+
+        // ============================================================
+        // RECORDS
+        // ============================================================
+        function renderRecords() {
+            // Rate-based stats (Qualified batters only)
+            const qualified = [...BATTING_DATA].filter(d => d[12] >= getQPA(d[1]));
+            const bestAvg = qualified.sort((a, b) => b[4] - a[4])[0] || [null, 0, '-', 0, 0];
+            const bestOBP = qualified.sort((a, b) => b[10] - a[10])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0, 0, 0];
+            const bestSLG = qualified.sort((a, b) => b[11] - a[11])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const bestOPS = qualified.sort((a, b) => b[9] - a[9])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0, 0];
+
+            // Count-based stats (All players)
+            const allBat = [...BATTING_DATA];
+            const bestHR = allBat.sort((a, b) => b[5] - a[5])[0] || [null, 0, '-', 0, 0, 0];
+            const bestRBI = allBat.sort((a, b) => b[6] - a[6])[0] || [null, 0, '-', 0, 0, 0, 0];
+            const bestH = allBat.sort((a, b) => b[7] - a[7])[0] || [null, 0, '-', 0, 0, 0, 0, 0];
+            const bestSB = allBat.sort((a, b) => b[8] - a[8])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0];
+
+            const pitS = [...PITCHING_DATA].filter(d => d[7] > 0);
+            const bestERA = pitS.filter(d => d[11] >= getQIP(d[1])).sort((a, b) => a[7] - b[7])[0] || [null, 0, '-', 0, 0, 0, 0, 0];
+            const bestK = pitS.sort((a, b) => b[8] - a[8])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0];
+            const bestSv = pitS.sort((a, b) => b[6] - a[6])[0] || [null, 0, '-', 0, 0, 0, 0];
+
+            const recs = [
+                { label: '打率トップ', val: Number(bestAvg[4]).toFixed(3), name: bestAvg[0], detail: `${bestAvg[1]}年 ${bestAvg[2].slice(0, 5)}`, icon: '🥇', sub: '規定以上' },
+                { label: '本塁打トップ', val: bestHR[5] + '本', name: bestHR[0], detail: `${bestHR[1]}年 ${bestHR[2].slice(0, 5)}`, icon: '💣', sub: '全体' },
+                { label: '打点トップ', val: bestRBI[6] + '点', name: bestRBI[0], detail: `${bestRBI[1]}年 ${bestRBI[2].slice(0, 5)}`, icon: '🎯', sub: '全体' },
+                { label: '安打トップ', val: bestH[7] + '本', name: bestH[0], detail: `${bestH[1]}年 ${bestH[2].slice(0, 5)}`, icon: '🏏', sub: '全体' },
+                { label: '盗塁トップ', val: bestSB[8] + '個', name: bestSB[0], detail: `${bestSB[1]}年 ${bestSB[2].slice(0, 5)}`, icon: '💨', sub: '全体' },
+                { label: '出塁率トップ', val: Number(bestOBP[10]).toFixed(3), name: bestOBP[0], detail: `${bestOBP[1]}年 ${bestOBP[2].slice(0, 5)}`, icon: '📈', sub: '規定以上' },
+                { label: '長打率トップ', val: Number(bestSLG[11]).toFixed(3), name: bestSLG[0], detail: `${bestSLG[1]}年 ${bestSLG[2].slice(0, 5)}`, icon: '💥', sub: '規定以上' },
+                { label: 'OPSトップ', val: Number(bestOPS[9]).toFixed(3), name: bestOPS[0], detail: `${bestOPS[1]}年 ${bestOPS[2].slice(0, 5)}`, icon: '📊', sub: '規定以上' },
+                { label: '最優秀防御率', val: Number(bestERA[7]).toFixed(2), name: bestERA[0], detail: `${bestERA[1]}年 ${bestERA[2].slice(0, 5)}`, icon: '🛡', sub: '規定以上' },
+                { label: '奪三振トップ', val: bestK[8] + 'K', name: bestK[0], detail: `${bestK[1]}年 ${bestK[2].slice(0, 5)}`, icon: '⚡', sub: '全体' },
+                { label: 'セーブトップ', val: bestSv[6] + 'S', name: bestSv[0], detail: `${bestSv[1]}年 ${bestSv[2].slice(0, 5)}`, icon: '🔒', sub: '全体' },
+            ];
+            document.getElementById('recs').innerHTML = recs.map(r => `
+    <div class="card">
+      <div class="cl">${r.icon} ${r.label} <span style="font-size:.7rem;opacity:.6;margin-left:4px">(${r.sub})</span></div>
+      <div class="cv">${r.val}</div>
+      <div class="cn">${r.name}</div>
+      <div class="cd">${r.detail}</div>
+    </div>`).join('');
+
+            // Champ bars
+            const champMap = {};
+            TEAM_DATA.forEach(d => { if (d.nippon === '○') champMap[d.team] = (champMap[d.team] || 0) + 1; });
+            const champs = Object.entries(champMap).sort((a, b) => b[1] - a[1]);
+            const maxC = champs[0]?.[1] || 1;
+            const cols = { giants: '#ff6b2b', tigers: '#ffe033', dragons: '#2b8cff', carp: '#ff4444', swallows: '#3bc5ff', baystars: '#648fff', hawks: '#ffd52b', lions: '#2bdcff', eagles: '#e05555', marines: '#5577ff', fighters: '#4488ff', buffaloes: '#22cc66' };
+            document.getElementById('chbars').innerHTML = champs.map(([t, c]) => {
+                const tag = TM[t]?.tag || 'giants';
+                const col = cols[tag] || '#888';
+                const pct = (c / maxC * 100).toFixed(1);
+                return `<div class="bar-row">
+      <div class="bar-lbl">${t.slice(0, 8)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}">${c}</div></div>
+      <div class="bar-num" style="color:${col}">${c}回</div>
+    </div>`;
+            }).join('');
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function show(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+
+            const titles = {
+                batting: '⚾ NPB <em>打撃成績データベース</em> 2020〜2025',
+                pitching: '⚾ NPB <em>投手成績データベース</em> 2020〜2025',
+                team: '⚾ NPB <em>チーム成績データベース</em> 2020〜2025',
+                records: '⚾ NPB <em>歴代記録・分析</em> 2020〜2025'
+            };
+            const subs = {
+                batting: '打率、本塁打、打点など打撃各項目を詳細に分析',
+                pitching: '防御率、奪三振、勝利数など投手各項目を詳細に分析',
+                team: '年度別順位、勝率、リーグ内戦績をビジュアル化',
+                records: '2020年〜2025年の記録をランキング形式で紹介'
+            };
+            const counts = {
+                batting: BATTING_DATA.length + '名',
+                pitching: PITCHING_DATA.length + '名',
+                team: '12球団',
+                records: '総合データ'
+            };
+            const labels = {
+                batting: '打撃部門 登録数',
+                pitching: '投手部門 登録数',
+                team: 'NPB球団数',
+                records: '統計解析対象'
+            };
+
+            document.getElementById('hero-title').innerHTML = titles[id] || titles.batting;
+            document.getElementById('hero-sub').textContent = subs[id] || subs.batting;
+            document.getElementById('hero-count').textContent = counts[id] || '-';
+            document.getElementById('hero-count-label').textContent = labels[id] || '登録数';
+
+            const navLabels = { batting: '打撃', pitching: '投手', team: 'チーム', records: '成績' };
+            [...document.querySelectorAll('nav button')].find(b => b.textContent.includes(navLabels[id]))?.classList.add('active');
+
+            if (id === 'records') renderRecords();
+        }
+
+        // ============================================================
+        // BOOT
+        // ============================================================
+        window.onload = () => {
+            initDropdowns();
+            bF = [...BATTING_DATA]; pF = [...PITCHING_DATA]; tF = [...TEAM_DATA];
+            rb(); rp(); rt();
+        };
+    </script>
+</body>
+
+</html>
