@@ -760,6 +760,9 @@
                     <h4 style="margin-bottom:1rem">打者を選択</h4>
                     <div style="margin-bottom:1rem">
                         <select id="sb-y" style="width:100%;margin-bottom:.5rem" onchange="upSimB()"></select>
+                        <select id="sb-t" style="width:100%;margin-bottom:.5rem" onchange="upSimB()">
+                            <option value="">全チーム</option>
+                        </select>
                         <input type="text" id="sb-s" placeholder="打者名で検索" style="width:100%" oninput="upSimB()" />
                     </div>
                     <div class="sim-list" id="sb-l"></div>
@@ -802,6 +805,9 @@
                     <h4 style="margin-bottom:1rem">投手を選択</h4>
                     <div style="margin-bottom:1rem">
                         <select id="sp-y" style="width:100%;margin-bottom:.5rem" onchange="upSimP()"></select>
+                        <select id="sp-t" style="width:100%;margin-bottom:.5rem" onchange="upSimP()">
+                            <option value="">全チーム</option>
+                        </select>
                         <input type="text" id="sp-s" placeholder="投手名で検索" style="width:100%" oninput="upSimP()" />
                     </div>
                     <div class="sim-list" id="sp-l"></div>
@@ -1098,9 +1104,13 @@
 
         function upSimB() {
             const y = document.getElementById('sb-y').value;
+            const t = document.getElementById('sb-t').value;
             const s = document.getElementById('sb-s').value.trim().toLowerCase();
-            const list = BATTING_DATA.filter(d => (!y || String(d[1]) === y) && (!s || d[0].toLowerCase().includes(s)))
-                .slice(0, 50);
+            const list = BATTING_DATA.filter(d =>
+                (!y || String(d[1]) === y) &&
+                (!t || d[2] === t) &&
+                (!s || d[0].toLowerCase().includes(s))
+            ).slice(0, 50);
             document.getElementById('sb-l').innerHTML = list.map(d =>
                 `<div class="sim-item ${curBS && curBS[0] === d[0] && curBS[1] === d[1] ? 'active' : ''}" onclick='selSimB(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${d[2]})</div>`
             ).join('');
@@ -1108,9 +1118,13 @@
 
         function upSimP() {
             const y = document.getElementById('sp-y').value;
+            const t = document.getElementById('sp-t').value;
             const s = document.getElementById('sp-s').value.trim().toLowerCase();
-            const list = PITCHING_DATA.filter(d => (!y || String(d[1]) === y) && (!s || d[0].toLowerCase().includes(s)))
-                .slice(0, 50);
+            const list = PITCHING_DATA.filter(d =>
+                (!y || String(d[1]) === y) &&
+                (!t || d[2] === t) &&
+                (!s || d[0].toLowerCase().includes(s))
+            ).slice(0, 50);
             document.getElementById('sp-l').innerHTML = list.map(d =>
                 `<div class="sim-item ${curPS && curPS[0] === d[0] && curPS[1] === d[1] ? 'active' : ''}" onclick='selSimP(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${d[2]})</div>`
             ).join('');
@@ -1486,6 +1500,15 @@
                 if (el) el.innerHTML = '<option value="">全年度</option>' +
                     [2025, 2024, 2023, 2022, 2021, 2020].map(y => `<option value="${y}">${y}年</option>`).join('');
             });
+
+            const st = ['sb-t', 'sp-t'];
+            const teams = ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ'];
+            st.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '<option value="">全チーム</option>' +
+                    teams.map(t => `<option value="${t}">${t}</option>`).join('');
+            });
+
             if (typeof upSimB === 'function') upSimB();
             if (typeof upSimP === 'function') upSimP();
         };
