@@ -1112,7 +1112,7 @@
             const list = PITCHING_DATA.filter(d => (!y || String(d[1]) === y) && (!s || d[0].toLowerCase().includes(s)))
                 .slice(0, 50);
             document.getElementById('sp-l').innerHTML = list.map(d =>
-                `div class="sim-item ${curPS && curPS[0] === d[0] && curPS[1] === d[1] ? 'active' : ''}" onclick='selSimP(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${d[2]})</div>`
+                `<div class="sim-item ${curPS && curPS[0] === d[0] && curPS[1] === d[1] ? 'active' : ''}" onclick='selSimP(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${d[2]})</div>`
             ).join('');
         }
 
