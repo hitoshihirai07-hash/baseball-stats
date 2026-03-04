@@ -75,6 +75,45 @@
         return rows;
     }
 
+    function parseTeamData(text, year, league) {
+        // Robust CSV parsing for multi-line cells
+        const rows = [];
+        let curr = [];
+        let field = "";
+        let inQuote = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            if (char === '"') {
+                inQuote = !inQuote;
+            } else if (char === ',' && !inQuote) {
+                curr.push(field.trim());
+                field = "";
+            } else if (char === '\n' && !inQuote) {
+                curr.push(field.trim());
+                if (curr.length > 5 && curr[0] !== 'チーム') {
+                    // チーム,試合,勝利,敗北,引分,勝率,差,...
+                    rows.push({
+                        team: curr[0],
+                        year: year,
+                        league: league,
+                        w: parseInt(curr[2]) || 0,
+                        l: parseInt(curr[3]) || 0,
+                        t: parseInt(curr[4]) || 0,
+                        pct: parseFloat(curr[5]) || 0,
+                        rank: 0, // Will be calculated after sorting by pct
+                        nippon: '×' // Placeholder
+                    });
+                }
+                curr = [];
+                field = "";
+            } else {
+                field += char;
+            }
+        }
+        return rows;
+    }
+
     const FILES = [
         { url: 'data/2020batter.csv', year: 2020, type: 'bat' },
         { url: 'data/2021batter.csv', year: 2021, type: 'bat' },
@@ -88,11 +127,25 @@
         { url: 'data/2023pitther.csv', year: 2023, type: 'pit' },
         { url: 'data/2024pitther.csv', year: 2024, type: 'pit' },
         { url: 'data/2025pitther.csv', year: 2025, type: 'pit' },
+        // Team Data (data2/)
+        { url: 'data2/2020se.csv', year: 2020, type: 'team', league: 'セ' },
+        { url: 'data2/2020pa.csv', year: 2020, type: 'team', league: 'パ' },
+        { url: 'data2/2021se.csv', year: 2021, type: 'team', league: 'セ' },
+        { url: 'data2/2021pa.csv', year: 2021, type: 'team', league: 'パ' },
+        { url: 'data2/2022se.csv', year: 2022, type: 'team', league: 'セ' },
+        { url: 'data2/2022pa.csv', year: 2022, type: 'team', league: 'パ' },
+        { url: 'data2/2023se.csv', year: 2023, type: 'team', league: 'セ' },
+        { url: 'data2/2023pa.csv', year: 2023, type: 'team', league: 'パ' },
+        { url: 'data2/2024se.csv', year: 2024, type: 'team', league: 'セ' },
+        { url: 'data2/2024pa.csv', year: 2024, type: 'team', league: 'パ' },
+        { url: 'data2/2025se.csv', year: 2025, type: 'team', league: 'セ' },
+        { url: 'data2/2025pa.csv', year: 2025, type: 'team', league: 'パ' },
     ];
 
     let loaded = 0;
     const allBatRows = [];
     const allPitRows = [];
+    const allTeamRows = [];
 
     function onAllLoaded() {
         // Batting
@@ -105,8 +158,20 @@
         const filteredPit = (window.PITCHING_DATA || []).filter(r => !pitYears.has(r[1]));
         window.PITCHING_DATA = [...allPitRows, ...filteredPit];
 
+        // Team
+        // Sort each year/league by pct and assign rank
+        const years = [...new Set(allTeamRows.map(r => r.year))];
+        years.forEach(y => {
+            ['セ', 'パ'].forEach(l => {
+                const subset = allTeamRows.filter(r => r.year === y && r.league === l)
+                    .sort((a, b) => b.pct - a.pct);
+                subset.forEach((r, idx) => { r.rank = idx + 1; });
+            });
+        });
+        window.TEAM_DATA = allTeamRows;
+
         if (typeof initDropdowns === 'function') {
-            ['by', 'bt', 'py', 'pt'].forEach(id => {
+            ['by', 'bt', 'py', 'pt', 'ty', 'tt'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     const first = el.options[0];
@@ -117,15 +182,18 @@
             initDropdowns();
             window.bF = [...window.BATTING_DATA];
             window.pF = [...window.PITCHING_DATA];
+            window.tF = [...window.TEAM_DATA];
             window.bPage = 1;
             window.pPage = 1;
+            window.tPage = 1;
             if (typeof rb === 'function') rb();
             if (typeof rp === 'function') rp();
+            if (typeof rt === 'function') rt();
             if (typeof show === 'function') show('home');
         }
     }
 
-    FILES.forEach(({ url, year, type }) => {
+    FILES.forEach(({ url, year, type, league }) => {
         fetch(url)
             .then(r => {
                 if (!r.ok) throw new Error(r.status);
@@ -135,9 +203,12 @@
                 if (type === 'bat') {
                     const rows = parseBattingData(text, year);
                     allBatRows.push(...rows);
-                } else {
+                } else if (type === 'pit') {
                     const rows = parsePitchingData(text, year);
                     allPitRows.push(...rows);
+                } else if (type === 'team') {
+                    const rows = parseTeamData(text, year, league);
+                    allTeamRows.push(...rows);
                 }
             })
             .catch(e => { console.warn('Load failed:', url, e); })
