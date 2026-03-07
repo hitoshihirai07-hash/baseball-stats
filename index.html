@@ -7,6 +7,7 @@
     <title>NPB打撃成績データベース 2020–2025</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
         rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #0a0e1a;
@@ -730,6 +731,136 @@
             background: var(--bg3);
             margin-right: 4px;
         }
+
+        /* MODAL STYLES */
+        .modal-ov {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-ov.active {
+            display: flex;
+        }
+
+        .modal-cnt {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            color: var(--tx2);
+            cursor: pointer;
+            transition: color .2s;
+        }
+
+        .modal-close:hover {
+            color: var(--ac);
+        }
+
+        .modal-hi {
+            padding: 2.5rem 2rem 1.5rem;
+            border-bottom: 1px solid var(--bd);
+            background: linear-gradient(to bottom, rgba(59, 130, 246, 0.05), transparent);
+        }
+
+        .modal-pname {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: .5rem;
+        }
+
+        .modal-pteam {
+            font-size: 1rem;
+            color: var(--tx2);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: rgba(0, 0, 0, .2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--bd);
+        }
+
+        .stat-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            background: var(--bg3);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: .75rem;
+            color: var(--tx2);
+            margin-bottom: .25rem;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--ac);
+        }
+
+        .name-link {
+            cursor: pointer;
+            color: var(--ac2);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-color: rgba(59, 130, 246, 0.3);
+            transition: all .2s;
+        }
+
+        .name-link:hover {
+            color: var(--ac);
+            text-decoration-color: var(--ac);
+        }
     </style>
 </head>
 
@@ -1169,11 +1300,14 @@
             '北海道日本ハムファイターズ': { tag: 'fighters', l: 'パ', sn: '日ハム' },
             'オリックス・バファローズ': { tag: 'buffaloes', l: 'パ', sn: 'オリックス' },
         };
-        function tleague(name) { return TM[name]?.l || ''; }
+        function tleague(name) { return TM[name]?.l; } // Tag helper
         function ttag(name) {
-            const t = TM[name];
-            if (!t) return `<span class="tt" style="background:#33333322;color:#888">${name.slice(0, 4)}</span>`;
-            return `<span class="tt tg-${t.tag}">${t.sn}</span>`;
+            const team = TM[name] || { tag: 'giants', sn: '巨人' };
+            return `<span class="t-badge ${team.tag}">${team.sn}</span>`;
+        }
+
+        function sn(name) {
+            return TM[name]?.sn || name;
         }
 
         // DATA HOLDERS (Initialized for sync logic)
@@ -1329,9 +1463,9 @@
                 const hrc = d[5] >= 30 ? 'vh' : d[5] >= 20 ? 'vm' : '';
                 return `<tr>
       <td class="${rc} rk">${r}</td>
-      <td class="pn">${d[0]}</td>
+      <td class="pn"><span class="name-link" onclick="showP('${d[0]}','bat')">${d[0]}</span></td>
       <td>${d[1]}</td>
-      <td>${ttag(d[2])} <span style="font-size:.85rem;opacity:.8">${TM[d[2]]?.sn || d[2]}</span></td>
+      <td>${ttag(d[2])} ${sn(d[2])}</td>
       <td>${d[3]}</td>
       <td class="${avc}">${avg}</td>
       <td class="${hrc}">${d[5]}</td>
@@ -1382,9 +1516,9 @@
                 const ec = d[7] <= 2.50 ? 'vh' : d[7] <= 3.50 ? 'vm' : '';
                 return `<tr>
       <td class="${rc} rk">${r}</td>
-      <td class="pn">${d[0]}</td>
+      <td class="pn"><span class="name-link" onclick="showP('${d[0]}','pit')">${d[0]}</span></td>
       <td>${d[1]}</td>
-      <td>${ttag(d[2])} <span style="font-size:.85rem;opacity:.8">${TM[d[2]]?.sn || d[2]}</span></td>
+      <td>${ttag(d[2])} ${sn(d[2])}</td>
       <td>${d[3]}</td>
       <td>${d[4]}</td>
       <td>${d[5]}</td>
@@ -1655,6 +1789,111 @@
         }
 
         // ============================================================
+        // PLAYER DETAIL MODAL
+        // ============================================================
+        let myChart = null;
+
+        function closeP() {
+            document.getElementById('modal-ov').classList.remove('active');
+            if (myChart) { myChart.destroy(); myChart = null; }
+        }
+
+        function showP(name, type) {
+            const data = type === 'bat'
+                ? BATTING_DATA.filter(d => d[0] === name).sort((a, b) => a[1] - b[1])
+                : PITCHING_DATA.filter(d => d[0] === name).sort((a, b) => a[1] - b[1]);
+
+            if (!data.length) return;
+
+            document.getElementById('modal-name').textContent = name;
+            const latest = data[data.length - 1];
+            document.getElementById('modal-team').innerHTML = `${ttag(latest[2])} ${latest[2]}`;
+
+            let summaryHTML = '';
+            if (type === 'bat') {
+                const totalG = data.reduce((s, d) => s + d[3], 0);
+                const totalH = data.reduce((s, d) => s + d[7], 0);
+                const totalHR = data.reduce((s, d) => s + d[5], 0);
+                summaryHTML = `
+                    <div class="stat-item"><div class="stat-label">通算試合</div><div class="stat-val">${totalG}</div></div>
+                    <div class="stat-item"><div class="stat-label">通算安打</div><div class="stat-val">${totalH}</div></div>
+                    <div class="stat-item"><div class="stat-label">通算本塁打</div><div class="stat-val">${totalHR}</div></div>
+                `;
+            } else {
+                const totalG = data.reduce((s, d) => s + d[3], 0);
+                const totalW = data.reduce((s, d) => s + d[4], 0);
+                const totalK = data.reduce((s, d) => s + d[8], 0);
+                summaryHTML = `
+                    <div class="stat-item"><div class="stat-label">通算登板</div><div class="stat-val">${totalG}</div></div>
+                    <div class="stat-item"><div class="stat-label">通算勝利</div><div class="stat-val">${totalW}</div></div>
+                    <div class="stat-item"><div class="stat-label">通算奪三振</div><div class="stat-val">${totalK}</div></div>
+                `;
+            }
+            document.getElementById('modal-stats').innerHTML = summaryHTML;
+
+            const labels = data.map(d => d[1] + '年');
+            const sets = [];
+
+            if (type === 'bat') {
+                sets.push({
+                    label: '打率',
+                    data: data.map(d => d[4]),
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    yAxisID: 'y',
+                    tension: 0.3
+                });
+                sets.push({
+                    label: '本塁打',
+                    data: data.map(d => d[5]),
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    yAxisID: 'y1',
+                    tension: 0.3
+                });
+            } else {
+                sets.push({
+                    label: '防御率',
+                    data: data.map(d => d[7]),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    yAxisID: 'y',
+                    tension: 0.3
+                });
+                sets.push({
+                    label: '勝利数',
+                    data: data.map(d => d[4]),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    yAxisID: 'y1',
+                    tension: 0.3
+                });
+            }
+
+            document.getElementById('modal-ov').classList.add('active');
+
+            setTimeout(() => {
+                const ctx = document.getElementById('playerChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels, datasets: sets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                            y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#9ca3af' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#f9fafb', font: { weight: 'bold' } } }
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        // ============================================================
         // BOOT
         // ============================================================
         window.onload = () => {
@@ -1682,6 +1921,27 @@
             if (typeof upSimP === 'function') upSimP();
         };
     </script>
+
+    <!-- PLAYER DETAIL MODAL -->
+    <div id="modal-ov" class="modal-ov" onclick="if(event.target===this)closeP()">
+        <div class="modal-cnt" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeP()">&times;</span>
+            <div class="modal-hi">
+                <div id="modal-name" class="modal-pname">選手名</div>
+                <div id="modal-team" class="modal-pteam">チーム</div>
+            </div>
+            <div class="modal-body">
+                <div class="stat-summary" id="modal-stats"></div>
+                <div class="chart-box" style="height: 350px;">
+                    <canvas id="playerChart"></canvas>
+                </div>
+                <div style="margin-top:1.5rem; text-align:center; color:var(--tx2); font-size:.8rem">
+                    ※ グラフの点は年度ごとの成績を表しています。
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
+```
