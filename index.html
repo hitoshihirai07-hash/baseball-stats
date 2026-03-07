@@ -677,6 +677,59 @@
                 display: none;
             }
         }
+
+        /* ORDER STYLES */
+        .order-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: .75rem;
+            margin-bottom: 2rem;
+        }
+
+        .order-card {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            padding: .75rem;
+            text-align: center;
+        }
+
+        .order-pos {
+            font-size: .8rem;
+            font-weight: 900;
+            color: var(--ac);
+            margin-bottom: .4rem;
+        }
+
+        .top-player {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: .2rem;
+        }
+
+        .top-sub {
+            font-size: .7rem;
+            color: var(--tx2);
+        }
+
+        .top-item {
+            padding: .3rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .top-item:last-child {
+            border: none;
+        }
+
+        .top-rank {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            font-size: .65rem;
+            border-radius: 50%;
+            background: var(--bg3);
+            margin-right: 4px;
+        }
     </style>
 </head>
 
@@ -689,6 +742,7 @@
                 <button onclick="show('batting')">打撃成績</button>
                 <button onclick="show('pitching')">投手成績</button>
                 <button onclick="show('simulator')">シミュレーター</button>
+                <button onclick="show('order')">オーダー</button>
                 <button onclick="show('team')">チーム成績</button>
                 <button onclick="show('records')">成績記録</button>
             </nav>
@@ -965,6 +1019,54 @@
             <div class="pg" id="tpg"></div>
         </div>
 
+        <!-- オーダー -->
+        <div class="section" id="section-order">
+            <div class="sh">
+                <h2 class="stitle">チームオーダー分析</h2>
+            </div>
+            <div class="filters">
+                <div class="fg"><label>年度</label><select id="oy" onchange="fo()">
+                        <option value="">年度を選択</option>
+                    </select></div>
+                <div class="fg"><label>チーム</label><select id="ot" onchange="fo()">
+                        <option value="">チームを選択</option>
+                    </select></div>
+            </div>
+
+            <div id="order-analysis" style="margin-bottom:2rem">
+                <h3 style="font-size:1rem;color:var(--ac);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem">
+                    <span>📊</span> 打順別起用頻度 TOP3
+                </h3>
+                <div id="order-top3" class="order-grid"></div>
+            </div>
+
+            <div class="sh" style="margin-top:2rem">
+                <h3 style="font-size:1rem;color:var(--tx2);margin-bottom:.5rem">📅 シーズンオーダー履歴</h3>
+            </div>
+            <div class="tw">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>チーム</th>
+                            <th>1番</th>
+                            <th>2番</th>
+                            <th>3番</th>
+                            <th>4番</th>
+                            <th>5番</th>
+                            <th>6番</th>
+                            <th>7番</th>
+                            <th>8番</th>
+                            <th>9番</th>
+                            <th>先発</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ob"></tbody>
+                </table>
+            </div>
+            <div class="pg" id="opg"></div>
+        </div>
+
         <!-- 歴代記録 -->
         <div class="section" id="section-records">
             <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
@@ -1094,11 +1196,14 @@
             const tTeams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
             const tyears = [...new Set(TEAM_DATA.map(d => d.year))].sort((a, b) => b - a);
             const pyears = [...new Set(PITCHING_DATA.map(d => d[1]))].sort((a, b) => b - a);
+            const oyears = [...new Set(ORDER_DATA.map(d => d[0]))].sort((a, b) => b - a);
+            const oTeams = [...new Set(ORDER_DATA.map(d => d[2]))].sort();
 
             function fill(id, items) { const s = document.getElementById(id); items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); }); }
             fill('by', years); fill('bt', batTeams);
             fill('py', pyears); fill('pt', pitTeams);
             fill('ty', tyears); fill('tt', tTeams);
+            fill('oy', oyears); fill('ot', oTeams);
         }
 
         // ============================================================
@@ -1335,6 +1440,62 @@
         }
 
         // ============================================================
+        // FILTER & RENDER: Order
+        // ============================================================
+        function fo() {
+            const y = document.getElementById('oy').value;
+            const t = document.getElementById('ot').value;
+            oF = ORDER_DATA.filter(d => {
+                if (y && String(d[0]) !== y) return false;
+                if (t && d[2] !== t) return false;
+                return true;
+            });
+            oPage = 1; ro(); renderOrderTop3();
+        }
+
+        function ro() {
+            const rows = 30;
+            const start = (oPage - 1) * rows;
+            const page = oF.slice(start, start + rows);
+            document.getElementById('ob').innerHTML = page.map(d => `
+                <tr>
+                    <td>${d[1]}</td>
+                    <td>${ttag(d[2])} ${d[2]}</td>
+                    ${d.slice(3, 12).map(p => `<td>${p}</td>`).join('')}
+                    <td class="pn">${d[12]}</td>
+                </tr>
+            `).join('');
+            pgn('opg', oF.length, rows, oPage, p => { oPage = p; ro(); });
+        }
+
+        function renderOrderTop3() {
+            const y = document.getElementById('oy').value;
+            const t = document.getElementById('ot').value;
+            const container = document.getElementById('order-top3');
+            if (!y || !t || !ORDER_TOP3[t] || !ORDER_TOP3[t][y]) {
+                container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">年度とチームを選択してください</div>';
+                return;
+            }
+            const data = ORDER_TOP3[t][y];
+            let html = '';
+            for (let i = 1; i <= 9; i++) {
+                const tops = data[i] || [];
+                html += `
+                    <div class="order-card">
+                        <div class="order-pos">${i}番</div>
+                        ${tops.map((p, idx) => `
+                            <div class="top-item">
+                                <div class="top-player"><span class="top-rank">${idx + 1}</span>${p.player}</div>
+                                <div class="top-sub">${p.count} 試合</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // ============================================================
         // SORT
         // ============================================================
         function srt(type, ci) {
@@ -1446,34 +1607,38 @@
             document.getElementById('section-' + id).classList.add('active');
 
             const titles = {
-                home: '⚾ NPB <em>次世代解析・予測センター</em> 2020〜2025',
-                batting: '⚾ NPB <em>打撃成績データベース</em> 2020〜2025',
-                pitching: '⚾ NPB <em>投手成績データベース</em> 2020〜2025',
-                simulator: '⚾ NPB <em>対戦シミュレーター</em> Pro',
-                team: '⚾ NPB <em>チーム成績データベース</em> 2020〜2025',
-                records: '⚾ NPB <em>歴代最高記録・分析</em> 2020〜2025'
+                home: '⚾ NPB <em>分析ダッシュボード</em>',
+                batting: '⚾ NPB <em>打撃成績統計</em>',
+                pitching: '⚾ NPB <em>投手成績統計</em>',
+                simulator: '⚾ NPB <em>対戦シミュレーター</em>',
+                order: '📋 NPB <em>チームオーダー・分析</em>',
+                team: '🏆 NPB <em>チーム年度別成績</em>',
+                records: '🥇 NPB <em>歴代最高記録</em>'
             };
             const subs = {
-                home: 'データが導く。次の一打、次の勝利を予測する最強の野球プラットフォーム',
-                batting: '打率、本塁打、打点など打席の質と結果をマルチアングルに分析',
-                pitching: '防御率、奪三振、勝利数。投球回の重みを加味した独自レーティング',
-                simulator: '打者×投手の相性を科学的に解析。100万回の試行から導き出す期待値',
-                team: '年度別順位、勝率、日本一回数。チームの真の実力を可視化',
-                records: '2020年〜2025年の最高峰を網羅。時代を彩るスターの軌跡'
+                home: '2020年～2025年シーズンの全選手データを詳細に収録・分析',
+                batting: '打率、本塁打、打点など打撃各部門のシーズン統計',
+                pitching: '防御率、奪三振、勝利数など投手各部門のシーズン統計',
+                simulator: '打者と投手の能力から対戦結果を論理的に予測',
+                order: '全12球団のスタメン履歴と打順別起用傾向の可視化',
+                team: '年度別の順位、勝敗、リーグ内戦績の推移を確認',
+                records: '2020年以降のNPBにおける最高記録・主要指標'
             };
             const counts = {
                 home: 'Analytics On',
                 batting: BATTING_DATA.length + '名',
                 pitching: PITCHING_DATA.length + '名',
-                simulator: 'Matchup Ready',
+                order: ORDER_DATA.length + '試合',
+                simulator: 'Ready',
                 team: '12球団',
                 records: '総合データ'
             };
             const labels = {
-                home: '分析エンジン状態',
+                home: 'エンジン状態',
                 batting: '打撃部門 登録数',
                 pitching: '投手部門 登録数',
-                simulator: '予測システム状態',
+                order: '収録試合数',
+                simulator: '予測システム',
                 team: 'NPB球団数',
                 records: '統計解析対象'
             };
@@ -1483,7 +1648,7 @@
             document.getElementById('hero-count').textContent = counts[id] || '-';
             document.getElementById('hero-count-label').textContent = labels[id] || '登録数';
 
-            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', simulator: 'シミュレーター', team: 'チーム', records: '成績' };
+            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', simulator: 'シミュレーター', order: 'オーダー', team: 'チーム', records: '成績' };
             [...document.querySelectorAll('nav button')].find(b => b.textContent.includes(navLabels[id]))?.classList.add('active');
 
             if (id === 'records') renderRecords();
