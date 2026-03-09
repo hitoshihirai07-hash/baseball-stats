@@ -1580,6 +1580,9 @@
             fill('py', pyears); fill('pt', pitTeams);
             fill('ty', tyears); fill('tt', tTeams);
             fill('oy', oyears); fill('ot', oTeams);
+
+            // Also refresh My Order builder when data loads
+            if (typeof initOrderBuilder === 'function') initOrderBuilder();
         }
 
         // ============================================================
@@ -2166,8 +2169,10 @@
             if (typeof upSimB === 'function') upSimB();
             if (typeof upSimP === 'function') upSimP();
 
-            // Init My Order
-            initOrderBuilder();
+            if (typeof upSimP === 'function') upSimP();
+
+            // Initial call if data is somehow ready (fallback)
+            if (typeof initOrderBuilder === 'function' && BATTING_DATA.length > 0) initOrderBuilder();
         };
 
         // ============================================================
