@@ -814,6 +814,160 @@
             }
         }
 
+        .builder-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        @media(max-width: 768px) {
+            .builder-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .builder-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: .75rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: .75rem;
+            border-radius: 8px;
+            border: 1px solid var(--bd);
+        }
+
+        .builder-pos {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg3);
+            border-radius: 50%;
+            font-weight: 900;
+            color: var(--ac);
+        }
+
+        .builder-select {
+            flex: 1;
+            padding: .5rem;
+            background: var(--bg);
+            border: 1px solid var(--bd);
+            color: var(--tx);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .builder-stats {
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+            font-size: .85rem;
+            color: var(--tx2);
+            min-width: 150px;
+            justify-content: flex-end;
+        }
+
+        .builder-stats span {
+            color: var(--tx);
+            font-weight: 700;
+        }
+
+        .summary-panel {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 80px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .75rem 0;
+            border-bottom: 1px solid var(--bd);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-val {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--ac);
+        }
+
+        .sim-run-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--ac2), #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            margin-top: 1.5rem;
+        }
+
+        .sim-run-btn:hover {
+            opacity: .9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, .4);
+        }
+
+        .sim-run-btn:disabled {
+            background: var(--bd);
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .vs-pitcher-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), transparent);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-result-large {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            border: 1px solid var(--ac);
+            display: none;
+        }
+
+        .expected-runs {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--ac);
+            line-height: 1;
+            margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(245, 158, 11, .3);
+        }
+
+        .t-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .7rem;
+            font-weight: 700;
+            background: var(--ac);
+            color: white;
+            margin-left: .5rem;
+        }
+
         .chart-box {
             background: rgba(0, 0, 0, .2);
             border-radius: 12px;
@@ -874,6 +1028,7 @@
                 <button onclick="show('pitching')">投手成績</button>
                 <button onclick="show('simulator')">シミュレーター</button>
                 <button onclick="show('order')">オーダー</button>
+                <button onclick="show('myorder')">俺のオーダー</button>
                 <button onclick="show('team')">チーム成績</button>
                 <button onclick="show('records')">成績記録</button>
             </nav>
@@ -1196,6 +1351,92 @@
                 </table>
             </div>
             <div class="pg" id="opg"></div>
+        </div>
+
+        <!-- 俺のオーダー (Builder) -->
+        <div class="section" id="section-myorder">
+            <div class="sh" style="margin-bottom: 2rem;">
+                <h2 class="stitle">俺のオーダー構築 & 得点シミュレーター</h2>
+                <div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
+                    好きなチームからスターティングラインナップを作成し、相手エース投手から平均何点取れるかシミュレーションします。
+                </div>
+            </div>
+
+            <div class="filters" style="justify-content: flex-start; gap: 2rem;">
+                <div class="fg">
+                    <label>年度</label>
+                    <select id="mo-year" onchange="initOrderBuilder()">
+                        <option value="2025">2025年</option>
+                        <option value="2024">2024年</option>
+                        <option value="2023">2023年</option>
+                        <option value="2022">2022年</option>
+                        <option value="2021">2021年</option>
+                        <option value="2020">2020年</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label>自分のチーム</label>
+                    <select id="mo-team" onchange="initOrderBuilder()"></select>
+                </div>
+            </div>
+
+            <div class="builder-grid">
+                <!-- 左側: 打順 1-9 -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; border-left: 4px solid var(--ac); padding-left: .5rem;">スターティングオーダー
+                    </h3>
+                    <div id="mo-batters-container">
+                        <!-- JSで1~9番を生成 -->
+                    </div>
+                </div>
+
+                <!-- 右側: サマリー＆相手投手 -->
+                <div>
+                    <div class="summary-panel">
+                        <h3 style="margin-bottom: 1rem; color: var(--ac); font-size: 1.1rem;">🔥 打線合計スタッツ</h3>
+                        <div class="summary-item">
+                            <span>チーム打率</span>
+                            <span class="summary-val" id="mo-sum-avg">.000</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>合計本塁打</span>
+                            <span class="summary-val" id="mo-sum-hr">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>チームOPS</span>
+                            <span class="summary-val" id="mo-sum-ops">.000</span>
+                        </div>
+
+                        <div class="vs-pitcher-card">
+                            <h4
+                                style="color: #ef4444; margin-bottom: 1rem; display:flex; align-items:center; gap:.5rem;">
+                                <span>⚔️</span> 対戦相手投手
+                            </h4>
+                            <div class="fg" style="margin-bottom: 1rem;">
+                                <label style="font-size: .8rem;">チームを選択</label>
+                                <select id="mo-vs-team" onchange="updateOpponentPitchers()"></select>
+                            </div>
+                            <div class="fg">
+                                <label style="font-size: .8rem;">先発投手</label>
+                                <select id="mo-vs-pitcher" onchange="checkBuilderState()"></select>
+                            </div>
+                        </div>
+
+                        <button id="mo-run-btn" class="sim-run-btn" onclick="runAdvancedSim()"
+                            disabled>シミュレーション実行</button>
+
+                        <div id="mo-result" class="sim-result-large">
+                            <div style="color:var(--tx2); font-size:.9rem; font-weight:700;">1試合（9イニング）の得点期待値</div>
+                            <div class="expected-runs" id="mo-expected-runs">0.00</div>
+                            <div
+                                style="margin-top: 1rem; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                                <div style="font-size: .8rem; color: var(--tx2); margin-bottom:.5rem;">勝敗予測</div>
+                                <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 歴代記録 -->
@@ -1744,8 +1985,9 @@
                 home: '⚾ NPB <em>分析ダッシュボード</em>',
                 batting: '⚾ NPB <em>打撃成績統計</em>',
                 pitching: '⚾ NPB <em>投手成績統計</em>',
-                simulator: '⚾ NPB <em>対戦シミュレーター</em>',
-                order: '📋 NPB <em>チームオーダー・分析</em>',
+                simulator: '⚾ NPB <em>1vs1 対戦予測</em>',
+                order: '📋 NPB <em>チームオーダー履歴</em>',
+                myorder: '🔥 NPB <em>オーダー構築シミュレーター</em>',
                 team: '🏆 NPB <em>チーム年度別成績</em>',
                 records: '🥇 NPB <em>歴代最高記録</em>'
             };
@@ -1753,8 +1995,9 @@
                 home: '2020年～2025年シーズンの全選手データを詳細に収録・分析',
                 batting: '打率、本塁打、打点など打撃各部門のシーズン統計',
                 pitching: '防御率、奪三振、勝利数など投手各部門のシーズン統計',
-                simulator: '打者と投手の能力から対戦結果を論理的に予測',
+                simulator: '打者と投手の能力から1打席の対戦結果を論理的に予測',
                 order: '全12球団のスタメン履歴と打順別起用傾向の可視化',
+                myorder: '夢の打線を組み上げ、エースから何点取れるかをAI予測',
                 team: '年度別の順位、勝敗、リーグ内戦績の推移を確認',
                 records: '2020年以降のNPBにおける最高記録・主要指標'
             };
@@ -1763,6 +2006,7 @@
                 batting: BATTING_DATA.length + '名',
                 pitching: PITCHING_DATA.length + '名',
                 order: ORDER_DATA.length + '試合',
+                myorder: 'Expected Runs',
                 simulator: 'Ready',
                 team: '12球団',
                 records: '総合データ'
@@ -1772,6 +2016,7 @@
                 batting: '打撃部門 登録数',
                 pitching: '投手部門 登録数',
                 order: '収録試合数',
+                myorder: '高度解析エンジン',
                 simulator: '予測システム',
                 team: 'NPB球団数',
                 records: '統計解析対象'
@@ -1782,7 +2027,7 @@
             document.getElementById('hero-count').textContent = counts[id] || '-';
             document.getElementById('hero-count-label').textContent = labels[id] || '登録数';
 
-            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', simulator: 'シミュレーター', order: 'オーダー', team: 'チーム', records: '成績' };
+            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', simulator: 'シミュレーター', order: 'オーダー', myorder: '俺のオーダー', team: 'チーム', records: '成績' };
             [...document.querySelectorAll('nav button')].find(b => b.textContent.includes(navLabels[id]))?.classList.add('active');
 
             if (id === 'records') renderRecords();
@@ -1919,7 +2164,220 @@
 
             if (typeof upSimB === 'function') upSimB();
             if (typeof upSimP === 'function') upSimP();
+
+            // Init My Order
+            initOrderBuilder();
         };
+
+        // ============================================================
+        // MY ORDER BUILDER & SIMULATOR
+        // ============================================================
+        let moBatters = []; // 選択可能な野手リスト
+        let moPitchers = []; // 相手チームの投手リスト
+        let moSelectedBatters = new Array(9).fill(null); // 1〜9番の選択状態
+
+        function initOrderBuilder() {
+            const y = document.getElementById('mo-year').value || '2025';
+            const tSel = document.getElementById('mo-team');
+
+            // チームリストの生成（初回のみ）
+            if (tSel.options.length === 0) {
+                const teams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+                tSel.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+                document.getElementById('mo-vs-team').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+                // デフォルトで別チームを選択
+                if (teams.length > 1) document.getElementById('mo-vs-team').value = teams[1];
+            }
+            const t = tSel.value;
+
+            // 選択年・チームの野手リストを取得（打席数順）
+            moBatters = BATTING_DATA
+                .filter(d => String(d[1]) === y && d[2] === t)
+                .sort((a, b) => b[12] - a[12]);
+
+            moSelectedBatters.fill(null); // リセット
+
+            // 打順1~9のUI生成
+            let html = '';
+            for (let i = 0; i < 9; i++) {
+                html += `
+                    <div class="builder-row">
+                        <div class="builder-pos">${i + 1}</div>
+                        <select class="builder-select" id="mo-b${i}" onchange="handleBatterSelect(${i})">
+                            <option value="">-- 打者を選択 --</option>
+                            ${moBatters.map(b => `<option value="${b[0]}">${b[0]} (率${Number(b[4]).toFixed(3)}/本${b[5]})</option>`).join('')}
+                        </select>
+                        <div class="builder-stats" id="mo-s${i}"></div>
+                    </div>
+                `;
+            }
+            document.getElementById('mo-batters-container').innerHTML = html;
+
+            updateOpponentPitchers();
+            calculateOrderStats();
+        }
+
+        // 打者選択時のハンドリング（重複防止とスタッツ表示）
+        function handleBatterSelect(index) {
+            const sel = document.getElementById(`mo-b${index}`);
+            const name = sel.value;
+
+            // 既に他の打順で選ばれているかチェック
+            let isDuplicate = false;
+            for (let i = 0; i < 9; i++) {
+                if (i !== index && moSelectedBatters[i] === name && name !== "") {
+                    isDuplicate = true;
+                    alert("同じ選手は複数回選択できません。");
+                    sel.value = "";
+                    break;
+                }
+            }
+
+            if (!isDuplicate) {
+                moSelectedBatters[index] = name || null;
+            } else {
+                moSelectedBatters[index] = null;
+            }
+
+            // 個別スタッツ表示の更新
+            const statDiv = document.getElementById(`mo-s${index}`);
+            if (moSelectedBatters[index]) {
+                const bData = moBatters.find(d => d[0] === moSelectedBatters[index]);
+                if (bData) {
+                    statDiv.innerHTML = `<span>.</span>${bData[4].toFixed(3).substring(2)} / <span>${bData[5]}</span>本 / OPS <span>.</span>${bData[9].toFixed(3).substring(2)}`;
+                }
+            } else {
+                statDiv.innerHTML = '';
+            }
+
+            calculateOrderStats();
+        }
+
+        // チーム合計スタッツの計算
+        function calculateOrderStats() {
+            let totalPA = 0, totalH = 0, totalHR = 0, totalAB = 0, totalOBP = 0, totalSLG = 0;
+            let count = 0;
+
+            moSelectedBatters.forEach(name => {
+                if (name) {
+                    const bData = moBatters.find(d => d[0] === name);
+                    if (bData) {
+                        totalH += bData[7]; // 安打
+                        totalHR += bData[5]; // 本塁打
+                        const ab = bData[12] * 0.9; // 概算打数
+                        totalAB += ab;
+                        totalOBP += bData[10];
+                        totalSLG += bData[11];
+                        count++;
+                    }
+                }
+            });
+
+            if (count > 0) {
+                const teamAvg = totalAB > 0 ? (totalH / totalAB).toFixed(3) : ".000";
+                document.getElementById('mo-sum-avg').textContent = teamAvg;
+                document.getElementById('mo-sum-hr').textContent = totalHR;
+                document.getElementById('mo-sum-ops').textContent = ((totalOBP + totalSLG) / count).toFixed(3);
+            } else {
+                document.getElementById('mo-sum-avg').textContent = ".000";
+                document.getElementById('mo-sum-hr').textContent = "0";
+                document.getElementById('mo-sum-ops').textContent = ".000";
+            }
+            checkBuilderState();
+        }
+
+        // 対戦相手投手のリスト更新
+        function updateOpponentPitchers() {
+            const y = document.getElementById('mo-year').value || '2025';
+            const t = document.getElementById('mo-vs-team').value;
+
+            moPitchers = PITCHING_DATA
+                .filter(d => String(d[1]) === y && d[2] === t && d[11] > 30) // 30投球回以上
+                .sort((a, b) => b[11] - a[11]); // 投球回順
+
+            const sel = document.getElementById('mo-vs-pitcher');
+            sel.innerHTML = '<option value="">-- 先発投手を選択 --</option>' +
+                moPitchers.map(p => `<option value="${p[0]}">${p[0]} (防${Number(p[7]).toFixed(2)}/回${p[11]})</option>`).join('');
+
+            checkBuilderState();
+        }
+
+        // 実行ボタンの活性化チェック
+        function checkBuilderState() {
+            const btn = document.getElementById('mo-run-btn');
+            const hasPitcher = document.getElementById('mo-vs-pitcher').value !== '';
+            const numBatters = moSelectedBatters.filter(n => n !== null).length;
+
+            // 9人全員と投手が選ばれていれば実行可能
+            btn.disabled = !(hasPitcher && numBatters === 9);
+            document.getElementById('mo-result').style.display = 'none'; // 条件が変わったら結果を隠す
+        }
+
+        // アドバンスド・シミュレーションの実行（得点期待値予測）
+        function runAdvancedSim() {
+            const pName = document.getElementById('mo-vs-pitcher').value;
+            const pData = moPitchers.find(d => d[0] === pName);
+            if (!pData) return;
+
+            // リーグ平均（簡易ベース）
+            const L_AVG = 0.250, L_OBP = 0.320, L_SLG = 0.380;
+
+            // 投手の指標化
+            const pERA = pData[7];
+            const pEstimatedAVG = Math.max(0.180, Math.min(0.350, 0.250 + (pERA - 3.50) * 0.02));
+            const pEstimatedOBP = pEstimatedAVG + 0.070;
+            const pEstimatedSLG = pEstimatedAVG + 0.130;
+
+            // 各打者の期待得点創出（Runs Created）を計算
+            let totalExpectedRuns = 0;
+
+            // Log5 formula -> (A*B/L) / ((A*B/L) + (1-A)*(1-B)/(1-L))
+            const log5 = (b, p, l) => {
+                const num = b * p / l;
+                const den = num + ((1 - b) * (1 - p) / (1 - l));
+                return den ? Math.max(0, Math.min(1, num / den)) : 0;
+            };
+
+            moSelectedBatters.forEach(bName => {
+                const bData = moBatters.find(d => d[0] === bName);
+                if (bData) {
+                    // 対戦確率のアジャスト
+                    const adjOBP = log5(bData[10], pEstimatedOBP, L_OBP);
+                    const adjSLG = log5(bData[11], pEstimatedSLG, L_SLG);
+
+                    // Base Runs (BsR) 簡易版: A * B / (B + C) + D... 
+                    // ここではシンプルな OPS派生モデル (OBP * SLG * Factor) を 1打席あたりの得点価値とする
+                    const runValuePerPA = (adjOBP * adjSLG) * 2.5;
+
+                    // 1試合平均 4打席と仮定
+                    totalExpectedRuns += (runValuePerPA * 4);
+                }
+            });
+
+            // 相手投手のクオリティによる補正（イニングイーターか等）
+            // 実際は中継ぎも出てくるので、相手先発の影響力を約60%とする
+            const relieversERA = 3.50; // 平均的な中継ぎ
+            const pitcherFactor = (pERA * 0.6 + relieversERA * 0.4) / 3.50;
+
+            // 最終期待得点
+            totalExpectedRuns = totalExpectedRuns * pitcherFactor;
+
+            // 勝率計算（ピタゴラス勝率ベース）
+            // 自チームの期待得点 vs 相手チームの期待得点(自チーム投手が不明なため、平均の3.5点とする)
+            const teamExpectedRuns = Math.max(0, totalExpectedRuns);
+            const opponentExpectedRuns = 3.50;
+            const pythExp = 1.83;
+            const winProb = Math.pow(teamExpectedRuns, pythExp) / (Math.pow(teamExpectedRuns, pythExp) + Math.pow(opponentExpectedRuns, pythExp));
+
+            // 結果表示
+            document.getElementById('mo-expected-runs').textContent = teamExpectedRuns.toFixed(2) + ' 点';
+            const wpPct = (winProb * 100).toFixed(1);
+            let wpColor = wpPct > 50 ? 'var(--gr)' : wpPct < 40 ? 'var(--re)' : 'var(--tx)';
+            let wpText = wpPct > 60 ? '🔥 優勢' : wpPct > 50 ? '📈 微有利' : wpPct > 40 ? '⚔️ 互角' : '📉 劣勢';
+
+            document.getElementById('mo-win-prob').innerHTML = `<span style="color:${wpColor}">${wpPct}% (${wpText})</span>`;
+            document.getElementById('mo-result').style.display = 'block';
+        }
     </script>
 
     <!-- PLAYER DETAIL MODAL -->
