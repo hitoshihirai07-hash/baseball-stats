@@ -11,7 +11,7 @@
         '中日': '中日ドラゴンズ',
         'ソフトバンク': '福岡ソフトバンクホークス',
         '日本ハム': '北海道日本ハムファイターズ',
-        'オリックス': 'オリックス・バファローズ',
+        'オリックス': 'オリックスバファローズ',
         '楽天': '東北楽天ゴールデンイーグルス',
         '西武': '埼玉西武ライオンズ',
         'ロッテ': '千葉ロッテマリーンズ',
@@ -91,20 +91,23 @@
                 field = "";
             } else if (char === '\n' && !inQuote) {
                 curr.push(field.trim());
-                if (curr.length > 5 && curr[0] !== 'チーム') {
-                    // チーム名をクリーンアップ（改行と空白を削除）
-                    const cleanTeam = curr[0].replace(/[\n\r\s]/g, "");
-                    rows.push({
-                        team: TEAM_MAP[cleanTeam] || cleanTeam,
-                        year: year,
-                        league: league,
-                        w: parseInt(curr[2]) || 0,
-                        l: parseInt(curr[3]) || 0,
-                        t: parseInt(curr[4]) || 0,
-                        pct: parseFloat(curr[5]) || 0,
-                        rank: 0, // Will be calculated after sorting by pct
-                        nippon: '×' // Placeholder
-                    });
+                if (curr.length >= 6 && curr[0] !== 'チーム' && curr[0] !== '') {
+                    // チーム名をクリーンアップ
+                    const cleanTeam = curr[0].replace(/[\n\r\s・"']/g, "").replace(/\(.*\)/, "");
+                    const w = parseInt(curr[2]);
+                    if (!isNaN(w)) {
+                        rows.push({
+                            team: TEAM_MAP[cleanTeam] || cleanTeam,
+                            year: year,
+                            league: league,
+                            w: w,
+                            l: parseInt(curr[3]) || 0,
+                            t: parseInt(curr[4]) || 0,
+                            pct: parseFloat(curr[5]) || 0,
+                            rank: rows.filter(r => r.year === year && r.league === league).length + 1,
+                            nippon: curr.some(c => c.includes('○')) ? '○' : '-'
+                        });
+                    }
                 }
                 curr = [];
                 field = "";
