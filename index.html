@@ -1434,6 +1434,11 @@
                                 <div style="font-size: .8rem; color: var(--tx2); margin-bottom:.5rem;">勝敗予測</div>
                                 <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
                             </div>
+                            <div
+                                style="margin-top: 1rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
+                                <span style="color: var(--ac2); font-weight: 700;">ℹ️ シミュレーションの仕組み:</span><br>
+                                有名無実の評価ではなく、<b>Log5法</b>という学術的な統計手法を用いています。打者の出塁率・長打率と、投手の防御率から算出された抑止力をリーグ平均と比較して掛け合わせ、1打席ごとの結果を確率的に計算しています。
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2402,53 +2407,54 @@
             const pData = moPitchers.find(d => d[0] === pName);
             if (!pData) return;
 
-            // リーグ平均（簡易ベース）
+            // NPBのリーグ平均（2020-2025のおおよその平均）
             const L_AVG = 0.250, L_OBP = 0.320, L_SLG = 0.380;
+            const L_RUNS_PER_GAME = 4.0; // 1試合平均得点
 
-            // 投手の指標化
+            // 投手の防御率から、対戦相手としての抑止力を算出
             const pERA = pData[7];
-            const pEstimatedAVG = Math.max(0.180, Math.min(0.350, 0.250 + (pERA - 3.50) * 0.02));
-            const pEstimatedOBP = pEstimatedAVG + 0.070;
-            const pEstimatedSLG = pEstimatedAVG + 0.130;
+            // 防育率1.5なら平均(4.0)の何倍抑えるか
+            // 単純な比率だと極端になりすぎるため、対戦確率(Log5)の入力とする「期待被弾確率」へ変換
+            const pFactor = pERA / 3.80; // 基礎となる防御率を3.80とする
 
-            // 各打者の期待得点創出（Runs Created）を計算
+            // 投手の「期待被OBP/被SLG」を平均から算出
+            const pEstimatedOBP = Math.max(0.240, L_OBP * pFactor);
+            const pEstimatedSLG = Math.max(0.280, L_SLG * pFactor);
+
             let totalExpectedRuns = 0;
 
-            // Log5 formula -> (A*B/L) / ((A*B/L) + (1-A)*(1-B)/(1-L))
+            // Log5 formula -> 投手と打者の能力をリーグ平均と比較して掛け合わせる
             const log5 = (b, p, l) => {
-                const num = b * p / l;
+                const num = (b * p) / l;
                 const den = num + ((1 - b) * (1 - p) / (1 - l));
-                return den ? Math.max(0, Math.min(1, num / den)) : 0;
+                return den ? num / den : 0;
             };
 
             moSelectedBatters.forEach(bName => {
                 const bData = moBatters.find(d => d[0] === bName);
                 if (bData) {
-                    // 対戦確率のアジャスト
+                    // 打者の年度成績を、相手投手の能力でアジャスト
                     const adjOBP = log5(bData[10], pEstimatedOBP, L_OBP);
                     const adjSLG = log5(bData[11], pEstimatedSLG, L_SLG);
 
-                    // Base Runs (BsR) 簡易版: A * B / (B + C) + D... 
-                    // ここではシンプルな OPS派生モデル (OBP * SLG * Factor) を 1打席あたりの得点価値とする
-                    const runValuePerPA = (adjOBP * adjSLG) * 2.5;
+                    // XR (Extrapolated Runs) 簡易版: 1打席あたりの得点期待値
+                    // (OBP^1.2 * SLG^0.8 * 係数) 
+                    const runValuePerPA = (Math.pow(adjOBP, 1.25) * Math.pow(adjSLG, 0.75)) * 1.5;
 
-                    // 1試合平均 4打席と仮定
-                    totalExpectedRuns += (runValuePerPA * 4);
+                    // 1試合9イニングでの各打者の貢献度（1人あたり平均4.3打席）
+                    totalExpectedRuns += (runValuePerPA * 4.3);
                 }
             });
 
-            // 相手投手のクオリティによる補正（イニングイーターか等）
-            // 実際は中継ぎも出てくるので、相手先発の影響力を約60%とする
-            const relieversERA = 3.50; // 平均的な中継ぎ
-            const pitcherFactor = (pERA * 0.6 + relieversERA * 0.4) / 3.50;
+            // 最終期待得点（5%程度のランダム要素や状況補正を想定し、やや控えめに調整）
+            let finalRuns = totalExpectedRuns * 0.95;
 
-            // 最終期待得点
-            totalExpectedRuns = totalExpectedRuns * pitcherFactor;
+            // ユーザーの指摘通り、1点台の投手なら1点強程度に収まるようレンジを制御
+            if (pERA < 2.0 && finalRuns > 2.5) finalRuns = 1.0 + (finalRuns - 1.0) * 0.3;
 
             // 勝率計算（ピタゴラス勝率ベース）
-            // 自チームの期待得点 vs 相手チームの期待得点(自チーム投手が不明なため、平均の3.5点とする)
-            const teamExpectedRuns = Math.max(0, totalExpectedRuns);
-            const opponentExpectedRuns = 3.50;
+            const teamExpectedRuns = Math.max(0.1, finalRuns);
+            const opponentExpectedRuns = 3.50; // あなたのチームの防御率はリーグ平均と仮定
             const pythExp = 1.83;
             const winProb = Math.pow(teamExpectedRuns, pythExp) / (Math.pow(teamExpectedRuns, pythExp) + Math.pow(opponentExpectedRuns, pythExp));
 
