@@ -1029,6 +1029,7 @@
                 <button onclick="show('simulator')">シミュレーター</button>
                 <button onclick="show('order')">オーダー</button>
                 <button onclick="show('myorder')">俺のオーダー</button>
+                <button onclick="show('pro-report')">分析レポート</button>
                 <button onclick="show('team')">チーム成績</button>
                 <button onclick="show('records')">成績記録</button>
             </nav>
@@ -1083,7 +1084,7 @@
                     <span class="badge">Biz</span>
                     <h3>📊 プロフェッショナル・レポート</h3>
                     <p>球団別勝敗トレンド、防御率相関、リーグ内戦績をビジュアル化。他社にはない「勝つためのデータ」を、収益化を目指すメディアやファンへ提供。</p>
-                    <button class="pbtn" onclick="show('team')">チーム統計を確認</button>
+                    <button class="pbtn" onclick="show('pro-report')">詳細レポートを見る</button>
                 </div>
             </div>
         </div>
@@ -1434,6 +1435,40 @@
                                 <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- プロフェッショナル・レポート -->
+        <div class="section" id="section-pro-report">
+            <div class="sh" style="margin-bottom: 2rem;">
+                <h2 class="stitle">Professional Analytics Report</h2>
+                <div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
+                    各球団の勝敗推移、防御率と勝率の相関など、「勝つための要因」を高度に分析します。
+                </div>
+            </div>
+
+            <div class="card-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="pcard" style="height: 450px;">
+                    <h3>📈 チーム勝率トレンド (2020-2025)</h3>
+                    <div style="flex:1; position:relative; min-height:0;">
+                        <canvas id="chart-win-trend"></canvas>
+                    </div>
+                </div>
+                <div class="pcard" style="height: 450px;">
+                    <h3>🎯 防御率 vs 勝率 相関分析</h3>
+                    <div style="flex:1; position:relative; min-height:0;">
+                        <canvas id="chart-era-win"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
+                <div class="pcard" style="height: 400px;">
+                    <h3>⚖️ リーグ間戦績比較</h3>
+                    <div style="flex:1; position:relative; min-height:0;">
+                        <canvas id="chart-league-stats"></canvas>
                     </div>
                 </div>
             </div>
@@ -1983,7 +2018,8 @@
         function show(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
+            const target = document.getElementById('section-' + id);
+            if (target) target.classList.add('active');
 
             const titles = {
                 home: '⚾ NPB <em>分析ダッシュボード</em>',
@@ -1992,6 +2028,7 @@
                 simulator: '⚾ NPB <em>1vs1 対戦予測</em>',
                 order: '📋 NPB <em>チームオーダー履歴</em>',
                 myorder: '🔥 NPB <em>オーダー構築シミュレーター</em>',
+                'pro-report': '📊 NPB <em>プロフェッショナル分析</em>',
                 team: '🏆 NPB <em>チーム年度別成績</em>',
                 records: '🥇 NPB <em>歴代最高記録</em>'
             };
@@ -2002,39 +2039,39 @@
                 simulator: '打者と投手の能力から1打席の対戦結果を論理的に予測',
                 order: '全12球団のスタメン履歴と打順別起用傾向の可視化',
                 myorder: '夢の打線を組み上げ、エースから何点取れるかをAI予測',
+                'pro-report': '球団別トレンド、相関分析、リーグ実力差の定量的評価',
                 team: '年度別の順位、勝敗、リーグ内戦績の推移を確認',
                 records: '2020年以降のNPBにおける最高記録・主要指標'
             };
             const counts = {
                 home: 'Analytics On',
-                batting: BATTING_DATA.length + '名',
-                pitching: PITCHING_DATA.length + '名',
-                order: ORDER_DATA.length + '試合',
+                batting: (window.BATTING_DATA?.length || 0) + '名',
+                pitching: (window.PITCHING_DATA?.length || 0) + '名',
+                order: (window.ORDER_DATA?.length || 0) + '試合',
                 myorder: 'Expected Runs',
+                'pro-report': 'Advanced',
                 simulator: 'Ready',
                 team: '12球団',
-                records: '総合データ'
-            };
-            const labels = {
-                home: 'エンジン状態',
-                batting: '打撃部門 登録数',
-                pitching: '投手部門 登録数',
-                order: '収録試合数',
-                myorder: '高度解析エンジン',
-                simulator: '予測システム',
-                team: 'NPB球団数',
-                records: '統計解析対象'
+                records: 'Legendary'
             };
 
             document.getElementById('hero-title').innerHTML = titles[id] || titles.home;
             document.getElementById('hero-sub').textContent = subs[id] || subs.home;
             document.getElementById('hero-count').textContent = counts[id] || '-';
-            document.getElementById('hero-count-label').textContent = labels[id] || '登録数';
+            document.getElementById('hero-count-label').textContent = (id === 'home' ? 'エンジン状態' : '統計項目');
 
-            const navLabels = { home: 'ホーム', batting: '打撃', pitching: '投手', simulator: 'シミュレーター', order: 'オーダー', myorder: '俺のオーダー', team: 'チーム', records: '成績' };
-            [...document.querySelectorAll('nav button')].find(b => b.textContent.includes(navLabels[id]))?.classList.add('active');
+            // Active button update
+            document.querySelectorAll('nav button').forEach(b => {
+                if (b.getAttribute('onclick') === `show('${id}')`) b.classList.add('active');
+            });
 
+            if (id === 'batting') rb();
+            if (id === 'pitching') rp();
+            if (id === 'team') ft();
+            if (id === 'order') fo();
             if (id === 'records') renderRecords();
+            if (id === 'myorder') initOrderBuilder();
+            if (id === 'pro-report') initProReport();
         }
 
         // ============================================================
@@ -2383,6 +2420,132 @@
 
             document.getElementById('mo-win-prob').innerHTML = `<span style="color:${wpColor}">${wpPct}% (${wpText})</span>`;
             document.getElementById('mo-result').style.display = 'block';
+        }
+        // ============================================================
+        // PROFESSIONAL ANALYTICS REPORT
+        // ============================================================
+        let proCharts = [];
+
+        function initProReport() {
+            proCharts.forEach(c => c.destroy());
+            proCharts = [];
+
+            const years = [2020, 2021, 2022, 2023, 2024, 2025];
+            const teams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+            const cols = { giants: '#ff6b2b', tigers: '#ffe033', dragons: '#2b8cff', carp: '#ff4444', swallows: '#3bc5ff', baystars: '#648fff', hawks: '#ffd52b', lions: '#2bdcff', eagles: '#e05555', marines: '#5577ff', fighters: '#4488ff', buffaloes: '#22cc66' };
+
+            // 1. Win Trend Chart
+            const trendDatasets = teams.map(t => {
+                const tag = TM[t]?.tag || 'giants';
+                return {
+                    label: sn(t),
+                    data: years.map(y => {
+                        const d = TEAM_DATA.find(rd => rd.team === t && rd.year === y);
+                        return d ? d.pct : null;
+                    }),
+                    borderColor: cols[tag] || '#888',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    tension: 0.2,
+                    hidden: !(t === '読売ジャイアンツ' || t === '阪神タイガース' || t === '福岡ソフトバンクホークス') // Default show top
+                };
+            });
+
+            proCharts.push(new Chart(document.getElementById('chart-win-trend').getContext('2d'), {
+                type: 'line',
+                data: { labels: years, datasets: trendDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, color: '#9ca3af', font: { size: 10 } } } },
+                    scales: {
+                        y: { min: 0.3, max: 0.7, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            }));
+
+            // 2. ERA vs Win% Correlation
+            // Calculate Team ERA per year
+            const eraWinNodes = [];
+            years.forEach(y => {
+                teams.forEach(t => {
+                    const tStats = TEAM_DATA.find(rd => rd.team === t && rd.year === y);
+                    if (!tStats) return;
+
+                    const pData = PITCHING_DATA.filter(p => p[1] === y && p[2] === t);
+                    let totalER = 0, totalIP = 0;
+                    pData.forEach(p => {
+                        totalER += (p[7] * p[11] / 9); // Estimated ER
+                        totalIP += p[11];
+                    });
+
+                    if (totalIP > 100) {
+                        const teamERA = (totalER * 9) / totalIP;
+                        eraWinNodes.push({ x: teamERA, y: tStats.pct, team: t, year: y });
+                    }
+                });
+            });
+
+            proCharts.push(new Chart(document.getElementById('chart-era-win').getContext('2d'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: '球団データ',
+                        data: eraWinNodes,
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        pointRadius: 6,
+                        hoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.raw.year} ${ctx.raw.team}: 防御率 ${ctx.raw.x.toFixed(2)}, 勝率 ${ctx.raw.y.toFixed(3)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'チーム防御率', color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        y: { title: { display: true, text: '勝率', color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            }));
+
+            // 3. League Comparison
+            const lAvg = ['セ', 'パ'].map(l => {
+                const sub = TEAM_DATA.filter(d => d.league === l);
+                return {
+                    league: l,
+                    avgPct: sub.reduce((a, b) => a + b.pct, 0) / sub.length,
+                    avgW: sub.reduce((a, b) => a + b.w, 0) / sub.length
+                };
+            });
+
+            proCharts.push(new Chart(document.getElementById('chart-league-stats').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['セ・リーグ', 'パ・リーグ'],
+                    datasets: [{
+                        label: '平均勝率',
+                        data: lAvg.map(l => l.avgPct),
+                        backgroundColor: ['rgba(59, 130, 246, 0.6)', 'rgba(239, 68, 68, 0.6)'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0.45, max: 0.55, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            }));
         }
     </script>
 

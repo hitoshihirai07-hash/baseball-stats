@@ -92,9 +92,10 @@
             } else if (char === '\n' && !inQuote) {
                 curr.push(field.trim());
                 if (curr.length > 5 && curr[0] !== 'チーム') {
-                    // チーム,試合,勝利,敗北,引分,勝率,差,...
+                    // チーム名をクリーンアップ（改行と空白を削除）
+                    const cleanTeam = curr[0].replace(/[\n\r\s]/g, "");
                     rows.push({
-                        team: curr[0],
+                        team: TEAM_MAP[cleanTeam] || cleanTeam,
                         year: year,
                         league: league,
                         w: parseInt(curr[2]) || 0,
