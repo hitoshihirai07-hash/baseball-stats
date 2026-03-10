@@ -1,0 +1,107 @@
+:root {
+  --bg: #0a0e1a;
+  --bg2: #111827;
+  --bg3: #1f2937;
+  --ac: #f59e0b;
+  --ac2: #3b82f6;
+  --tx: #f9fafb;
+  --tx2: #9ca3af;
+  --bd: #374151;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--tx);
+  line-height: 1.7;
+}
+a { color: var(--ac2); }
+.header {
+  background: linear-gradient(135deg, #0f172a, #1e1b4b, #0f172a);
+  border-bottom: 2px solid var(--ac);
+  padding: 1rem 1.5rem;
+}
+.header-inner, .wrap, .footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.brand {
+  font-weight: 900;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: var(--tx);
+}
+.brand span { color: var(--ac); }
+.hero {
+  padding: 2.2rem 1.5rem 1.2rem;
+  background: linear-gradient(180deg, rgba(245,158,11,.08), rgba(10,14,26,0));
+}
+.hero h1 { margin: 0 0 .6rem; font-size: clamp(1.6rem, 4vw, 2.5rem); }
+.hero p { margin: 0; color: var(--tx2); }
+.wrap {
+  padding: 0 1.5rem 2rem;
+}
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  padding: 1.3rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 24px rgba(0,0,0,.22);
+}
+.card h2 {
+  margin: 0 0 .7rem;
+  font-size: 1.1rem;
+}
+.card p, .card li {
+  color: var(--tx2);
+  font-size: .95rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.cta-row {
+  display: flex;
+  gap: .8rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .8rem 1rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 800;
+}
+.btn.primary { background: linear-gradient(135deg, #f59e0b, #f97316); color: #111827; }
+.btn.secondary { border: 1px solid rgba(255,255,255,.12); color: var(--tx); background: rgba(255,255,255,.04); }
+.kicker {
+  display: inline-block;
+  margin-bottom: .8rem;
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 900;
+  background: rgba(245,158,11,.12);
+  color: var(--ac);
+}
+.footer {
+  padding: 0 1.5rem 2rem;
+}
+.footer-inner {
+  padding-top: 1rem;
+  border-top: 1px solid var(--bd);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.footer-inner p { margin: 0; color: var(--tx2); font-size: .82rem; }
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}

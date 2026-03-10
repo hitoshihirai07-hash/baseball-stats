@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>NPB打撃成績データベース 2020–2025</title>
+    <title>NPB打順・成績分析ラボ 2020–2025</title>
+    <meta name="description" content="NPBの打撃成績・投手成績・打順履歴・俺のオーダー・分析レポートを1つにまとめた野球データ分析サイト。2020年から2025年までを収録。" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -670,12 +671,31 @@
         }
 
         @media(max-width:768px) {
+            header {
+                position: static;
+                padding: .75rem 1rem;
+            }
+
+            .hi {
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: .8rem;
+            }
+
             .st {
                 grid-template-columns: repeat(2, 1fr);
             }
 
             nav {
-                display: none;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: .2rem;
+                scrollbar-width: thin;
+            }
+
+            nav button {
+                flex: 0 0 auto;
             }
         }
 
@@ -824,6 +844,25 @@
         @media(max-width: 768px) {
             .builder-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .home-grid,
+            .guide-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-actions,
+            .footer-links,
+            .site-footer-inner,
+            .site-footer-nav {
+                align-items: stretch;
+            }
+
+            .hero-cta,
+            .hero-subcta,
+            .footer-link {
+                width: 100%;
             }
         }
 
@@ -1015,6 +1054,229 @@
             color: var(--ac);
             text-decoration-color: var(--ac);
         }
+
+        .hero-actions {
+            margin-top: 1.2rem;
+            display: flex;
+            gap: .8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta,
+        .hero-subcta,
+        .mini-link,
+        .footer-link {
+            text-decoration: none;
+        }
+
+        .hero-cta,
+        .hero-subcta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .75rem 1.15rem;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: .88rem;
+            transition: transform .2s, box-shadow .2s, background .2s, border-color .2s;
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: #111827;
+            box-shadow: 0 10px 24px rgba(245, 158, 11, .22);
+        }
+
+        .hero-subcta {
+            border: 1px solid rgba(255, 255, 255, .16);
+            background: rgba(255, 255, 255, .04);
+            color: var(--tx);
+        }
+
+        .hero-cta:hover,
+        .hero-subcta:hover,
+        .mini-link:hover,
+        .footer-link:hover {
+            transform: translateY(-1px);
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1.3fr .9fr;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .home-panel,
+        .mini-panel,
+        .guide-card,
+        .footer-card {
+            background: var(--bg2);
+            border: 1px solid var(--bd);
+            border-radius: 14px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .22);
+        }
+
+        .home-panel {
+            padding: 1.4rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, .08), rgba(59, 130, 246, .05));
+        }
+
+        .home-panel h3,
+        .mini-panel h3,
+        .guide-card h3,
+        .footer-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: .65rem;
+        }
+
+        .home-panel p,
+        .mini-panel p,
+        .guide-card p,
+        .footer-card p {
+            color: var(--tx2);
+            line-height: 1.7;
+            font-size: .88rem;
+        }
+
+        .mini-stack {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .mini-panel {
+            padding: 1.1rem;
+        }
+
+        .mini-list {
+            display: grid;
+            gap: .7rem;
+            margin-top: .9rem;
+        }
+
+        .mini-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            font-size: .84rem;
+            color: var(--tx2);
+            padding-bottom: .65rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .mini-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .mini-item b {
+            font-size: 1rem;
+            color: var(--tx);
+        }
+
+        .mini-link {
+            display: inline-flex;
+            margin-top: .9rem;
+            color: var(--ac2);
+            font-weight: 700;
+            font-size: .82rem;
+        }
+
+        .home-note {
+            margin-bottom: 1rem;
+            font-size: .82rem;
+            color: var(--tx2);
+        }
+
+        .feature-card h3 {
+            min-height: 3rem;
+        }
+
+        .guide-grid,
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .guide-card,
+        .footer-card {
+            padding: 1.15rem;
+        }
+
+        .guide-step {
+            display: inline-flex;
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            margin-bottom: .8rem;
+            background: rgba(245, 158, 11, .12);
+            color: var(--ac);
+            font-weight: 900;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            padding: .7rem .95rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .03);
+            color: var(--tx);
+            font-size: .84rem;
+            font-weight: 700;
+        }
+
+        .site-footer {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .site-footer-inner {
+            border-top: 1px solid var(--bd);
+            margin-top: 2rem;
+            padding-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .site-footer p {
+            color: var(--tx2);
+            font-size: .78rem;
+        }
+
+        .site-footer-nav {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .site-footer-nav a {
+            color: var(--tx2);
+            text-decoration: none;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        .site-footer-nav a:hover {
+            color: var(--ac);
+        }
+
     </style>
 </head>
 
@@ -1036,8 +1298,13 @@
         </div>
     </header>
     <div class="hero">
-        <h1 id="hero-title">⚾ NPB <em>打撃成績データベース</em> 2020〜2025</h1>
-        <p id="hero-sub">2020年～2025年シーズンの全選手データを詳細に収録・分析</p>
+        <h1 id="hero-title">⚾ NPB <em>打順・成績分析ラボ</em> 2020〜2025</h1>
+        <p id="hero-sub">打撃成績・投手成績・打順履歴・オーダー構築を、1つの画面で横断して見られる野球データサイト</p>
+        <div class="hero-actions">
+            <a class="hero-cta" href="#" onclick="show('order'); return false;">打順分析を見る</a>
+            <a class="hero-subcta" href="#" onclick="show('myorder'); return false;">俺のオーダーを作る</a>
+            <a class="hero-subcta" href="#" onclick="show('pro-report'); return false;">分析レポートを見る</a>
+        </div>
     </div>
     <div class="strip">
         <div class="st">
@@ -1065,26 +1332,95 @@
         <!-- ホーム -->
         <div class="section active" id="section-home">
             <div class="sh">
-                <h2 class="stitle">Predictive Analytics Hub</h2>
+                <h2 class="stitle">このサイトの使いどころ</h2>
             </div>
+            <div class="home-note">まずは「打順分析」「俺のオーダー」「分析レポート」の3本を入口にして、必要に応じて成績表へ深掘りできる形に整理しました。</div>
+            <div class="home-grid">
+                <div class="home-panel">
+                    <h3>打順と成績を横断して見られる構成に整理</h3>
+                    <p>このサイトの強みは、単なる成績表ではなく、<b>打順の起用傾向</b>と<b>チーム分析</b>まで一気に見られることです。トップでは入口を絞り、どこから使い始めればいいかが伝わるように直しました。</p>
+                    <div class="hero-actions" style="justify-content:flex-start; margin-top:1rem;">
+                        <a class="hero-cta" href="#" onclick="show('order'); return false;">打順分析へ</a>
+                        <a class="hero-subcta" href="#" onclick="show('myorder'); return false;">オーダー構築へ</a>
+                    </div>
+                </div>
+                <div class="mini-stack">
+                    <div class="mini-panel">
+                        <h3>収録状況</h3>
+                        <div class="mini-list">
+                            <div class="mini-item"><span>打撃レコード</span><b id="home-batting-count">-</b></div>
+                            <div class="mini-item"><span>投手レコード</span><b id="home-pitching-count">-</b></div>
+                            <div class="mini-item"><span>オーダー履歴</span><b id="home-order-count">-</b></div>
+                        </div>
+                    </div>
+                    <div class="mini-panel">
+                        <h3>収益化に向けた土台</h3>
+                        <p>広告導線だけではなく、サポートページ・運営情報・プライバシーポリシーへの導線を追加しました。今後は比較機能や出力機能を有料化しやすい構成に寄せられます。</p>
+                        <a class="mini-link" href="support.html">サポート構想を見る →</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="card-grid">
-                <div class="pcard">
-                    <span class="badge">Next Gen</span>
-                    <h3>📈 AI次世代予測モデル</h3>
-                    <p>過去6年分の膨大なスタッツから、選手の来季成績や試合展開を多角的にシミュレーション。勝敗を左右する「xFactor」を独自算出します。</p>
-                    <button class="pbtn" onclick="show('simulator')">予測を開始</button>
+                <div class="pcard feature-card">
+                    <span class="badge">Core 01</span>
+                    <h3>📋 打順分析</h3>
+                    <p>年度と球団を選ぶだけで、打順別の起用頻度TOP3とシーズン中のオーダー履歴をまとめて確認できます。試合ごとの起用傾向を追いたい人向けの入口です。</p>
+                    <button class="pbtn" onclick="show('order')">打順分析を見る</button>
                 </div>
-                <div class="pcard">
-                    <span class="badge">Sync</span>
-                    <h3>⚡ 対戦シミュレーター</h3>
-                    <p>打者と投手を自由に組み合わせて対戦結果を確率予測。データに基づいた論理的なマッチアップ解析を瞬時に提供します。</p>
-                    <button class="pbtn" onclick="show('simulator')">シミュレーターを起動</button>
+                <div class="pcard feature-card">
+                    <span class="badge">Core 02</span>
+                    <h3>🔥 俺のオーダー</h3>
+                    <p>好きな年度・球団の打者でスタメンを組み、相手先発に対する得点期待値を確認できます。保存・比較機能を足せば、今後の有料化とも相性が良い看板機能です。</p>
+                    <button class="pbtn" onclick="show('myorder')">オーダーを作る</button>
                 </div>
-                <div class="pcard">
-                    <span class="badge">Biz</span>
-                    <h3>📊 プロフェッショナル・レポート</h3>
-                    <p>球団別勝敗トレンド、防御率相関、リーグ内戦績をビジュアル化。他社にはない「勝つためのデータ」を、収益化を目指すメディアやファンへ提供。</p>
-                    <button class="pbtn" onclick="show('pro-report')">詳細レポートを見る</button>
+                <div class="pcard feature-card">
+                    <span class="badge">Core 03</span>
+                    <h3>📊 分析レポート</h3>
+                    <p>勝率トレンドや防御率との相関など、表だけでは見えにくい傾向をグラフで把握できます。記事化・週次レポート化に繋げやすい機能です。</p>
+                    <button class="pbtn" onclick="show('pro-report')">分析レポートを見る</button>
+                </div>
+            </div>
+
+            <div class="sh" style="margin-top:2rem">
+                <h2 class="stitle">おすすめの見方</h2>
+            </div>
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <span class="guide-step">1</span>
+                    <h3>球団の打順傾向を確認</h3>
+                    <p>まずは「チームオーダー分析」で、どの選手が何番に多く置かれていたかをざっと掴みます。チーム単位の入口として最初に見やすい場所です。</p>
+                </div>
+                <div class="guide-card">
+                    <span class="guide-step">2</span>
+                    <h3>成績表で裏取り</h3>
+                    <p>打順で気になった選手は、打撃成績や投手成績に戻って数値を確認できます。見る順番が整理されるだけで、サイト全体の使いやすさがかなり変わります。</p>
+                </div>
+                <div class="guide-card">
+                    <span class="guide-step">3</span>
+                    <h3>自分の仮説を試す</h3>
+                    <p>「俺のオーダー」や対戦シミュレーターで、自分なりの並びや相性を試せます。将来的には比較保存や画像出力を追加しやすい構成です。</p>
+                </div>
+            </div>
+
+            <div class="sh" style="margin-top:2rem">
+                <h2 class="stitle">運営まわり</h2>
+            </div>
+            <div class="footer-grid">
+                <div class="footer-card">
+                    <h3>このサイトについて</h3>
+                    <p>何を扱うサイトなのか、どの機能を看板にするのか、今後の強化方針をまとめたページを追加しました。</p>
+                    <div class="footer-links"><a class="footer-link" href="about.html">about.html を開く</a></div>
+                </div>
+                <div class="footer-card">
+                    <h3>プライバシーポリシー</h3>
+                    <p>広告やアクセス解析を見据えて、先に置いておける基本ページを追加しました。今後の導入状況に応じて追記しやすい形です。</p>
+                    <div class="footer-links"><a class="footer-link" href="privacy.html">privacy.html を開く</a></div>
+                </div>
+                <div class="footer-card">
+                    <h3>サポート構想</h3>
+                    <p>広告だけに寄せず、将来的に相性の良い有料機能の方向性をまとめたページです。比較・保存・出力機能の受け皿にできます。</p>
+                    <div class="footer-links"><a class="footer-link" href="support.html">support.html を開く</a></div>
                 </div>
             </div>
         </div>
@@ -1158,7 +1494,7 @@
         </div>
 
         <!-- 打撃 -->
-        <div class="section active" id="section-batting">
+        <div class="section" id="section-batting">
             <div class="sh">
                 <h2 class="stitle">シーズン打撃成績</h2>
             </div>
@@ -1585,7 +1921,19 @@
             </div>
         </div>
 
+
     </div><!-- /main -->
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <p>NPB打順・成績分析ラボ 2020–2025 / 打順・成績・分析を1つにまとめた野球データサイト</p>
+            <div class="site-footer-nav">
+                <a href="about.html">このサイトについて</a>
+                <a href="privacy.html">プライバシーポリシー</a>
+                <a href="support.html">サポート構想</a>
+            </div>
+        </div>
+    </footer>
 
     <script src="data-loader.js"></script>
     <script>
@@ -1664,6 +2012,17 @@
 
             // Also refresh My Order builder when data loads
             if (typeof initOrderBuilder === 'function') initOrderBuilder();
+        }
+
+
+        function updateHomeCounts() {
+            const set = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            };
+            set('home-batting-count', (window.BATTING_DATA?.length || 0) + '件');
+            set('home-pitching-count', (window.PITCHING_DATA?.length || 0) + '件');
+            set('home-order-count', (window.ORDER_DATA?.length || 0) + '試合');
         }
 
         // ============================================================
@@ -2067,43 +2426,54 @@
             if (target) target.classList.add('active');
 
             const titles = {
-                home: '⚾ NPB <em>分析ダッシュボード</em>',
+                home: '⚾ NPB <em>打順・成績分析ラボ</em>',
                 batting: '⚾ NPB <em>打撃成績統計</em>',
                 pitching: '⚾ NPB <em>投手成績統計</em>',
-                simulator: '⚾ NPB <em>1vs1 対戦予測</em>',
-                order: '📋 NPB <em>チームオーダー履歴</em>',
-                myorder: '🔥 NPB <em>オーダー構築シミュレーター</em>',
-                'pro-report': '📊 NPB <em>プロフェッショナル分析</em>',
+                simulator: '⚾ NPB <em>1打席シミュレーター</em>',
+                order: '📋 NPB <em>チームオーダー分析</em>',
+                myorder: '🔥 NPB <em>俺のオーダー</em>',
+                'pro-report': '📊 NPB <em>分析レポート</em>',
                 team: '🏆 NPB <em>チーム年度別成績</em>',
                 records: '🥇 NPB <em>歴代最高記録</em>'
             };
             const subs = {
-                home: '2020年～2025年シーズンの全選手データを詳細に収録・分析',
+                home: '打順・成績・分析を横断して見られる野球データサイト',
                 batting: '打率、本塁打、打点など打撃各部門のシーズン統計',
                 pitching: '防御率、奪三振、勝利数など投手各部門のシーズン統計',
-                simulator: '打者と投手の能力から1打席の対戦結果を論理的に予測',
-                order: '全12球団のスタメン履歴と打順別起用傾向の可視化',
-                myorder: '夢の打線を組み上げ、エースから何点取れるかをAI予測',
-                'pro-report': '球団別トレンド、相関分析、リーグ実力差の定量的評価',
+                simulator: '打者と投手を選んで1打席の結果をざっくり比較',
+                order: '全12球団のスタメン履歴と打順別起用傾向を確認',
+                myorder: '自分のスタメンを組み、得点期待値を試す',
+                'pro-report': '勝率トレンドや相関分析をグラフで確認',
                 team: '年度別の順位、勝敗、リーグ内戦績の推移を確認',
                 records: '2020年以降のNPBにおける最高記録・主要指標'
             };
             const counts = {
-                home: 'Analytics On',
-                batting: (window.BATTING_DATA?.length || 0) + '名',
-                pitching: (window.PITCHING_DATA?.length || 0) + '名',
+                home: ((window.BATTING_DATA?.length || 0) + (window.PITCHING_DATA?.length || 0)) + '件',
+                batting: (window.BATTING_DATA?.length || 0) + '件',
+                pitching: (window.PITCHING_DATA?.length || 0) + '件',
                 order: (window.ORDER_DATA?.length || 0) + '試合',
-                myorder: 'Expected Runs',
-                'pro-report': 'Advanced',
-                simulator: 'Ready',
+                myorder: '9人編成',
+                'pro-report': '3グラフ',
+                simulator: '1打席比較',
                 team: '12球団',
-                records: 'Legendary'
+                records: '主要記録'
+            };
+            const countLabels = {
+                home: '収録レコード',
+                batting: '打撃レコード',
+                pitching: '投手レコード',
+                order: '打順履歴',
+                myorder: '編成単位',
+                'pro-report': '可視化数',
+                simulator: '分析単位',
+                team: '収録球団',
+                records: '記録カテゴリ'
             };
 
             document.getElementById('hero-title').innerHTML = titles[id] || titles.home;
             document.getElementById('hero-sub').textContent = subs[id] || subs.home;
             document.getElementById('hero-count').textContent = counts[id] || '-';
-            document.getElementById('hero-count-label').textContent = (id === 'home' ? 'エンジン状態' : '統計項目');
+            document.getElementById('hero-count-label').textContent = countLabels[id] || '統計項目';
 
             // Active button update
             document.querySelectorAll('nav button').forEach(b => {
@@ -2117,6 +2487,7 @@
             if (id === 'records') renderRecords();
             if (id === 'myorder') initOrderBuilder();
             if (id === 'pro-report') initProReport();
+            if (id === 'home') updateHomeCounts();
         }
 
         // ============================================================
@@ -2229,6 +2600,7 @@
         // ============================================================
         window.onload = () => {
             initDropdowns();
+            updateHomeCounts();
             bF = [...BATTING_DATA]; pF = [...PITCHING_DATA]; tF = [...TEAM_DATA];
             rb(); rp(); rt();
 
@@ -2255,6 +2627,7 @@
 
             // Initial call if data is somehow ready (fallback)
             if (typeof initOrderBuilder === 'function' && BATTING_DATA.length > 0) initOrderBuilder();
+            show('home');
         };
 
         // ============================================================
