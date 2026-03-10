@@ -115,6 +115,27 @@
                 field += char;
             }
         }
+        // ループ終了後、最終行が改行で終わっていない場合の処理
+        if (field || curr.length > 0) {
+            curr.push(field.trim());
+            if (curr.length >= 6 && curr[0] !== 'チーム' && curr[0] !== '') {
+                const cleanTeam = curr[0].replace(/[\n\r\s・"']/g, "").replace(/\(.*\)/, "");
+                const w = parseInt(curr[2]);
+                if (!isNaN(w)) {
+                    rows.push({
+                        team: TEAM_MAP[cleanTeam] || cleanTeam,
+                        year: year,
+                        league: league,
+                        w: w,
+                        l: parseInt(curr[3]) || 0,
+                        t: parseInt(curr[4]) || 0,
+                        pct: parseFloat(curr[5]) || 0,
+                        rank: rows.filter(r => r.year === year && r.league === league).length + 1,
+                        nippon: curr.some(c => c.includes('○')) ? '○' : '-'
+                    });
+                }
+            }
+        }
         return rows;
     }
 
