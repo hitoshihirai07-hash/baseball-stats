@@ -11,31 +11,27 @@
 </head>
 <body>
   <header class="header"><div class="header-inner"><a class="brand" href="index.html">⚾ NPB<span>Stats</span> Lab</a></div></header>
-  <section class="hero"><div class="wrap"><span class="kicker">DATA</span><h1>データについて</h1><p>収録している内容や、数値を見るときの注意点をまとめています。</p></div></section>
+  <section class="hero"><div class="wrap"><span class="kicker">DATA</span><h1>データについて</h1><p>このサイトでは、2020年から2025年までのCSVデータをもとに、公開用の表示データを生成して利用しています。</p></div></section>
   <main class="wrap">
     <div class="card">
-      <h2>主な収録内容</h2>
+      <h2>公開時の表示方法</h2>
+      <p>管理用データはCSVで保持し、公開ページでは表示速度を上げるためにJSONへ事前変換したデータを読み込んでいます。これにより、初回表示で全CSVを解析する負荷を減らしています。</p>
+    </div>
+    <div class="card">
+      <h2>読み込みの考え方</h2>
       <div class="grid">
-        <div><p><b>年度別成績</b><br>打撃成績・投手成績・チーム成績を年度ごとに確認できます。</p></div>
-        <div><p><b>打順履歴</b><br>球団ごとのスタメン傾向や打順別の起用頻度を見られます。</p></div>
-        <div><p><b>シミュレーター</b><br>打者と投手の組み合わせをもとに、期待値の変化を試せます。</p></div>
-        <div><p><b>記録・分析</b><br>表だけでは見えにくい傾向を、グラフや集計で確認できます。</p></div>
+        <div><p><b>トップ</b><br>件数表示用の summary データだけを先に読み込みます。</p></div>
+        <div><p><b>打撃・投手・チーム</b><br>各セクションを開いた時に必要なJSONを読み込みます。</p></div>
+        <div><p><b>打順分析</b><br>打順TOP3は軽い集計JSONを使い、履歴は年度ごとのJSONを読み込みます。</p></div>
+        <div><p><b>更新時</b><br>CSVを更新した後は同梱の再生成スクリプトで public-data を作り直せます。</p></div>
       </div>
     </div>
     <div class="card">
-      <h2>数値を見るときの注意点</h2>
-      <ul>
-        <li>更新時期や集計方法の違いにより、他サイトや公式記録と見え方が異なる場合があります。</li>
-        <li>シミュレーターや分析結果は、掲載データをもとにした独自表示です。</li>
-        <li>ファン向けの比較・閲覧を目的としたサイトであり、公式発表そのものを置き換えるものではありません。</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h2>ご利用にあたって</h2>
-      <p>気になる年度や球団を切り替えながら、成績表・打順分析・俺のオーダーを行き来して見ると、チームの傾向を追いやすくなります。</p>
-      <div class="cta-row"><a class="btn primary" href="index.html">トップへ戻る</a><a class="btn secondary" href="privacy.html">プライバシーポリシー</a></div>
+      <h2>更新ファイル</h2>
+      <p>CSVを更新した後は、<code>build-public-data.py</code> または <code>build-public-data.bat</code> を実行すると公開用JSONを再生成できます。</p>
+      <div class="cta-row"><a class="btn primary" href="index.html">トップへ戻る</a><a class="btn secondary" href="about.html">このサイトについて</a></div>
     </div>
   </main>
-  <footer class="footer"><div class="footer-inner"><p>NPB打順・成績分析ラボ</p><p><a href="about.html">このサイトについて</a></p></div></footer>
+  <footer class="footer"><div class="footer-inner"><p>NPB打順・成績分析ラボ</p><p><a href="privacy.html">プライバシーポリシー</a></p></div></footer>
 </body>
 </html>

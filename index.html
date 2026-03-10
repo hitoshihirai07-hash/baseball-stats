@@ -1354,9 +1354,9 @@
                         </div>
                     </div>
                     <div class="mini-panel">
-                        <h3>サイト案内</h3>
-                        <p>このサイトの見方や、掲載データの扱い、利用にあたっての基本情報をまとめたページです。第三者が見ても分かりやすい案内に整理しています。</p>
-                        <a class="mini-link" href="support.html">データについて →</a>
+                        <h3>サイト情報</h3>
+                        <p>このサイトについて・データについて・プライバシーポリシーをまとめています。初めて見る方はこちらから確認できます。</p>
+                        <a class="mini-link" href="support.html">データについてを見る →</a>
                     </div>
                 </div>
             </div>
@@ -1371,7 +1371,7 @@
                 <div class="pcard feature-card">
                     <span class="badge">Core 02</span>
                     <h3>🔥 俺のオーダー</h3>
-                    <p>好きな年度・球団の打者でスタメンを組み、相手先発に対する得点期待値を確認できます。自分なりの並びを試したい人向けの看板機能です。</p>
+                    <p>好きな年度・球団の打者でスタメンを組み、相手先発に対する得点期待値を確認できます。並びの仮説を試したい時に使える機能です。</p>
                     <button class="pbtn" onclick="show('myorder')">オーダーを作る</button>
                 </div>
                 <div class="pcard feature-card">
@@ -1399,28 +1399,28 @@
                 <div class="guide-card">
                     <span class="guide-step">3</span>
                     <h3>自分の仮説を試す</h3>
-                    <p>「俺のオーダー」や対戦シミュレーターで、自分なりの並びや相性をすぐ試せます。気になる仮説をその場で確認しやすいページです。</p>
+                    <p>「俺のオーダー」や対戦シミュレーターで、自分なりの並びや相性を試せます。気になった仮説をすぐに確認したい時に便利です。</p>
                 </div>
             </div>
 
             <div class="sh" style="margin-top:2rem">
-                <h2 class="stitle">ご案内</h2>
+                <h2 class="stitle">サイト情報</h2>
             </div>
             <div class="footer-grid">
                 <div class="footer-card">
                     <h3>このサイトについて</h3>
-                    <p>このサイトで見られる内容や、主な使い方をまとめています。</p>
-                    <div class="footer-links"><a class="footer-link" href="about.html">このサイトについて</a></div>
+                    <p>このサイトで見られる内容と、使い方の入口をまとめています。</p>
+                    <div class="footer-links"><a class="footer-link" href="about.html">このサイトについてを見る</a></div>
                 </div>
                 <div class="footer-card">
                     <h3>プライバシーポリシー</h3>
-                    <p>本サイト内での情報の取り扱いと、利用にあたっての基本方針をまとめています。</p>
-                    <div class="footer-links"><a class="footer-link" href="privacy.html">プライバシーポリシー</a></div>
+                    <p>本サイトの運用方針と、更新時の扱いをまとめています。</p>
+                    <div class="footer-links"><a class="footer-link" href="privacy.html">プライバシーポリシーを見る</a></div>
                 </div>
                 <div class="footer-card">
                     <h3>データについて</h3>
-                    <p>収録している内容や、数値を見るときの注意点をまとめています。</p>
-                    <div class="footer-links"><a class="footer-link" href="support.html">データについて</a></div>
+                    <p>CSVと公開用JSONの使い分けや、表示データの更新方法をまとめています。</p>
+                    <div class="footer-links"><a class="footer-link" href="support.html">データについてを見る</a></div>
                 </div>
             </div>
         </div>
@@ -1985,6 +1985,8 @@
         window.PITCHING_DATA = window.PITCHING_DATA || [];
         window.TEAM_DATA = window.TEAM_DATA || [];
         window.ORDER_DATA = window.ORDER_DATA || [];
+        window.ORDER_TOP3 = window.ORDER_TOP3 || {};
+        window.SITE_SUMMARY = window.SITE_SUMMARY || null;
 
         // STATE
         let bF = [], pF = [], tF = [];
@@ -1995,34 +1997,67 @@
         // INIT: build year/team dropdowns
         // ============================================================
         function initDropdowns() {
+            const selectIds = ['by', 'bt', 'py', 'pt', 'ty', 'tt', 'oy', 'ot'];
+            const prev = {};
+            selectIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) prev[id] = el.value;
+            });
+
+            const reset = id => {
+                const el = document.getElementById(id);
+                if (!el) return null;
+                const first = el.options[0] ? el.options[0].cloneNode(true) : null;
+                el.innerHTML = '';
+                if (first) el.appendChild(first);
+                return el;
+            };
+
             const years = [...new Set(BATTING_DATA.map(d => d[1]))].sort((a, b) => b - a);
             const batTeams = [...new Set(BATTING_DATA.map(d => d[2]))].sort();
             const pitTeams = [...new Set(PITCHING_DATA.map(d => d[2]))].sort();
             const tTeams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
             const tyears = [...new Set(TEAM_DATA.map(d => d.year))].sort((a, b) => b - a);
             const pyears = [...new Set(PITCHING_DATA.map(d => d[1]))].sort((a, b) => b - a);
-            const oyears = [...new Set(ORDER_DATA.map(d => d[0]))].sort((a, b) => b - a);
-            const oTeams = [...new Set(ORDER_DATA.map(d => d[2]))].sort();
+            const oyears = ORDER_DATA.length
+                ? [...new Set(ORDER_DATA.map(d => d[0]))].sort((a, b) => b - a)
+                : [...(window.SITE_SUMMARY?.years || [])].sort((a, b) => b - a);
+            const oTeams = ORDER_DATA.length
+                ? [...new Set(ORDER_DATA.map(d => d[2]))].sort()
+                : [...(window.SITE_SUMMARY?.teams || [])].sort();
 
-            function fill(id, items) { const s = document.getElementById(id); items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); }); }
+            function fill(id, items) {
+                const s = reset(id);
+                if (!s) return;
+                items.forEach(v => {
+                    const o = document.createElement('option');
+                    o.value = v;
+                    o.textContent = v;
+                    s.appendChild(o);
+                });
+                if (prev[id] && [...s.options].some(o => o.value === prev[id])) {
+                    s.value = prev[id];
+                }
+            }
+
             fill('by', years); fill('bt', batTeams);
             fill('py', pyears); fill('pt', pitTeams);
             fill('ty', tyears); fill('tt', tTeams);
             fill('oy', oyears); fill('ot', oTeams);
-
-            // Also refresh My Order builder when data loads
-            if (typeof initOrderBuilder === 'function') initOrderBuilder();
         }
 
-
         function updateHomeCounts() {
+            const summaryCounts = window.SITE_SUMMARY?.counts || {};
+            const battingCount = (window.BATTING_DATA?.length || summaryCounts.batting || 0);
+            const pitchingCount = (window.PITCHING_DATA?.length || summaryCounts.pitching || 0);
+            const orderCount = (window.ORDER_DATA?.length || summaryCounts.order || 0);
             const set = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = value;
             };
-            set('home-batting-count', (window.BATTING_DATA?.length || 0) + '件');
-            set('home-pitching-count', (window.PITCHING_DATA?.length || 0) + '件');
-            set('home-order-count', (window.ORDER_DATA?.length || 0) + '試合');
+            set('home-batting-count', battingCount + '件');
+            set('home-pitching-count', pitchingCount + '件');
+            set('home-order-count', orderCount + '試合');
         }
 
         // ============================================================
@@ -2260,9 +2295,15 @@
         // ============================================================
         // FILTER & RENDER: Order
         // ============================================================
-        function fo() {
+        async function fo() {
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
+            const body = document.getElementById('ob');
+            if (body) body.innerHTML = '<tr><td colspan="12" style="padding:1rem;text-align:center;opacity:.7">読み込み中...</td></tr>';
+            if (window.DataStore) {
+                if (y) await window.DataStore.ensureOrderYear(y);
+                else await window.DataStore.ensureAllOrders();
+            }
             oF = ORDER_DATA.filter(d => {
                 if (y && String(d[0]) !== y) return false;
                 if (t && d[2] !== t) return false;
@@ -2419,7 +2460,7 @@
         // ============================================================
         // NAVIGATION
         // ============================================================
-        function show(id) {
+        async function show(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             const target = document.getElementById('section-' + id);
@@ -2447,16 +2488,17 @@
                 team: '年度別の順位、勝敗、リーグ内戦績の推移を確認',
                 records: '2020年以降のNPBにおける最高記録・主要指標'
             };
+            const summaryCounts = window.SITE_SUMMARY?.counts || {};
             const counts = {
-                home: ((window.BATTING_DATA?.length || 0) + (window.PITCHING_DATA?.length || 0)) + '件',
-                batting: (window.BATTING_DATA?.length || 0) + '件',
-                pitching: (window.PITCHING_DATA?.length || 0) + '件',
-                order: (window.ORDER_DATA?.length || 0) + '試合',
+                home: ((window.BATTING_DATA?.length || summaryCounts.batting || 0) + (window.PITCHING_DATA?.length || summaryCounts.pitching || 0)) + '件',
+                batting: (window.BATTING_DATA?.length || summaryCounts.batting || 0) + '件',
+                pitching: (window.PITCHING_DATA?.length || summaryCounts.pitching || 0) + '件',
+                order: (window.ORDER_DATA?.length || summaryCounts.order || 0) + '試合',
                 myorder: '9人編成',
                 'pro-report': '3グラフ',
                 simulator: '1打席比較',
-                team: '12球団',
-                records: '主要記録'
+                team: (window.SITE_SUMMARY?.teams?.length || 12) + '球団',
+                records: '記録カテゴリ'
             };
             const countLabels = {
                 home: '収録レコード',
@@ -2471,23 +2513,53 @@
             };
 
             document.getElementById('hero-title').innerHTML = titles[id] || titles.home;
-            document.getElementById('hero-sub').textContent = subs[id] || subs.home;
+            document.getElementById('hero-sub').textContent = 'データを読み込み中...';
             document.getElementById('hero-count').textContent = counts[id] || '-';
             document.getElementById('hero-count-label').textContent = countLabels[id] || '統計項目';
 
-            // Active button update
             document.querySelectorAll('nav button').forEach(b => {
                 if (b.getAttribute('onclick') === `show('${id}')`) b.classList.add('active');
             });
 
-            if (id === 'batting') rb();
-            if (id === 'pitching') rp();
-            if (id === 'team') ft();
-            if (id === 'order') fo();
-            if (id === 'records') renderRecords();
-            if (id === 'myorder') initOrderBuilder();
-            if (id === 'pro-report') initProReport();
-            if (id === 'home') updateHomeCounts();
+            try {
+                if (window.DataStore) await window.DataStore.ensureSectionData(id);
+
+                if (['batting', 'pitching', 'team', 'order', 'records', 'pro-report', 'myorder'].includes(id)) {
+                    initDropdowns();
+                }
+
+                if (id === 'order') {
+                    const oy = document.getElementById('oy');
+                    if (oy && !oy.value && window.SITE_SUMMARY?.latestYear) oy.value = String(window.SITE_SUMMARY.latestYear);
+                }
+
+                const updatedCounts = {
+                    home: ((window.BATTING_DATA?.length || summaryCounts.batting || 0) + (window.PITCHING_DATA?.length || summaryCounts.pitching || 0)) + '件',
+                    batting: (window.BATTING_DATA?.length || summaryCounts.batting || 0) + '件',
+                    pitching: (window.PITCHING_DATA?.length || summaryCounts.pitching || 0) + '件',
+                    order: (window.ORDER_DATA?.length || summaryCounts.order || 0) + '試合',
+                    myorder: '9人編成',
+                    'pro-report': '3グラフ',
+                    simulator: '1打席比較',
+                    team: (window.SITE_SUMMARY?.teams?.length || 12) + '球団',
+                    records: '記録カテゴリ'
+                };
+                document.getElementById('hero-sub').textContent = subs[id] || subs.home;
+                document.getElementById('hero-count').textContent = updatedCounts[id] || '-';
+
+                if (id === 'batting') { bF = [...BATTING_DATA]; rb(); }
+                if (id === 'pitching') { pF = [...PITCHING_DATA]; rp(); }
+                if (id === 'team') { tF = [...TEAM_DATA]; rt(); }
+                if (id === 'order') await fo();
+                if (id === 'records') renderRecords();
+                if (id === 'myorder') initOrderBuilder();
+                if (id === 'pro-report') initProReport();
+                if (id === 'simulator') { upSimB(); upSimP(); }
+                if (id === 'home') updateHomeCounts();
+            } catch (error) {
+                console.warn(error);
+                document.getElementById('hero-sub').textContent = 'データの読み込みに失敗しました。';
+            }
         }
 
         // ============================================================
@@ -2598,35 +2670,32 @@
         // ============================================================
         // BOOT
         // ============================================================
-        window.onload = () => {
-            initDropdowns();
+        window.onload = async () => {
+            if (window.DataStore) {
+                try {
+                    await window.DataStore.ensureSummary();
+                } catch (error) {
+                    console.warn(error);
+                }
+            }
             updateHomeCounts();
-            bF = [...BATTING_DATA]; pF = [...PITCHING_DATA]; tF = [...TEAM_DATA];
-            rb(); rp(); rt();
 
-            // Init Simulator selectors
+            const years = (window.SITE_SUMMARY?.years || [2025, 2024, 2023, 2022, 2021, 2020]).slice().sort((a, b) => b - a);
             const sy = ['sb-y', 'sp-y'];
             sy.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = '<option value="">全年度</option>' +
-                    [2025, 2024, 2023, 2022, 2021, 2020].map(y => `<option value="${y}">${y}年</option>`).join('');
+                    years.map(y => `<option value="${y}">${y}年</option>`).join('');
             });
 
+            const teams = window.SITE_SUMMARY?.teams || ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ'];
             const st = ['sb-t', 'sp-t'];
-            const teams = ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ'];
             st.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = '<option value="">全チーム</option>' +
                     teams.map(t => `<option value="${t}">${t}</option>`).join('');
             });
 
-            if (typeof upSimB === 'function') upSimB();
-            if (typeof upSimP === 'function') upSimP();
-
-            if (typeof upSimP === 'function') upSimP();
-
-            // Initial call if data is somehow ready (fallback)
-            if (typeof initOrderBuilder === 'function' && BATTING_DATA.length > 0) initOrderBuilder();
             show('home');
         };
 
