@@ -248,7 +248,8 @@
             margin-left: auto;
         }
 
-        .split-wrap {
+        .split-wrap,
+        .normal-wrap {
             display: none;
         }
 
@@ -1541,7 +1542,7 @@
             <div class="sh">
                 <h2 class="stitle">シーズン打撃成績</h2>
             </div>
-            <p class="section-note">通常成績に加えて、対左・対右の分割成績も切り替えて表示できます。左右別データは2021〜2025を収録し、打率はサイト上で自動計算しています。</p>
+            <p class="section-note">通常成績と対左・対右の分割成績を切り替えて確認できます。打率も画面上で表示します。</p>
             <div class="filters">
                 <div class="fg"><label>年度</label><select id="by" onchange="fb()">
                         <option value="">全期間</option>
@@ -1630,7 +1631,7 @@
             <div class="sh">
                 <h2 class="stitle">シーズン投手成績</h2>
             </div>
-            <p class="section-note">通常成績に加えて、左右打者別の被打成績も切り替えて確認できます。被打率は対左・対右の被安打 ÷ 被打数でサイト上で自動計算しています。</p>
+            <p class="section-note">通常成績と左右打者別の被打成績を切り替えて確認できます。被打率も画面上で表示します。</p>
             <div class="filters">
                 <div class="fg"><label>年度</label><select id="py" onchange="fp()">
                         <option value="">全期間</option>
@@ -2307,8 +2308,8 @@
             if (normal) normal.classList.toggle('active', mode === 'normal');
             if (split) split.classList.toggle('active', mode === 'split');
             if (note) note.textContent = mode === 'split'
-                ? '左右別は data/batting_vs_lr.csv を表示中。打率 = 安打 ÷ 打数、左右差 = 対左打率 − 対右打率。'
-                : '通常のシーズン打撃成績を表示中。';
+                ? '対左・対右の打率と左右差を表示中。'
+                : '';
             if (mode === 'split') rbs(); else rb();
         }
 
@@ -2320,8 +2321,8 @@
             if (normal) normal.classList.toggle('active', mode === 'normal');
             if (split) split.classList.toggle('active', mode === 'split');
             if (note) note.textContent = mode === 'split'
-                ? '左右別は data/pitching_vs_lr.csv を表示中。被打率 = 被安打 ÷ 被打数、左右差 = 対左被打率 − 対右被打率。'
-                : '通常のシーズン投手成績を表示中。';
+                ? '対左・対右の被打率と左右差を表示中。'
+                : '';
             if (mode === 'split') rps(); else rp();
         }
 
