@@ -229,6 +229,49 @@
             border-color: var(--ac);
         }
 
+
+
+        .mode-toggle {
+            min-width: 150px;
+        }
+
+        .section-note {
+            margin: -.25rem 0 1rem;
+            color: var(--tx2);
+            font-size: .83rem;
+            line-height: 1.7;
+        }
+
+        .mode-note {
+            color: var(--tx2);
+            font-size: .78rem;
+            margin-left: auto;
+        }
+
+        .split-wrap {
+            display: none;
+        }
+
+        .split-wrap.active,
+        .normal-wrap.active {
+            display: block;
+        }
+
+        .split-stat-plus {
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .split-stat-minus {
+            color: #f87171;
+            font-weight: 700;
+        }
+
+        .split-stat-even {
+            color: var(--tx2);
+            font-weight: 700;
+        }
+
         .tw {
             background: var(--bg2);
             border: 1px solid var(--bd);
@@ -1498,6 +1541,7 @@
             <div class="sh">
                 <h2 class="stitle">シーズン打撃成績</h2>
             </div>
+            <p class="section-note">通常成績に加えて、対左・対右の分割成績も切り替えて表示できます。左右別データは2021〜2025を収録し、打率はサイト上で自動計算しています。</p>
             <div class="filters">
                 <div class="fg"><label>年度</label><select id="by" onchange="fb()">
                         <option value="">全期間</option>
@@ -1509,6 +1553,10 @@
                     </select></div>
                 <div class="fg"><label>チーム</label><select id="bt" onchange="fb()">
                         <option value="">全チーム</option>
+                    </select></div>
+                <div class="fg"><label>表示</label><select id="bm" class="mode-toggle" onchange="updateBattingMode()">
+                        <option value="normal">通常成績</option>
+                        <option value="split">対左右別成績</option>
                     </select></div>
                 <div class="fg"><label>データ範囲</label><select id="bq" onchange="fb()">
                         <option value="0">全選手表示</option>
@@ -1522,30 +1570,59 @@
                     </select></div>
                 <div class="sb"><input type="text" id="bs" placeholder="選手名で検索" oninput="fb()" /></div>
             </div>
-            <div class="tw">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th onclick="srt('b',0)">選手名</th>
-                            <th onclick="srt('b',1)">年度</th>
-                            <th onclick="srt('b',2)">チーム</th>
-                            <th onclick="srt('b',3)">試合</th>
-                            <th onclick="srt('b',4)">打率</th>
-                            <th onclick="srt('b',5)">HR</th>
-                            <th onclick="srt('b',6)">打点</th>
-                            <th onclick="srt('b',7)">安打</th>
-                            <th onclick="srt('b',8)">盗塁</th>
-                            <th onclick="srt('b',10)">出塁率</th>
-                            <th onclick="srt('b',11)">長打率</th>
-                            <th onclick="srt('b',9)">OPS</th>
-                            <th onclick="srt('b',12)">打席</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bb"></tbody>
-                </table>
+            <div class="mode-note" id="batting-mode-note"></div>
+            <div class="normal-wrap active" id="bat-normal-wrap">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th onclick="srt('b',0)">選手名</th>
+                                <th onclick="srt('b',1)">年度</th>
+                                <th onclick="srt('b',2)">チーム</th>
+                                <th onclick="srt('b',3)">試合</th>
+                                <th onclick="srt('b',4)">打率</th>
+                                <th onclick="srt('b',5)">HR</th>
+                                <th onclick="srt('b',6)">打点</th>
+                                <th onclick="srt('b',7)">安打</th>
+                                <th onclick="srt('b',8)">盗塁</th>
+                                <th onclick="srt('b',10)">出塁率</th>
+                                <th onclick="srt('b',11)">長打率</th>
+                                <th onclick="srt('b',9)">OPS</th>
+                                <th onclick="srt('b',12)">打席</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bb"></tbody>
+                    </table>
+                </div>
+                <div class="pg" id="bpg"></div>
             </div>
-            <div class="pg" id="bpg"></div>
+            <div class="split-wrap" id="bat-split-wrap">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th onclick="srtSplit('b','name')">選手名</th>
+                                <th onclick="srtSplit('b','year')">年度</th>
+                                <th onclick="srtSplit('b','team')">チーム</th>
+                                <th onclick="srtSplit('b','position')">守備</th>
+                                <th onclick="srtSplit('b','leftPaAb')">対左PA/打数</th>
+                                <th onclick="srtSplit('b','leftHits')">対左安打</th>
+                                <th onclick="srtSplit('b','leftAb')">対左打数</th>
+                                <th onclick="srtSplit('b','leftAvg')">対左打率</th>
+                                <th onclick="srtSplit('b','rightPaAb')">対右PA/打数</th>
+                                <th onclick="srtSplit('b','rightHits')">対右安打</th>
+                                <th onclick="srtSplit('b','rightAb')">対右打数</th>
+                                <th onclick="srtSplit('b','rightAvg')">対右打率</th>
+                                <th onclick="srtSplit('b','diffAvg')">左右差</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bbs"></tbody>
+                    </table>
+                </div>
+                <div class="pg" id="bspg"></div>
+            </div>
         </div>
 
         <!-- 投手 -->
@@ -1553,6 +1630,7 @@
             <div class="sh">
                 <h2 class="stitle">シーズン投手成績</h2>
             </div>
+            <p class="section-note">通常成績に加えて、左右打者別の被打成績も切り替えて確認できます。被打率は対左・対右の被安打 ÷ 被打数でサイト上で自動計算しています。</p>
             <div class="filters">
                 <div class="fg"><label>年度</label><select id="py" onchange="fp()">
                         <option value="">全期間</option>
@@ -1564,6 +1642,10 @@
                     </select></div>
                 <div class="fg"><label>チーム</label><select id="pt" onchange="fp()">
                         <option value="">全チーム</option>
+                    </select></div>
+                <div class="fg"><label>表示</label><select id="pm" class="mode-toggle" onchange="updatePitchingMode()">
+                        <option value="normal">通常成績</option>
+                        <option value="split">対左右別被打</option>
                     </select></div>
                 <div class="fg"><label>データ範囲</label><select id="pq" onchange="fp()">
                         <option value="0">全選手表示</option>
@@ -1577,29 +1659,56 @@
                     </select></div>
                 <div class="sb"><input type="text" id="ps" placeholder="選手名で検索" oninput="fp()" /></div>
             </div>
-            <div class="tw">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th onclick="srt('p',0)">選手名</th>
-                            <th onclick="srt('p',1)">年度</th>
-                            <th onclick="srt('p',2)">チーム</th>
-                            <th onclick="srt('p',3)">登板</th>
-                            <th onclick="srt('p',4)">勝</th>
-                            <th onclick="srt('p',5)">敗</th>
-                            <th onclick="srt('p',6)">S</th>
-                            <th onclick="srt('p',12)">HP</th>
-                            <th onclick="srt('p',7)">防御率</th>
-                            <th onclick="srt('p',8)">奪三振</th>
-                            <th onclick="srt('p',9)">勝率</th>
-                            <th onclick="srt('p',10)">投球回</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pb"></tbody>
-                </table>
+            <div class="mode-note" id="pitching-mode-note"></div>
+            <div class="normal-wrap active" id="pit-normal-wrap">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th onclick="srt('p',0)">選手名</th>
+                                <th onclick="srt('p',1)">年度</th>
+                                <th onclick="srt('p',2)">チーム</th>
+                                <th onclick="srt('p',3)">登板</th>
+                                <th onclick="srt('p',4)">勝</th>
+                                <th onclick="srt('p',5)">敗</th>
+                                <th onclick="srt('p',6)">S</th>
+                                <th onclick="srt('p',12)">HP</th>
+                                <th onclick="srt('p',7)">防御率</th>
+                                <th onclick="srt('p',8)">奪三振</th>
+                                <th onclick="srt('p',9)">勝率</th>
+                                <th onclick="srt('p',10)">投球回</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pb"></tbody>
+                    </table>
+                </div>
+                <div class="pg" id="ppg"></div>
             </div>
-            <div class="pg" id="ppg"></div>
+            <div class="split-wrap" id="pit-split-wrap">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th onclick="srtSplit('p','name')">選手名</th>
+                                <th onclick="srtSplit('p','year')">年度</th>
+                                <th onclick="srtSplit('p','team')">チーム</th>
+                                <th onclick="srtSplit('p','position')">区分</th>
+                                <th onclick="srtSplit('p','leftAb')">対左被打数</th>
+                                <th onclick="srtSplit('p','leftHits')">対左被安打</th>
+                                <th onclick="srtSplit('p','leftAvg')">対左被打率</th>
+                                <th onclick="srtSplit('p','rightAb')">対右被打数</th>
+                                <th onclick="srtSplit('p','rightHits')">対右被安打</th>
+                                <th onclick="srtSplit('p','rightAvg')">対右被打率</th>
+                                <th onclick="srtSplit('p','diffAvg')">左右差</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pbs"></tbody>
+                    </table>
+                </div>
+                <div class="pg" id="pspg"></div>
+            </div>
         </div>
 
         <!-- チーム -->
@@ -1936,6 +2045,7 @@
     </footer>
 
     <script src="data-loader.js"></script>
+    <script src="split-loader.js"></script>
     <script>
         // ============================================================
         // TEAM META
@@ -1990,8 +2100,10 @@
 
         // STATE
         let bF = [], pF = [], tF = [];
-        let bPage = 1, pPage = 1, tPage = 1;
+        let bsF = [], psF = [];
+        let bPage = 1, pPage = 1, tPage = 1, bsPage = 1, psPage = 1;
         let bSort = { c: -1, asc: false }, pSort = { c: -1, asc: false }, tSort = { c: -1, asc: false };
+        let bsSort = { key: '', asc: false }, psSort = { key: '', asc: false };
 
         // ============================================================
         // INIT: build year/team dropdowns
@@ -2144,6 +2256,92 @@
             document.getElementById('sim-win').textContent = `予測結果: ${win}`;
         }
 
+
+        function toNumberSafe(v) {
+            if (v == null || v === '') return null;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : null;
+        }
+
+        function fmtRate(v) {
+            return typeof v === 'number' && Number.isFinite(v) ? v.toFixed(3) : '-';
+        }
+
+        function fmtCount(v) {
+            return typeof v === 'number' && Number.isFinite(v) ? v : '-';
+        }
+
+        function diffClass(v) {
+            if (typeof v !== 'number' || !Number.isFinite(v)) return 'split-stat-even';
+            if (v > 0) return 'split-stat-plus';
+            if (v < 0) return 'split-stat-minus';
+            return 'split-stat-even';
+        }
+
+        function diffText(v) {
+            if (typeof v !== 'number' || !Number.isFinite(v)) return '-';
+            return (v > 0 ? '+' : '') + v.toFixed(3);
+        }
+
+        function battingMasterMap() {
+            const map = new Map();
+            (window.BATTING_DATA || []).forEach(d => {
+                map.set(`${d[0]}|${d[1]}|${d[2]}`, d);
+            });
+            return map;
+        }
+
+        function pitchingMasterMap() {
+            const map = new Map();
+            (window.PITCHING_DATA || []).forEach(d => {
+                map.set(`${d[0]}|${d[1]}|${d[2]}`, d);
+            });
+            return map;
+        }
+
+        function updateBattingMode() {
+            const mode = document.getElementById('bm')?.value || 'normal';
+            const normal = document.getElementById('bat-normal-wrap');
+            const split = document.getElementById('bat-split-wrap');
+            const note = document.getElementById('batting-mode-note');
+            if (normal) normal.classList.toggle('active', mode === 'normal');
+            if (split) split.classList.toggle('active', mode === 'split');
+            if (note) note.textContent = mode === 'split'
+                ? '左右別は data/batting_vs_lr.csv を表示中。打率 = 安打 ÷ 打数、左右差 = 対左打率 − 対右打率。'
+                : '通常のシーズン打撃成績を表示中。';
+            if (mode === 'split') rbs(); else rb();
+        }
+
+        function updatePitchingMode() {
+            const mode = document.getElementById('pm')?.value || 'normal';
+            const normal = document.getElementById('pit-normal-wrap');
+            const split = document.getElementById('pit-split-wrap');
+            const note = document.getElementById('pitching-mode-note');
+            if (normal) normal.classList.toggle('active', mode === 'normal');
+            if (split) split.classList.toggle('active', mode === 'split');
+            if (note) note.textContent = mode === 'split'
+                ? '左右別は data/pitching_vs_lr.csv を表示中。被打率 = 被安打 ÷ 被打数、左右差 = 対左被打率 − 対右被打率。'
+                : '通常のシーズン投手成績を表示中。';
+            if (mode === 'split') rps(); else rp();
+        }
+
+        function srtSplit(type, key) {
+            const state = type === 'b' ? bsSort : psSort;
+            if (state.key === key) state.asc = !state.asc; else { state.key = key; state.asc = false; }
+            const arr = type === 'b' ? bsF : psF;
+            arr.sort((a, b) => {
+                const v1 = a[key], v2 = b[key];
+                if (v1 == null) return 1;
+                if (v2 == null) return -1;
+                if (typeof v1 === 'string' || typeof v2 === 'string') {
+                    const res = String(v1).localeCompare(String(v2), 'ja');
+                    return state.asc ? res : -res;
+                }
+                return state.asc ? (v1 < v2 ? -1 : v1 > v2 ? 1 : 0) : (v1 > v2 ? -1 : v1 < v2 ? 1 : 0);
+            });
+            if (type === 'b') { bsPage = 1; rbs(); } else { psPage = 1; rps(); }
+        }
+
         // ============================================================
         // FILTER & RENDER: Batting
         // ============================================================
@@ -2156,6 +2354,7 @@
             const t = document.getElementById('bt').value;
             const q = document.getElementById('bq').value;
             const s = document.getElementById('bs').value.trim().toLowerCase();
+            const bMap = battingMasterMap();
             bF = BATTING_DATA.filter(d => {
                 if (y && String(d[1]) !== y) return false;
                 if (l && tleague(d[2]) !== l) return false;
@@ -2167,7 +2366,22 @@
                 if (s && !d[0].toLowerCase().includes(s)) return false;
                 return true;
             });
-            bPage = 1; rb();
+            bsF = (window.BATTING_SPLIT_DATA || []).filter(d => {
+                if (y && String(d.year) !== y) return false;
+                if (l && tleague(d.team) !== l) return false;
+                if (t && d.team !== t) return false;
+                if (s && !String(d.name).toLowerCase().includes(s)) return false;
+                if (q === '1') {
+                    const master = bMap.get(`${d.name}|${d.year}|${d.team}`);
+                    const threshold = getQPA(d.year);
+                    const paLike = master ? master[12] : ((d.leftPaAb || 0) + (d.rightPaAb || 0));
+                    if ((paLike || 0) < threshold) return false;
+                }
+                return true;
+            });
+            bPage = 1;
+            bsPage = 1;
+            updateBattingMode();
         }
         function rb() {
             const rows = parseInt(document.getElementById('br').value) || 30;
@@ -2201,6 +2415,33 @@
             pgn('bpg', bF.length, rows, bPage, p => { bPage = p; rb(); });
         }
 
+        function rbs() {
+            const rows = parseInt(document.getElementById('br').value) || 30;
+            const start = (bsPage - 1) * rows;
+            const page = bsF.slice(start, start + rows);
+            document.getElementById('bbs').innerHTML = page.map((d, i) => {
+                const r = start + i + 1;
+                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+                return `<tr>
+      <td class="${rc} rk">${r}</td>
+      <td class="pn"><span class="name-link" onclick="showP('${d.name}','bat')">${d.name}</span></td>
+      <td>${d.year}</td>
+      <td>${ttag(d.team)}</td>
+      <td>${d.position || '-'}</td>
+      <td>${fmtCount(d.leftPaAb)}</td>
+      <td>${fmtCount(d.leftHits)}</td>
+      <td>${fmtCount(d.leftAb)}</td>
+      <td class="${d.leftAvg >= .330 ? 'vh' : d.leftAvg >= .290 ? 'vm' : ''}">${fmtRate(d.leftAvg)}</td>
+      <td>${fmtCount(d.rightPaAb)}</td>
+      <td>${fmtCount(d.rightHits)}</td>
+      <td>${fmtCount(d.rightAb)}</td>
+      <td class="${d.rightAvg >= .330 ? 'vh' : d.rightAvg >= .290 ? 'vm' : ''}">${fmtRate(d.rightAvg)}</td>
+      <td class="${diffClass(d.diffAvg)}">${diffText(d.diffAvg)}</td>
+    </tr>`;
+            }).join('');
+            pgn('bspg', bsF.length, rows, bsPage, p => { bsPage = p; rbs(); });
+        }
+
         // ============================================================
         // FILTER & RENDER: Pitching
         // ============================================================
@@ -2210,6 +2451,7 @@
             const t = document.getElementById('pt').value;
             const q = document.getElementById('pq').value;
             const s = document.getElementById('ps').value.trim().toLowerCase();
+            const pMap = pitchingMasterMap();
             pF = PITCHING_DATA.filter(d => {
                 if (y && String(d[1]) !== y) return false;
                 if (l && tleague(d[2]) !== l) return false;
@@ -2221,7 +2463,22 @@
                 if (s && !d[0].toLowerCase().includes(s)) return false;
                 return true;
             });
-            pPage = 1; rp();
+            psF = (window.PITCHING_SPLIT_DATA || []).filter(d => {
+                if (y && String(d.year) !== y) return false;
+                if (l && tleague(d.team) !== l) return false;
+                if (t && d.team !== t) return false;
+                if (s && !String(d.name).toLowerCase().includes(s)) return false;
+                if (q === '1') {
+                    const master = pMap.get(`${d.name}|${d.year}|${d.team}`);
+                    const threshold = getQIP(d.year);
+                    const ipLike = master ? master[11] : null;
+                    if ((ipLike || 0) < threshold) return false;
+                }
+                return true;
+            });
+            pPage = 1;
+            psPage = 1;
+            updatePitchingMode();
         }
         function rp() {
             const rows = parseInt(document.getElementById('pr').value) || 30;
@@ -2251,6 +2508,33 @@
     </tr>`;
             }).join('');
             pgn('ppg', pF.length, rows, pPage, p => { pPage = p; rp(); });
+        }
+
+        function rps() {
+            const rows = parseInt(document.getElementById('pr').value) || 30;
+            const start = (psPage - 1) * rows;
+            const page = psF.slice(start, start + rows);
+            document.getElementById('pbs').innerHTML = page.map((d, i) => {
+                const r = start + i + 1;
+                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+                const lClass = d.leftAvg <= .220 ? 'vh' : d.leftAvg <= .260 ? 'vm' : '';
+                const rClass = d.rightAvg <= .220 ? 'vh' : d.rightAvg <= .260 ? 'vm' : '';
+                return `<tr>
+      <td class="${rc} rk">${r}</td>
+      <td class="pn"><span class="name-link" onclick="showP('${d.name}','pit')">${d.name}</span></td>
+      <td>${d.year}</td>
+      <td>${ttag(d.team)}</td>
+      <td>${d.position || '-'}</td>
+      <td>${fmtCount(d.leftAb)}</td>
+      <td>${fmtCount(d.leftHits)}</td>
+      <td class="${lClass}">${fmtRate(d.leftAvg)}</td>
+      <td>${fmtCount(d.rightAb)}</td>
+      <td>${fmtCount(d.rightHits)}</td>
+      <td class="${rClass}">${fmtRate(d.rightAvg)}</td>
+      <td class="${diffClass(d.diffAvg)}">${diffText(d.diffAvg)}</td>
+    </tr>`;
+            }).join('');
+            pgn('pspg', psF.length, rows, psPage, p => { psPage = p; rps(); });
         }
 
         // ============================================================
@@ -2523,6 +2807,8 @@
 
             try {
                 if (window.DataStore) await window.DataStore.ensureSectionData(id);
+                if (id === 'batting' && window.SplitDataStore) await window.SplitDataStore.ensureBattingSplit();
+                if (id === 'pitching' && window.SplitDataStore) await window.SplitDataStore.ensurePitchingSplit();
 
                 if (['batting', 'pitching', 'team', 'order', 'records', 'pro-report', 'myorder'].includes(id)) {
                     initDropdowns();
@@ -2547,8 +2833,8 @@
                 document.getElementById('hero-sub').textContent = subs[id] || subs.home;
                 document.getElementById('hero-count').textContent = updatedCounts[id] || '-';
 
-                if (id === 'batting') { bF = [...BATTING_DATA]; rb(); }
-                if (id === 'pitching') { pF = [...PITCHING_DATA]; rp(); }
+                if (id === 'batting') { fb(); }
+                if (id === 'pitching') { fp(); }
                 if (id === 'team') { tF = [...TEAM_DATA]; rt(); }
                 if (id === 'order') await fo();
                 if (id === 'records') renderRecords();
