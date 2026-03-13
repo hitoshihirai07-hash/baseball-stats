@@ -11,24 +11,24 @@
 </head>
 <body>
   <header class="header"><div class="header-inner"><a class="brand" href="index.html">⚾ NPB<span>Stats</span> Lab</a></div></header>
-  <section class="hero"><div class="wrap"><span class="kicker">DATA</span><h1>データについて</h1><p>このサイトでは、2020年から2025年までのCSVデータをもとに、公開用の表示データを生成して利用しています。</p></div></section>
+  <section class="hero"><div class="wrap"><span class="kicker">DATA</span><h1>データについて</h1><p>このサイトでは、2020年から2025年までの集計データをもとに、公開ページ用の表示データを整えて利用しています。</p></div></section>
   <main class="wrap">
     <div class="card">
       <h2>公開時の表示方法</h2>
-      <p>管理用データはCSVで保持し、公開ページでは表示速度を上げるためにJSONへ事前変換したデータを読み込んでいます。これにより、初回表示で全CSVを解析する負荷を減らしています。</p>
+      <p>管理用データと公開用データを分け、公開ページでは必要な情報を優先して読み込む構成にしています。これにより、初回表示の負荷を抑えています。</p>
     </div>
     <div class="card">
       <h2>読み込みの考え方</h2>
       <div class="grid">
         <div><p><b>トップ</b><br>件数表示用の summary データだけを先に読み込みます。</p></div>
-        <div><p><b>打撃・投手・チーム</b><br>各セクションを開いた時に必要なJSONを読み込みます。</p></div>
-        <div><p><b>打順分析</b><br>打順TOP3は軽い集計JSONを使い、履歴は年度ごとのJSONを読み込みます。</p></div>
-        <div><p><b>更新時</b><br>CSVを更新した後は同梱の再生成スクリプトで public-data を作り直せます。</p></div>
+        <div><p><b>打撃・投手・チーム</b><br>各セクションを開いた時に必要な表示データを読み込みます。</p></div>
+        <div><p><b>打順分析</b><br>打順TOP3は軽い集計データを先に使い、履歴は年度ごとのデータを読み込みます。</p></div>
+        <div><p><b>更新時</b><br>データを更新した後は同梱の再生成ツールで公開用データを作り直せます。</p></div>
       </div>
     </div>
     <div class="card">
       <h2>更新ファイル</h2>
-      <p>CSVを更新した後は、<code>build-public-data.py</code> または <code>build-public-data.bat</code> を実行すると公開用JSONを再生成できます。</p>
+      <p>データを更新した後は、同梱の再生成ツールを実行すると公開用の表示データを作り直せます。</p>
       <div class="cta-row"><a class="btn primary" href="index.html">トップへ戻る</a><a class="btn secondary" href="about.html">このサイトについて</a></div>
     </div>
   </main>

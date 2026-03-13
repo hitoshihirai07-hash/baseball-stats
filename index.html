@@ -1463,7 +1463,7 @@
                 </div>
                 <div class="footer-card">
                     <h3>データについて</h3>
-                    <p>CSVと公開用JSONの使い分けや、表示データの更新方法をまとめています。</p>
+                    <p>データの整え方や、表示データの更新方法をまとめています。</p>
                     <div class="footer-links"><a class="footer-link" href="support.html">データについてを見る</a></div>
                 </div>
             </div>
@@ -1960,24 +1960,24 @@
             </div>
         </div>
 
-        <!-- CSVインポート -->
+        <!-- データインポート -->
         <div class="section" id="section-import">
-            <h2 class="stitle" style="margin-bottom:1rem">📂 CSVデータインポート</h2>
+            <h2 class="stitle" style="margin-bottom:1rem">📂 データ取り込み</h2>
             <div
                 style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
                 <p style="color:var(--tx2);font-size:.88rem;margin-bottom:1rem">
-                    NPB公式サイトやデータサービスからダウンロードしたCSVを読み込むと、全選手のデータを追加できます。<br>既存データと<strong
-                        style="color:var(--ac)">マージ（追記）</strong>または<strong style="color:var(--re)">置換</strong>が選択できます。
+                    NPB公式サイトやデータサービスから取得した表形式データを読み込むと、全選手のデータを追加できます。<br>既存データに<strong
+                        style="color:var(--ac)">追記</strong>するか、<strong style="color:var(--re)">入れ替え</strong>るかを選べます。
                 </p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
                     <div>
-                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">🏏 打撃成績 CSV</h3>
+                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">🏏 打撃成績データ</h3>
                         <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
                             選手名,年度,チーム,試合数,打率,本塁打,打点,安打,盗塁,OPS</p>
-                        <input type="file" id="bat-csv" accept=".csv" style="display:none"
-                            onchange="importCSV('batting',this)" />
+                        <input type="file" id="bat-file" style="display:none"
+                            onchange="importData('batting',this)" />
                         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                            <button onclick="document.getElementById('bat-csv').click()"
+                            <button onclick="document.getElementById('bat-file').click()"
                                 style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
                                 ファイルを選択</button>
                             <button onclick="downloadTemplate('batting')"
@@ -1987,13 +1987,13 @@
                         <div id="bat-import-msg" style="margin-top:.5rem;font-size:.8rem"></div>
                     </div>
                     <div>
-                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">⚾ 投手成績 CSV</h3>
+                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">⚾ 投手成績データ</h3>
                         <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
                             選手名,年度,チーム,登板,勝,敗,セーブ,防御率,奪三振,WHIP,リーグ</p>
-                        <input type="file" id="pit-csv" accept=".csv" style="display:none"
-                            onchange="importCSV('pitching',this)" />
+                        <input type="file" id="pit-file" style="display:none"
+                            onchange="importData('pitching',this)" />
                         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                            <button onclick="document.getElementById('pit-csv').click()"
+                            <button onclick="document.getElementById('pit-file').click()"
                                 style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
                                 ファイルを選択</button>
                             <button onclick="downloadTemplate('pitching')"
@@ -2004,24 +2004,24 @@
                     </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:1rem">
-                    <label style="font-size:.85rem">インポートモード:</label>
+                    <label style="font-size:.85rem">取り込み方法:</label>
                     <label style="font-size:.85rem"><input type="radio" name="imode" value="merge" checked>
-                        マージ（追記）</label>
-                    <label style="font-size:.85rem"><input type="radio" name="imode" value="replace"> 置換</label>
+                        追記</label>
+                    <label style="font-size:.85rem"><input type="radio" name="imode" value="replace"> 入れ替え</label>
                 </div>
             </div>
             <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem">
-                <h3 style="font-size:.9rem;margin-bottom:1rem;color:var(--tx2)">📝 CSVフォーマット説明</h3>
+                <h3 style="font-size:.9rem;margin-bottom:1rem;color:var(--tx2)">📝 入力形式の説明</h3>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
                     <div>
-                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">打撃CSV形式</p>
+                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">打撃データの形式</p>
                         <pre
                             style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,試合数,打率,HR,打点,安打,盗塁,OPS
 岡本和真,2025,読売ジャイアンツ,143,.298,42,118,148,1,.928
 丸佳浩,2025,読売ジャイアンツ,135,.271,19,75,127,1,.818</pre>
                     </div>
                     <div>
-                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">投手CSV形式</p>
+                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">投手データの形式</p>
                         <pre
                             style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,登板,勝,敗,S,防御率,奪三振,WHIP,リーグ
 戸郷翔征,2025,読売ジャイアンツ,27,17,6,0,2.18,185,0.94,セ
@@ -2177,6 +2177,7 @@
         // SIMULATOR LOGIC
         // ============================================================
         let curBS = null, curPS = null;
+        let simBatCandidates = [], simPitCandidates = [];
 
         function upSimB() {
             const y = document.getElementById('sb-y').value;
@@ -2187,8 +2188,9 @@
                 (!t || d[2] === t) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
-            document.getElementById('sb-l').innerHTML = list.map(d =>
-                `<div class="sim-item ${curBS && curBS[0] === d[0] && curBS[1] === d[1] ? 'active' : ''}" onclick='selSimB(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${TM[d[2]]?.sn || d[2]})</div>`
+            simBatCandidates = list;
+            document.getElementById('sb-l').innerHTML = list.map((d, i) =>
+                `<div class="sim-item ${curBS && curBS[0] === d[0] && curBS[1] === d[1] ? 'active' : ''}" onclick='selSimBByIndex(${i})'>${d[0]} (${d[1]} ${TM[d[2]]?.sn || d[2]})</div>`
             ).join('');
         }
 
@@ -2201,13 +2203,21 @@
                 (!t || d[2] === t) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
-            document.getElementById('sp-l').innerHTML = list.map(d =>
-                `<div class="sim-item ${curPS && curPS[0] === d[0] && curPS[1] === d[1] ? 'active' : ''}" onclick='selSimP(${JSON.stringify(d)})'>${d[0]} (${d[1]} ${TM[d[2]]?.sn || d[2]})</div>`
+            simPitCandidates = list;
+            document.getElementById('sp-l').innerHTML = list.map((d, i) =>
+                `<div class="sim-item ${curPS && curPS[0] === d[0] && curPS[1] === d[1] ? 'active' : ''}" onclick='selSimPByIndex(${i})'>${d[0]} (${d[1]} ${TM[d[2]]?.sn || d[2]})</div>`
             ).join('');
         }
 
-        window.selSimB = d => { curBS = d; document.getElementById('sb-sel').textContent = `${d[0]} (${d[1]})`; upSimB(); checkSim(); };
-        window.selSimP = d => { curPS = d; document.getElementById('sp-sel').textContent = `${d[0]} (${d[1]})`; upSimP(); checkSim(); };
+        window.selSimBByIndex = i => { const d = simBatCandidates[i]; if (!d) return; curBS = d; document.getElementById('sb-sel').textContent = `${d[0]} (${d[1]})`; upSimB(); checkSim(); };
+        window.selSimPByIndex = i => { const d = simPitCandidates[i]; if (!d) return; curPS = d; document.getElementById('sp-sel').textContent = `${d[0]} (${d[1]})`; upSimP(); checkSim(); };
+
+        window.importData = function(type, input) {
+            if (typeof window.handleDataImport === 'function') return window.handleDataImport(type, input);
+            if (typeof window.importTableData === 'function') return window.importTableData(type, input);
+            if (typeof window.importFileData === 'function') return window.importFileData(type, input);
+            if (typeof window.importDataFile === 'function') return window.importDataFile(type, input);
+        };
 
         function checkSim() {
             const btn = document.getElementById('sim-run-btn');
