@@ -1496,19 +1496,13 @@
                     <h2 id="sim-vs-names" style="margin-bottom:1rem; font-size: 1.2rem;">MATCHUP</h2>
                     <h3 id="sim-vs" style="font-size: 2.5rem; opacity: 0.2;">VS</h3>
                     <div class="filters" style="justify-content:center; gap:1rem; margin:1rem 0 1.25rem;">
-                        <div class="fg" style="min-width:140px;">
+                        <div class="fg" style="min-width:180px;">
                             <label>打者の打席左右</label>
-                            <select id="sim-bat-side" onchange="checkSim()">
-                                <option value="R">右打席</option>
-                                <option value="L">左打席</option>
-                            </select>
+                            <div id="sim-bat-side-auto" class="mode-note">選手データから自動判定</div>
                         </div>
-                        <div class="fg" style="min-width:140px;">
+                        <div class="fg" style="min-width:180px;">
                             <label>投手の投球左右</label>
-                            <select id="sim-pit-hand" onchange="checkSim()">
-                                <option value="R">右投手</option>
-                                <option value="L">左投手</option>
-                            </select>
+                            <div id="sim-pit-hand-auto" class="mode-note">選手データから自動判定</div>
                         </div>
                     </div>
                     <div id="sim-split-note" class="mode-note" style="margin-bottom:1rem;"></div>
@@ -1883,14 +1877,11 @@
                             </div>
                             <div class="fg">
                                 <label style="font-size: .8rem;">先発投手</label>
-                                <select id="mo-vs-pitcher" onchange="checkBuilderState()"></select>
+                                <select id="mo-vs-pitcher" onchange="handleOrderHandChange()"></select>
                             </div>
                             <div class="fg" style="margin-top: 1rem;">
                                 <label style="font-size: .8rem;">投球左右</label>
-                                <select id="mo-vs-hand" onchange="handleOrderHandChange()">
-                                    <option value="R">右投手</option>
-                                    <option value="L">左投手</option>
-                                </select>
+                                <div id="mo-vs-hand-auto" class="mode-note">先発投手から自動判定</div>
                             </div>
                             <div id="mo-split-note" class="mode-note" style="margin-top:.75rem;"></div>
                         </div>
@@ -2247,16 +2238,30 @@
 
         function checkSim() {
             const btn = document.getElementById('sim-run-btn');
-            const batSide = document.getElementById('sim-bat-side')?.value || 'R';
-            const pitHand = document.getElementById('sim-pit-hand')?.value || 'R';
             const note = document.getElementById('sim-split-note');
+            const batAuto = document.getElementById('sim-bat-side-auto');
+            const pitAuto = document.getElementById('sim-pit-hand-auto');
             if (curBS && curPS) {
                 btn.disabled = false;
+                const pitHand = getPitcherThrowHand(curPS);
+                const batSide = getBatterSideForMatchup(curBS, pitHand);
+                if (batAuto) batAuto.textContent = handLabel(batSide, 'bat');
+                if (pitAuto) pitAuto.textContent = handLabel(pitHand);
                 document.getElementById('sim-vs-names').textContent = `${curBS[0]} (${handLabel(batSide, 'bat')}) vs ${curPS[0]} (${handLabel(pitHand)})`;
                 document.getElementById('sim-vs').style.opacity = "1";
-                if (note) note.textContent = `打者は対${pitHand === 'L' ? '左' : '右'}、投手は対${batSide === 'L' ? '左' : '右'}打者成績で補正します。`;
+                if (note) {
+                    if (pitHand && batSide) {
+                        note.textContent = `打者は対${pitHand === 'L' ? '左' : '右'}、投手は対${batSide === 'L' ? '左' : '右'}打者成績で補正します。`;
+                    } else if (pitHand) {
+                        note.textContent = '投手の投球左右は自動判定できています。打者の打席左右が見つからないため、投手側は通常成績で計算します。';
+                    } else {
+                        note.textContent = '投打情報が見つからないため、通常成績ベースで計算します。';
+                    }
+                }
             } else {
                 btn.disabled = true;
+                if (batAuto) batAuto.textContent = '選手データから自動判定';
+                if (pitAuto) pitAuto.textContent = '選手データから自動判定';
                 if (note) note.textContent = '';
             }
         }
@@ -2266,8 +2271,8 @@
             document.getElementById('sim-res').style.display = 'block';
 
             const L_AVG = 0.250, L_HR = 0.025, L_K = 0.180;
-            const batSide = document.getElementById('sim-bat-side')?.value || 'R';
-            const pitHand = document.getElementById('sim-pit-hand')?.value || 'R';
+            const pitHand = getPitcherThrowHand(curPS);
+            const batSide = getBatterSideForMatchup(curBS, pitHand);
             const batterMetrics = getAdjustedBatterMetrics(curBS, pitHand);
             const pitcherMetrics = getAdjustedPitcherMetrics(curPS, batSide);
 
@@ -2364,9 +2369,50 @@
             return map.get(`${masterRow[0]}|${masterRow[1]}|${masterRow[2]}`) || null;
         }
 
+        function normalizeHandCode(value, type = 'pit') {
+            const raw = String(value || '').trim();
+            if (!raw) return null;
+            if (['L', '左', '左打', '左投'].includes(raw)) return 'L';
+            if (['R', '右', '右打', '右投'].includes(raw)) return 'R';
+            if (type === 'bat' && ['S', '両', '両打', 'スイッチ'].includes(raw)) return 'S';
+            return null;
+        }
+
         function handLabel(hand, type = 'pit') {
-            if (type === 'bat') return hand === 'L' ? '左打席' : '右打席';
-            return hand === 'L' ? '左投手' : '右投手';
+            if (type === 'bat') {
+                if (hand === 'L') return '左打席';
+                if (hand === 'R') return '右打席';
+                if (hand === 'S') return '両打';
+                return '不明';
+            }
+            if (hand === 'L') return '左投手';
+            if (hand === 'R') return '右投手';
+            return '不明';
+        }
+
+        function getHandednessRecord(masterRow) {
+            if (!masterRow || !window.HandednessStore || typeof window.HandednessStore.get !== 'function') return null;
+            return window.HandednessStore.get(masterRow[0], masterRow[2]) || null;
+        }
+
+        function getPitcherThrowHand(masterRow) {
+            const rec = getHandednessRecord(masterRow);
+            return normalizeHandCode(rec?.pitchHand, 'pit');
+        }
+
+        function resolveBatterSide(batHand, pitcherHand) {
+            const code = normalizeHandCode(batHand, 'bat');
+            if (code === 'S') {
+                if (pitcherHand === 'L') return 'R';
+                if (pitcherHand === 'R') return 'L';
+                return 'S';
+            }
+            return code;
+        }
+
+        function getBatterSideForMatchup(masterRow, pitcherHand) {
+            const rec = getHandednessRecord(masterRow);
+            return resolveBatterSide(rec?.batHand, pitcherHand);
         }
 
         function getAdjustedBatterMetrics(bData, pitcherHand) {
@@ -2376,9 +2422,10 @@
             const seasonPa = Math.max(1, Number(bData?.[12] || 0));
             const seasonHrRate = clampNumber((Number(bData?.[5] || 0) / seasonPa), 0.002, 0.120);
             const splitRow = getBattingSplitRow(bData);
-            const splitAvg = splitRow ? (pitcherHand === 'L' ? splitRow.leftAvg : splitRow.rightAvg) : null;
-            const splitAb = splitRow ? (pitcherHand === 'L' ? splitRow.leftAb : splitRow.rightAb) : null;
-            const splitPa = splitRow ? (pitcherHand === 'L' ? splitRow.leftPaAb : splitRow.rightPaAb) : null;
+            const useHand = pitcherHand === 'L' || pitcherHand === 'R' ? pitcherHand : null;
+            const splitAvg = splitRow && useHand ? (useHand === 'L' ? splitRow.leftAvg : splitRow.rightAvg) : null;
+            const splitAb = splitRow && useHand ? (useHand === 'L' ? splitRow.leftAb : splitRow.rightAb) : null;
+            const splitPa = splitRow && useHand ? (useHand === 'L' ? splitRow.leftPaAb : splitRow.rightPaAb) : null;
             if (typeof splitAvg === 'number' && Number.isFinite(splitAvg)) {
                 const ratio = clampNumber(splitAvg / Math.max(seasonAvg, 0.180), 0.72, 1.32);
                 return {
@@ -2390,7 +2437,7 @@
                     abLike: Number.isFinite(splitAb) && splitAb > 0 ? splitAb : seasonPa * 0.9,
                     adjusted: true,
                     splitAvg,
-                    label: `対${pitcherHand === 'L' ? '左' : '右'} ${fmtRate(splitAvg)}`
+                    label: `対${useHand === 'L' ? '左' : '右'} ${fmtRate(splitAvg)}`
                 };
             }
             return {
@@ -2413,7 +2460,8 @@
             const seasonKRate = clampNumber((Number(pData?.[8] || 0) / Math.max(ip * 3.5, 1)), 0.050, 0.380);
             const seasonHrRate = clampNumber(0.02 * (era / 3.5), 0.005, 0.090);
             const splitRow = getPitchingSplitRow(pData);
-            const splitAvg = splitRow ? (batterSide === 'L' ? splitRow.leftAvg : splitRow.rightAvg) : null;
+            const useSide = batterSide === 'L' || batterSide === 'R' ? batterSide : null;
+            const splitAvg = splitRow && useSide ? (useSide === 'L' ? splitRow.leftAvg : splitRow.rightAvg) : null;
             if (typeof splitAvg === 'number' && Number.isFinite(splitAvg)) {
                 const ratio = clampNumber(splitAvg / Math.max(seasonAvgAllowed, 0.180), 0.72, 1.32);
                 return {
@@ -2422,7 +2470,7 @@
                     hrRate: clampNumber(seasonHrRate * ratio, 0.005, 0.100),
                     adjusted: true,
                     splitAvg,
-                    label: `対${batterSide === 'L' ? '左' : '右'}打者 ${fmtRate(splitAvg)}`
+                    label: `対${useSide === 'L' ? '左' : '右'}打者 ${fmtRate(splitAvg)}`
                 };
             }
             return {
@@ -2961,6 +3009,7 @@
                 if (window.DataStore) await window.DataStore.ensureSectionData(id);
                 if (['batting', 'simulator', 'myorder'].includes(id) && window.SplitDataStore) await window.SplitDataStore.ensureBattingSplit();
                 if (['pitching', 'simulator', 'myorder'].includes(id) && window.SplitDataStore) await window.SplitDataStore.ensurePitchingSplit();
+                if (['simulator', 'myorder'].includes(id) && window.HandednessStore) await window.HandednessStore.ensure();
 
                 if (['batting', 'pitching', 'team', 'order', 'records', 'pro-report', 'myorder'].includes(id)) {
                     initDropdowns();
@@ -3147,8 +3196,6 @@
         function initOrderBuilder() {
             const y = document.getElementById('mo-year').value || '2025';
             const tSel = document.getElementById('mo-team');
-            const handSel = document.getElementById('mo-vs-hand');
-            if (handSel && !handSel.value) handSel.value = 'R';
 
             // チームリストの生成（初回のみ）
             if (tSel.options.length === 0) {
@@ -3188,7 +3235,10 @@
         }
 
         function getOrderPitcherHand() {
-            return document.getElementById('mo-vs-hand')?.value || 'R';
+            const pName = document.getElementById('mo-vs-pitcher')?.value || '';
+            if (!pName) return null;
+            const pData = moPitchers.find(d => d[0] === pName);
+            return getPitcherThrowHand(pData);
         }
 
         function renderOrderBatterStat(index) {
@@ -3216,12 +3266,20 @@
 
         function refreshOrderSplitStatus() {
             const note = document.getElementById('mo-split-note');
+            const auto = document.getElementById('mo-vs-hand-auto');
             if (!note) return;
             const hand = getOrderPitcherHand();
             const selected = moSelectedBatters.filter(Boolean).length;
-            note.textContent = selected
-                ? `現在は ${handLabel(hand)} 想定で、各打者の対${hand === 'L' ? '左' : '右'}成績を優先して計算します。`
-                : `現在は ${handLabel(hand)} 想定です。打者を選ぶと左右補正を反映します。`;
+            if (auto) auto.textContent = hand ? handLabel(hand) : '先発投手から判定できません';
+            if (selected) {
+                note.textContent = hand
+                    ? `現在は ${handLabel(hand)} 想定で、各打者の対${hand === 'L' ? '左' : '右'}成績を優先して計算します。`
+                    : '先発投手の投球左右を判定できないため、現在は通常成績ベースです。';
+            } else {
+                note.textContent = hand
+                    ? `現在は ${handLabel(hand)} 想定です。打者を選ぶと左右補正を反映します。`
+                    : '先発投手を選ぶと投球左右を自動判定します。';
+            }
         }
 
         function handleOrderHandChange() {
@@ -3305,10 +3363,12 @@
                 .sort((a, b) => b[11] - a[11]);
 
             const sel = document.getElementById('mo-vs-pitcher');
+            const prev = sel.value;
             sel.innerHTML = '<option value="">-- 先発投手を選択 --</option>' +
                 moPitchers.map(p => `<option value="${p[0]}">${p[0]} (防${Number(p[7]).toFixed(2)}/回${p[11]})</option>`).join('');
+            if (prev && [...sel.options].some(opt => opt.value === prev)) sel.value = prev;
 
-            refreshOrderSplitStatus();
+            handleOrderHandChange();
             checkBuilderState();
         }
 
@@ -3321,6 +3381,7 @@
             // 9人全員と投手が選ばれていれば実行可能
             btn.disabled = !(hasPitcher && numBatters === 9);
             document.getElementById('mo-result').style.display = 'none'; // 条件が変わったら結果を隠す
+            refreshOrderSplitStatus();
         }
 
         // アドバンスド・シミュレーションの実行（得点期待値予測）

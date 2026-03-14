@@ -31,14 +31,18 @@
 
     const PATHS = {
         batting: 'data/batting_vs_lr.csv',
-        pitching: 'data/pitching_vs_lr.csv'
+        pitching: 'data/pitching_vs_lr.csv',
+        handedness: 'data/player_handedness.csv'
     };
 
     window.BATTING_SPLIT_DATA = window.BATTING_SPLIT_DATA || [];
     window.PITCHING_SPLIT_DATA = window.PITCHING_SPLIT_DATA || [];
+    window.PLAYER_HANDEDNESS = window.PLAYER_HANDEDNESS || [];
+    window.PLAYER_HANDEDNESS_BY_KEY = window.PLAYER_HANDEDNESS_BY_KEY || new Map();
+    window.PLAYER_HANDEDNESS_BY_NAME = window.PLAYER_HANDEDNESS_BY_NAME || new Map();
 
     const state = {
-        loaded: { batting: false, pitching: false },
+        loaded: { batting: false, pitching: false, handedness: false },
         promises: {}
     };
 
@@ -58,6 +62,23 @@
     function calcRate(hits, atBats) {
         if (hits == null || atBats == null || Number(atBats) <= 0) return null;
         return Number(hits) / Number(atBats);
+    }
+
+    function normalizePitchHand(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        if (['右', 'R', '右投'].includes(raw)) return 'R';
+        if (['左', 'L', '左投'].includes(raw)) return 'L';
+        return '';
+    }
+
+    function normalizeBatHand(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        if (['右', 'R', '右打'].includes(raw)) return 'R';
+        if (['左', 'L', '左打'].includes(raw)) return 'L';
+        if (['両', 'S', '両打', 'スイッチ'].includes(raw)) return 'S';
+        return '';
     }
 
     function parseCSVLine(line) {
@@ -179,9 +200,48 @@
         });
     }
 
+    async function ensureHandedness() {
+        if (state.loaded.handedness) return window.PLAYER_HANDEDNESS;
+        return once('player-handedness', async () => {
+            const text = await loadCSV(PATHS.handedness);
+            const rows = parseCSV(text).map(row => ({
+                name: String(row['選手名'] || '').trim(),
+                team: normalizeTeam(row['球団']),
+                position: String(row['ポジション'] || '').trim(),
+                pitchHand: normalizePitchHand(row['投']),
+                batHand: normalizeBatHand(row['打'])
+            })).filter(row => row.name);
+            const keyMap = new Map();
+            const nameMap = new Map();
+            rows.forEach(row => {
+                if (row.team) keyMap.set(`${row.name}|${row.team}`, row);
+                if (!nameMap.has(row.name)) nameMap.set(row.name, row);
+            });
+            window.PLAYER_HANDEDNESS = rows;
+            window.PLAYER_HANDEDNESS_BY_KEY = keyMap;
+            window.PLAYER_HANDEDNESS_BY_NAME = nameMap;
+            state.loaded.handedness = true;
+            return rows;
+        });
+    }
+
+    window.HandednessStore = {
+        ensure: ensureHandedness,
+        get(name, team) {
+            if (!state.loaded.handedness) return null;
+            const n = String(name || '').trim();
+            const t = normalizeTeam(team);
+            if (t && window.PLAYER_HANDEDNESS_BY_KEY.has(`${n}|${t}`)) return window.PLAYER_HANDEDNESS_BY_KEY.get(`${n}|${t}`);
+            return window.PLAYER_HANDEDNESS_BY_NAME.get(n) || null;
+        },
+        state
+    };
+
     window.SplitDataStore = {
         ensureBattingSplit,
         ensurePitchingSplit,
         state
     };
+
+    ensureHandedness().catch(error => console.warn('handedness load failed', error));
 })();
