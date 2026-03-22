@@ -1971,7 +1971,7 @@
         <div class="section" id="section-records">
             <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
             <div class="cards" id="recs"></div>
-            <h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数ﾈ2020〜2025）</h2>
+            <h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数（2020〜2025）</h2>
             <div class="tw" style="padding:1.5rem">
                 <div id="chbars"></div>
             </div>
@@ -2106,6 +2106,20 @@
 
         function sn(name) {
             return TM[name]?.sn || name;
+        }
+
+        function getResolvedNipponSeriesWinners() {
+            const fallback = window.NIPPON_SERIES_WINNERS || {};
+            const rows = Array.isArray(TEAM_DATA) ? TEAM_DATA : [];
+            const hasExplicitChampion = rows.some(d => d && d.nippon === '○');
+            return rows.map(d => {
+                if (!d || typeof d !== 'object') return d;
+                if (hasExplicitChampion) return d;
+                return {
+                    ...d,
+                    nippon: fallback[Number(d.year)] === d.team ? '○' : (d.nippon || '-')
+                };
+            });
         }
 
         // DATA HOLDERS (Initialized for sync logic)
@@ -2925,18 +2939,34 @@
 
             // Champ bars
             const champMap = {};
-            TEAM_DATA.forEach(d => { if (d.nippon === '○') champMap[d.team] = (champMap[d.team] || 0) + 1; });
-            const champs = Object.entries(champMap).sort((a, b) => b[1] - a[1]);
+            const champYears = {};
+            const teamRows = getResolvedNipponSeriesWinners();
+            teamRows.forEach(d => {
+                if (d?.nippon === '○') {
+                    champMap[d.team] = (champMap[d.team] || 0) + 1;
+                    (champYears[d.team] ||= []).push(Number(d.year));
+                }
+            });
+            const champs = Object.entries(champMap).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'));
             const maxC = champs[0]?.[1] || 1;
             const cols = { giants: '#ff6b2b', tigers: '#ffe033', dragons: '#2b8cff', carp: '#ff4444', swallows: '#3bc5ff', baystars: '#648fff', hawks: '#ffd52b', lions: '#2bdcff', eagles: '#e05555', marines: '#5577ff', fighters: '#4488ff', buffaloes: '#22cc66' };
-            document.getElementById('chbars').innerHTML = champs.map(([t, c]) => {
+            const champRoot = document.getElementById('chbars');
+            if (!champs.length) {
+                champRoot.innerHTML = `<div style="padding:1rem;border:1px dashed var(--bd);border-radius:10px;color:var(--tx2);font-size:.85rem">日本一データがまだありません。TEAM_DATA の nippon 列か、日本一の年度マッピングを確認してください。</div>`;
+                return;
+            }
+            champRoot.innerHTML = champs.map(([t, c]) => {
                 const tag = TM[t]?.tag || 'giants';
                 const col = cols[tag] || '#888';
                 const pct = (c / maxC * 100).toFixed(1);
-                return `<div class="bar-row">
-      <div class="bar-lbl">${t}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}">${c}</div></div>
-      <div class="bar-num" style="color:${col}">${c}回</div>
+                const years = (champYears[t] || []).sort((a, b) => a - b);
+                return `<div style="padding:.25rem 0 .8rem;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div class="bar-row" style="margin-bottom:.35rem">
+        <div class="bar-lbl">${t}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}">${c}</div></div>
+        <div class="bar-num" style="color:${col}">${c}回</div>
+      </div>
+      <div style="margin-left:calc(150px + .6rem);font-size:.73rem;color:var(--tx2)">優勝年: ${years.join(' / ')}</div>
     </div>`;
             }).join('');
         }

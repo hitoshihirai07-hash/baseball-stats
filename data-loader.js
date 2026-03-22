@@ -19,6 +19,17 @@
     window.ORDER_TOP3 = window.ORDER_TOP3 || {};
     window.SITE_SUMMARY = window.SITE_SUMMARY || null;
 
+
+    const NIPPON_SERIES_WINNERS = {
+        2020: '福岡ソフトバンクホークス',
+        2021: '東京ヤクルトスワローズ',
+        2022: 'オリックスバファローズ',
+        2023: '阪神タイガース',
+        2024: '横浜DeNAベイスターズ',
+        2025: '福岡ソフトバンクホークス',
+    };
+
+
     const state = {
         loaded: { summary: false, batting: false, pitching: false, team: false, orderTop3: false },
         orderYears: new Set(),
@@ -54,6 +65,20 @@
 
     function syncHomeCounts() {
         if (typeof window.updateHomeCounts === 'function') window.updateHomeCounts();
+    }
+
+    function normalizeTeamRows(rows) {
+        if (!Array.isArray(rows)) return [];
+        const hasExplicitChampion = rows.some(row => row && row.nippon === '○');
+        return rows.map(row => {
+            if (!row || typeof row !== 'object') return row;
+            if (hasExplicitChampion) return row;
+            const championTeam = NIPPON_SERIES_WINNERS[Number(row.year)];
+            return {
+                ...row,
+                nippon: championTeam && row.team === championTeam ? '○' : (row.nippon || '-')
+            };
+        });
     }
 
     async function ensureSummary() {
@@ -92,7 +117,7 @@
         if (state.loaded.team) return window.TEAM_DATA;
         return once('team', async () => {
             const payload = await loadJSON(PATHS.team);
-            window.TEAM_DATA = payload.rows || [];
+            window.TEAM_DATA = normalizeTeamRows(payload.rows || []);
             state.loaded.team = true;
             return window.TEAM_DATA;
         });
@@ -140,6 +165,7 @@
         return true;
     }
 
+    window.NIPPON_SERIES_WINNERS = NIPPON_SERIES_WINNERS;
     window.DataStore = { YEARS, ensureSummary, ensureBatting, ensurePitching, ensureTeam, ensureOrderTop3, ensureOrderYear, ensureAllOrders, ensureSectionData, state };
     ensureSummary().catch(error => console.warn('summary load failed', error));
 })();
