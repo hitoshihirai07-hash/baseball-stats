@@ -211,7 +211,7 @@
                 .filter(row => !position || row.position === position)
                 .filter(row => {
                     if (!keyword) return true;
-                    return row.name.toLowerCase().includes(keyword) || row.no.toLowerCase().includes(keyword);
+                    return row.name.toLowerCase().includes(keyword);
                 })
                 .sort((a, b) => {
                     const teamDiff = currentTeamOrder(a.team) - currentTeamOrder(b.team);
@@ -243,7 +243,6 @@
                     <td>${start + idx + 1}</td>
                     <td>${ttag(row.team)} ${row.team}</td>
                     <td>${row.division || '-'}</td>
-                    <td>${row.no || '-'}</td>
                     <td><b>${row.name}</b></td>
                     <td>${row.position || '-'}</td>
                     <td>${row.birthDate || '-'}</td>
@@ -251,9 +250,8 @@
                     <td>${row.weight || '-'}</td>
                     <td>${row.throwHand || '-'}</td>
                     <td>${row.batHand || '-'}</td>
-                    <td>${row.note || '-'}</td>
                     <td>${row.updatedAt || '-'}</td>
-                </tr>`).join('') : '<tr><td colspan="13" style="text-align:center;color:var(--tx2)">該当データがありません</td></tr>';
+                </tr>`).join('') : '<tr><td colspan="11" style="text-align:center;color:var(--tx2)">該当データがありません</td></tr>';
 
             pager.innerHTML = totalPages <= 1 ? '' : `
                 <button ${currentMasterState.page === 1 ? 'disabled' : ''} onclick="changeCurrentMasterPage(-1)">← 前へ</button>

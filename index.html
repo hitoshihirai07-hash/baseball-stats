@@ -1499,7 +1499,7 @@
                         <option value="200">200件</option>
                         <option value="9999">全件</option>
                     </select></div>
-                <div class="sb"><input type="text" id="cy-search" placeholder="選手名・背番号で検索" oninput="renderCurrentMaster(true)" /></div>
+                <div class="sb"><input type="text" id="cy-search" placeholder="選手名で検索" oninput="renderCurrentMaster(true)" /></div>
             </div>
             <div class="mode-note" id="current-master-note"></div>
             <div class="tw">
@@ -1509,7 +1509,6 @@
                             <th>#</th>
                             <th>球団</th>
                             <th>区分</th>
-                            <th>No.</th>
                             <th>選手名</th>
                             <th>ポジション</th>
                             <th>生年月日</th>
@@ -1517,7 +1516,6 @@
                             <th>体重</th>
                             <th>投</th>
                             <th>打</th>
-                            <th>備考</th>
                             <th>更新日</th>
                         </tr>
                     </thead>
@@ -2336,7 +2334,7 @@
                 .filter(row => !position || row.position === position)
                 .filter(row => {
                     if (!keyword) return true;
-                    return row.name.toLowerCase().includes(keyword) || row.no.toLowerCase().includes(keyword);
+                    return row.name.toLowerCase().includes(keyword);
                 })
                 .sort((a, b) => {
                     const teamDiff = currentTeamOrder(a.team) - currentTeamOrder(b.team);
@@ -2368,7 +2366,6 @@
                     <td>${start + idx + 1}</td>
                     <td>${ttag(row.team)} ${row.team}</td>
                     <td>${row.division || '-'}</td>
-                    <td>${row.no || '-'}</td>
                     <td><b>${row.name}</b></td>
                     <td>${row.position || '-'}</td>
                     <td>${row.birthDate || '-'}</td>
@@ -2376,9 +2373,8 @@
                     <td>${row.weight || '-'}</td>
                     <td>${row.throwHand || '-'}</td>
                     <td>${row.batHand || '-'}</td>
-                    <td>${row.note || '-'}</td>
                     <td>${row.updatedAt || '-'}</td>
-                </tr>`).join('') : '<tr><td colspan="13" style="text-align:center;color:var(--tx2)">該当データがありません</td></tr>';
+                </tr>`).join('') : '<tr><td colspan="11" style="text-align:center;color:var(--tx2)">該当データがありません</td></tr>';
 
             pager.innerHTML = totalPages <= 1 ? '' : `
                 <button ${currentMasterState.page === 1 ? 'disabled' : ''} onclick="changeCurrentMasterPage(-1)">← 前へ</button>
