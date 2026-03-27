@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>NPB Stats | 今年度オーダー</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#0a0e1a; --bg2:#111827; --bg3:#1f2937; --ac:#f59e0b; --ac2:#3b82f6; --tx:#f9fafb; --tx2:#9ca3af; --bd:#374151; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+    header{background:linear-gradient(135deg,#0f172a,#1e1b4b,#0f172a);border-bottom:2px solid var(--ac);padding:0 1.5rem;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+    .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:1rem}
+    .logo{font-size:1.2rem;font-weight:900;text-decoration:none;color:var(--tx)}
+    .logo span{color:var(--ac)}
+    nav{display:flex;gap:.2rem;flex-wrap:wrap;justify-content:flex-end}
+    nav a{color:var(--tx2);padding:.5rem .9rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:700}
+    nav a:hover, nav a.active{background:rgba(245,158,11,.15);color:var(--ac)}
+    .hero{background:linear-gradient(135deg,#0f172a,#1e1b4b);padding:2rem 1.5rem}
+    .hero-in{max-width:1400px;margin:0 auto}
+    .hero h1{font-size:clamp(1.5rem,4vw,2.3rem);font-weight:900;margin-bottom:.5rem}
+    .hero h1 em{font-style:normal;background:linear-gradient(90deg,#f59e0b,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{color:var(--tx2);font-size:.92rem;line-height:1.8;max-width:900px}
+    .hero-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+    .btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ac);color:#08111f;border:none;padding:.7rem 1.15rem;border-radius:8px;font-weight:800;font-size:.86rem;text-decoration:none;cursor:pointer}
+    .btn.sub{background:var(--bg3);color:var(--tx);border:1px solid var(--bd)}
+    .main{max-width:1400px;margin:0 auto;padding:1.5rem}
+    .card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.1rem 1.1rem 1.25rem;margin-bottom:1rem;box-shadow:0 18px 40px rgba(0,0,0,.22)}
+    .stitle{font-size:1.08rem;font-weight:800;display:flex;align-items:center;gap:.55rem;margin-bottom:1rem}
+    .stitle::before{content:'';width:4px;height:1.1em;background:var(--ac);border-radius:2px}
+    .note{color:var(--tx2);font-size:.83rem;line-height:1.8;margin-top:-.2rem;margin-bottom:1rem}
+    .filters{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem}
+    .fg{display:flex;align-items:center;gap:.45rem}
+    .fg label{font-size:.78rem;color:var(--tx2);white-space:nowrap}
+    select,input[type=text]{background:var(--bg3);border:1px solid var(--bd);color:var(--tx);padding:.5rem .75rem;border-radius:8px;font-family:inherit;font-size:.9rem;outline:none}
+    select:hover,input[type=text]:hover{border-color:var(--ac2)}
+    select:focus,input[type=text]:focus{border-color:var(--ac)}
+    .tw{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:900px}
+    thead tr{background:var(--bg3);border-bottom:2px solid var(--ac)}
+    th,td{padding:.72rem .9rem;white-space:nowrap}
+    th{text-align:left;font-size:.72rem;color:var(--tx2);font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    tbody tr{border-bottom:1px solid var(--bd)}
+    tbody tr:hover{background:rgba(59,130,246,.06)}
+    tbody tr:last-child{border-bottom:none}
+    td{font-size:.9rem}
+    .empty{padding:2rem 1rem;color:var(--tx2);text-align:center}
+    .meta{display:flex;gap:1rem;flex-wrap:wrap;font-size:.83rem;color:var(--tx2);margin-bottom:.8rem}
+    .chip{display:inline-flex;align-items:center;gap:.45rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);padding:.38rem .65rem;border-radius:999px;color:#fbbf24;font-weight:700}
+    .games-note{font-size:.85rem;color:var(--tx2);margin:.6rem 0 .25rem}
+    @media (max-width: 900px){
+      header{padding:0 .8rem}
+      .hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}
+      nav{width:100%;overflow:auto;flex-wrap:nowrap}
+      .main,.hero{padding:1rem .9rem}
+      .filters{gap:.55rem}
+      .fg{width:100%}
+      .fg label{min-width:3.5rem}
+      select,input[type=text]{flex:1;min-width:0}
+      .hero-actions{width:100%}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hi">
+      <a class="logo" href="index.html">NPB <span>Stats</span></a>
+      <nav>
+        <a href="index.html">ホーム</a>
+        <a href="current.html" class="active">今年度</a>
+        <a href="batting.html">打撃成績</a>
+        <a href="pitching.html">投手成績</a>
+        <a href="simulator.html">シミュレーター</a>
+        <a href="order.html">オーダー</a>
+        <a href="myorder.html">俺のオーダー</a>
+        <a href="pro-report.html">分析レポート</a>
+        <a href="team.html">チーム成績</a>
+        <a href="records.html">成績記録</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-in">
+      <h1>今年度 <em>オーダー（2026）</em></h1>
+      <p>2026lineup.csv をそのまま読んで表示します。今後はこのCSVに行を下へ足していけば、そのまま今年度オーダーへ反映される形です。</p>
+      <div class="hero-actions">
+        <a class="btn sub" id="back-current-link" href="current.html">今年度ページへ戻る</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <section class="card">
+      <h2 class="stitle">今年度オーダー一覧</h2>
+      <p class="note">球団を選ぶと、その球団の試合日ごとの打順を確認できます。表示順は新しい順が初期値です。</p>
+      <div class="filters">
+        <div class="fg"><label>球団</label><select id="co-team"></select></div>
+        <div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
+        <div class="fg"><label>表示数</label><select id="co-limit"><option value="10">10試合</option><option value="30">30試合</option><option value="50">50試合</option><option value="9999">全試合</option></select></div>
+      </div>
+      <div class="meta">
+        <div class="chip" id="co-summary">読込中</div>
+        <div id="co-last-updated"></div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>試合日</th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>投手</th>
+            </tr>
+          </thead>
+          <tbody id="co-body"><tr><td colspan="11" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="games-note" id="co-foot"></div>
+    </section>
+  </main>
+
+  <script>
+    const CURRENT_ORDER_TEAM_ORDER = [
+      '読売ジャイアンツ','阪神タイガース','横浜DeNAベイスターズ','広島東洋カープ','中日ドラゴンズ','東京ヤクルトスワローズ',
+      '福岡ソフトバンクホークス','北海道日本ハムファイターズ','オリックス・バファローズ','埼玉西武ライオンズ','東北楽天ゴールデンイーグルス','千葉ロッテマリーンズ'
+    ];
+
+    function normalizeTeamName(name) {
+      return String(name || '').trim().replace(/[・･\s]/g, '').replace('ｄｅＮＡ','DeNA').replace('ＤｅＮＡ','DeNA');
+    }
+
+    function teamOrder(name) {
+      const normalized = normalizeTeamName(name);
+      const idx = CURRENT_ORDER_TEAM_ORDER.map(normalizeTeamName).indexOf(normalized);
+      return idx === -1 ? 999 : idx;
+    }
+
+    function parseCSVLine(line) {
+      const out = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          out.push(cur);
+          cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      out.push(cur);
+      return out.map(v => v.trim());
+    }
+
+    async function loadCurrentOrders() {
+      const res = await fetch('2026lineup.csv');
+      if (!res.ok) throw new Error('2026lineup.csv の読込に失敗しました');
+      const text = await res.text();
+      const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
+      if (lines.length <= 1) return [];
+      return lines.slice(1).map(line => {
+        const cols = parseCSVLine(line);
+        const gameId = cols[0] || '';
+        const gameDate = cols[1] || '';
+        const team = cols[2] || '';
+        const order = cols.slice(3, 12);
+        const pitcher = cols[12] || order[8] || '';
+        return {
+          gameId,
+          gameDate,
+          team,
+          teamNormalized: normalizeTeamName(team),
+          one: order[0] || '',
+          two: order[1] || '',
+          three: order[2] || '',
+          four: order[3] || '',
+          five: order[4] || '',
+          six: order[5] || '',
+          seven: order[6] || '',
+          eight: order[7] || '',
+          nine: order[8] || '',
+          pitcher
+        };
+      }).filter(row => row.gameDate && row.team);
+    }
+
+    const state = { rows: [] };
+
+    function fillTeams(prefTeam = '') {
+      const sel = document.getElementById('co-team');
+      const teams = [...new Map(state.rows.map(row => [row.teamNormalized, row.team])).values()]
+        .sort((a, b) => teamOrder(a) - teamOrder(b) || a.localeCompare(b, 'ja'));
+      sel.innerHTML = '<option value="">全球団</option>' + teams.map(team => `<option value="${team}">${team}</option>`).join('');
+      if (prefTeam) {
+        const target = [...sel.options].find(opt => normalizeTeamName(opt.value) === normalizeTeamName(prefTeam));
+        if (target) sel.value = target.value;
+      }
+    }
+
+    function renderCurrentOrders() {
+      const body = document.getElementById('co-body');
+      const team = document.getElementById('co-team').value;
+      const sort = document.getElementById('co-sort').value;
+      const limit = Number(document.getElementById('co-limit').value || 10);
+      const filtered = state.rows
+        .filter(row => !team || row.teamNormalized === normalizeTeamName(team))
+        .sort((a, b) => {
+          const d = String(a.gameDate).localeCompare(String(b.gameDate));
+          if (d !== 0) return sort === 'asc' ? d : -d;
+          const g = String(a.gameId).localeCompare(String(b.gameId));
+          return sort === 'asc' ? g : -g;
+        });
+      const visible = limit === 9999 ? filtered : filtered.slice(0, limit);
+
+      body.innerHTML = visible.length ? visible.map(row => `
+        <tr>
+          <td>${row.gameDate}</td>
+          <td>${row.one || '-'}</td>
+          <td>${row.two || '-'}</td>
+          <td>${row.three || '-'}</td>
+          <td>${row.four || '-'}</td>
+          <td>${row.five || '-'}</td>
+          <td>${row.six || '-'}</td>
+          <td>${row.seven || '-'}</td>
+          <td>${row.eight || '-'}</td>
+          <td>${row.nine || '-'}</td>
+          <td>${row.pitcher || '-'}</td>
+        </tr>`).join('') : '<tr><td colspan="11" class="empty">該当する今年度オーダーがありません。</td></tr>';
+
+      const summary = document.getElementById('co-summary');
+      const foot = document.getElementById('co-foot');
+      const label = team || '全球団';
+      summary.textContent = `${label} ${filtered.length}試合`;
+      foot.textContent = visible.length ? `${label} ${visible.length}試合を表示中` : `${label} の表示データはありません`;
+
+      const params = new URLSearchParams(location.search);
+      if (team) params.set('team', team); else params.delete('team');
+      history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params.toString() : ''));
+      document.getElementById('back-current-link').href = 'current.html' + (team ? `?team=${encodeURIComponent(team)}` : '');
+    }
+
+    async function init() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const prefTeam = params.get('team') || '';
+        state.rows = await loadCurrentOrders();
+        fillTeams(prefTeam);
+        document.getElementById('co-team').addEventListener('change', renderCurrentOrders);
+        document.getElementById('co-sort').addEventListener('change', renderCurrentOrders);
+        document.getElementById('co-limit').addEventListener('change', renderCurrentOrders);
+        const lastDate = state.rows.map(row => row.gameDate).sort().slice(-1)[0] || '';
+        document.getElementById('co-last-updated').textContent = lastDate ? `最新試合日: ${lastDate}` : '';
+        renderCurrentOrders();
+      } catch (error) {
+        document.getElementById('co-body').innerHTML = `<tr><td colspan="11" class="empty">${error.message}</td></tr>`;
+        document.getElementById('co-summary').textContent = '読込失敗';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1502,6 +1502,14 @@
                     </select></div>
                 <div class="sb"><input type="text" id="cy-search" placeholder="選手名で検索" oninput="renderCurrentMaster(true)" /></div>
             </div>
+            <div style="display:flex;gap:.6rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 1rem;padding:.9rem 1rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:10px;">
+                <div style="font-size:.84rem;color:var(--tx2);line-height:1.7;">
+                    2026年のオーダーは別ページで確認できます。球団を選んだ状態なら、その球団の今年度オーダーへそのまま移動します。
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                    <button class="pbtn" onclick="goCurrentOrderPage()">今年度オーダーを見る</button>
+                </div>
+            </div>
             <div class="mode-note" id="current-master-note"></div>
             <div class="tw">
                 <table>
@@ -2388,6 +2396,21 @@
             renderCurrentMaster();
         }
 
+        function applyCurrentTeamFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const team = params.get('team') || '';
+            const teamSel = document.getElementById('cy-team');
+            if (!teamSel || !team) return;
+            const target = [...teamSel.options].find(opt => opt.value === team);
+            if (target) teamSel.value = team;
+        }
+
+        function goCurrentOrderPage() {
+            const team = document.getElementById('cy-team')?.value || '';
+            const href = 'current-order.html' + (team ? `?team=${encodeURIComponent(team)}` : '');
+            window.location.href = href;
+        }
+
         // ============================================================
         // SIMULATOR LOGIC
         // ============================================================
@@ -3257,6 +3280,7 @@
                 if (id === 'current' && window.CurrentMasterStore) {
                     await window.CurrentMasterStore.ensure();
                     initCurrentMasterFilters();
+                    applyCurrentTeamFromQuery();
                 }
 
                 if (id === 'order') {
