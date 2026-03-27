@@ -2,7 +2,7 @@
 // 公開側では JSON を必要な分だけ読み込み、初回表示を軽くします。
 
 (function () {
-    const YEARS = [2020, 2021, 2022, 2023, 2024, 2025];
+    const YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
     const PATHS = {
         summary: 'public-data/summary.json',
         batting: 'public-data/batting/all.json',
@@ -10,6 +10,7 @@
         team: 'public-data/team/all.json',
         orderTop3: 'public-data/order/top3.json',
         orderYear: year => `public-data/order/by-year/${year}.json`,
+        order2026Csv: '2026lineup.csv',
     };
 
     window.BATTING_DATA = window.BATTING_DATA || [];
@@ -132,12 +133,65 @@
         });
     }
 
+    function splitCSVRow(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (ch === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += ch;
+            }
+        }
+        result.push(current);
+        return result;
+    }
+
+    async function loadOrderCSV2026() {
+        const response = await fetch(PATHS.order2026Csv);
+        if (!response.ok) throw new Error(`Failed to load: ${PATHS.order2026Csv}`);
+        const text = (await response.text()).replace(/^\ufeff/, '');
+        const lines = text.split(/\r?\n/).filter(line => line.trim());
+        if (lines.length <= 1) return { rows: [] };
+        const rows = [];
+        for (let i = 1; i < lines.length; i++) {
+            const cols = splitCSVRow(lines[i]);
+            if (cols.length < 13) continue;
+            rows.push([
+                2026,
+                String(cols[1] || '').trim(),
+                String(cols[2] || '').trim(),
+                String(cols[3] || '').trim(),
+                String(cols[4] || '').trim(),
+                String(cols[5] || '').trim(),
+                String(cols[6] || '').trim(),
+                String(cols[7] || '').trim(),
+                String(cols[8] || '').trim(),
+                String(cols[9] || '').trim(),
+                String(cols[10] || '').trim(),
+                String(cols[11] || '').trim(),
+                String(cols[12] || '').trim(),
+            ]);
+        }
+        return { rows };
+    }
+
     async function ensureOrderYear(year) {
         const numericYear = Number(year);
         if (!numericYear) return window.ORDER_DATA;
         if (state.orderYears.has(numericYear)) return window.ORDER_DATA;
         return once(`order-${numericYear}`, async () => {
-            const payload = await loadJSON(PATHS.orderYear(numericYear));
+            const payload = numericYear === 2026 ? await loadOrderCSV2026() : await loadJSON(PATHS.orderYear(numericYear));
             const rows = payload.rows || [];
             window.ORDER_DATA.push(...rows);
             state.orderYears.add(numericYear);
@@ -166,6 +220,6 @@
     }
 
     window.NIPPON_SERIES_WINNERS = NIPPON_SERIES_WINNERS;
-    window.DataStore = { YEARS, ensureSummary, ensureBatting, ensurePitching, ensureTeam, ensureOrderTop3, ensureOrderYear, ensureAllOrders, ensureSectionData, state };
+    window.DataStore = { YEARS, ORDER_YEARS: YEARS.slice(), ensureSummary, ensureBatting, ensurePitching, ensureTeam, ensureOrderTop3, ensureOrderYear, ensureAllOrders, ensureSectionData, state };
     ensureSummary().catch(error => console.warn('summary load failed', error));
 })();

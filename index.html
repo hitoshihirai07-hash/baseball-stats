@@ -2221,9 +2221,10 @@
             const tTeams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
             const tyears = [...new Set(TEAM_DATA.map(d => d.year))].sort((a, b) => b - a);
             const pyears = [...new Set(PITCHING_DATA.map(d => d[1]))].sort((a, b) => b - a);
-            const oyears = ORDER_DATA.length
-                ? [...new Set(ORDER_DATA.map(d => d[0]))].sort((a, b) => b - a)
-                : [...(window.SITE_SUMMARY?.years || [])].sort((a, b) => b - a);
+            const orderYearBase = ORDER_DATA.length
+                ? [...new Set(ORDER_DATA.map(d => d[0]))]
+                : [...(window.SITE_SUMMARY?.years || [])];
+            const oyears = [...new Set([...(window.DataStore?.ORDER_YEARS || []), ...orderYearBase])].sort((a, b) => b - a);
             const oTeams = ORDER_DATA.length
                 ? [...new Set(ORDER_DATA.map(d => d[2]))].sort()
                 : [...(window.SITE_SUMMARY?.teams || [])].sort();
@@ -3012,23 +3013,45 @@
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
             const container = document.getElementById('order-top3');
-            if (!y || !t || !ORDER_TOP3[t] || !ORDER_TOP3[t][y]) {
+            if (!y || !t) {
                 container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">年度とチームを選択してください</div>';
                 return;
             }
-            const data = ORDER_TOP3[t][y];
+
+            let data = ORDER_TOP3?.[t]?.[y] || null;
+            if (!data) {
+                const rows = ORDER_DATA.filter(d => String(d[0]) === String(y) && d[2] === t);
+                if (!rows.length) {
+                    container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">該当データがありません</div>';
+                    return;
+                }
+                data = {};
+                for (let i = 1; i <= 9; i++) {
+                    const counts = new Map();
+                    rows.forEach(row => {
+                        const player = String(row[i + 2] || '').trim();
+                        if (!player) return;
+                        counts.set(player, (counts.get(player) || 0) + 1);
+                    });
+                    data[i] = [...counts.entries()]
+                        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'))
+                        .slice(0, 3)
+                        .map(([player, count]) => ({ player, count }));
+                }
+            }
+
             let html = '';
             for (let i = 1; i <= 9; i++) {
                 const tops = data[i] || [];
                 html += `
                     <div class="order-card">
                         <div class="order-pos">${i}番</div>
-                        ${tops.map((p, idx) => `
+                        ${tops.length ? tops.map((p, idx) => `
                             <div class="top-item">
                                 <div class="top-player"><span class="top-rank">${idx + 1}</span>${p.player}</div>
                                 <div class="top-sub">${p.count} 試合</div>
                             </div>
-                        `).join('')}
+                        `).join('') : '<div class="top-item"><div class="top-sub">データなし</div></div>'}
                     </div>
                 `;
             }
@@ -3239,7 +3262,8 @@
 
                 if (id === 'order') {
                     const oy = document.getElementById('oy');
-                    if (oy && !oy.value && window.SITE_SUMMARY?.latestYear) oy.value = String(window.SITE_SUMMARY.latestYear);
+                    const latestOrderYear = Math.max(...((window.DataStore?.ORDER_YEARS || []).map(Number).filter(Boolean)), Number(window.SITE_SUMMARY?.latestYear || 0));
+                    if (oy && !oy.value && latestOrderYear) oy.value = String(latestOrderYear);
                 }
 
                 const updatedCurrentCount = window.CURRENT_PLAYER_MASTER?.length || 0;
