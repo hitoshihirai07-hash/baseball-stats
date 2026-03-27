@@ -124,9 +124,10 @@
               <th>8</th>
               <th>9</th>
               <th>投手</th>
+              <th>対戦相手</th>
             </tr>
           </thead>
-          <tbody id="co-body"><tr><td colspan="11" class="empty">読込中...</td></tr></tbody>
+          <tbody id="co-body"><tr><td colspan="12" class="empty">読込中...</td></tr></tbody>
         </table>
       </div>
       <div class="games-note" id="co-foot"></div>
@@ -179,6 +180,10 @@
       const text = await res.text();
       const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
       if (lines.length <= 1) return [];
+      const header = parseCSVLine(lines[0]).map(col => String(col || '').trim());
+      const lastHeader = header[header.length - 1] || '';
+      const hasOpponentColumn = /対戦相手/.test(lastHeader) || header.length >= 14;
+
       return lines.slice(1).map(line => {
         const cols = parseCSVLine(line);
         const gameId = cols[0] || '';
@@ -186,6 +191,7 @@
         const team = cols[2] || '';
         const order = cols.slice(3, 12);
         const pitcher = cols[12] || order[8] || '';
+        const opponent = hasOpponentColumn ? (cols[13] || '') : '';
         return {
           gameId,
           gameDate,
@@ -200,7 +206,8 @@
           seven: order[6] || '',
           eight: order[7] || '',
           nine: order[8] || '',
-          pitcher
+          pitcher,
+          opponent
         };
       }).filter(row => row.gameDate && row.team);
     }
@@ -246,7 +253,8 @@
           <td>${row.eight || '-'}</td>
           <td>${row.nine || '-'}</td>
           <td>${row.pitcher || '-'}</td>
-        </tr>`).join('') : '<tr><td colspan="11" class="empty">該当する今年度オーダーがありません。</td></tr>';
+          <td>${row.opponent || '-'}</td>
+        </tr>`).join('') : '<tr><td colspan="12" class="empty">該当する今年度オーダーがありません。</td></tr>';
 
       const summary = document.getElementById('co-summary');
       const foot = document.getElementById('co-foot');
@@ -273,7 +281,7 @@
         document.getElementById('co-last-updated').textContent = lastDate ? `最新試合日: ${lastDate}` : '';
         renderCurrentOrders();
       } catch (error) {
-        document.getElementById('co-body').innerHTML = `<tr><td colspan="11" class="empty">${error.message}</td></tr>`;
+        document.getElementById('co-body').innerHTML = `<tr><td colspan="12" class="empty">${error.message}</td></tr>`;
         document.getElementById('co-summary').textContent = '読込失敗';
       }
     }
