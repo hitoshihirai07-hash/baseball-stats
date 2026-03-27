@@ -99,7 +99,7 @@
   <main class="main">
     <section class="card">
       <h2 class="stitle">今年度オーダー一覧</h2>
-      <p class="note">球団を選ぶと、その球団の試合日ごとの打順を確認できます。表示順は新しい順が初期値です。</p>
+      <p class="note">球団を選ぶと、その球団の試合日ごとの打順を確認できます。チーム名と対戦相手を表に残す形です。表示順は新しい順が初期値です。</p>
       <div class="filters">
         <div class="fg"><label>球団</label><select id="co-team"></select></div>
         <div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
@@ -114,6 +114,7 @@
           <thead>
             <tr>
               <th>試合日</th>
+              <th>チーム</th>
               <th>1</th>
               <th>2</th>
               <th>3</th>
@@ -127,7 +128,7 @@
               <th>対戦相手</th>
             </tr>
           </thead>
-          <tbody id="co-body"><tr><td colspan="12" class="empty">読込中...</td></tr></tbody>
+          <tbody id="co-body"><tr><td colspan="13" class="empty">読込中...</td></tr></tbody>
         </table>
       </div>
       <div class="games-note" id="co-foot"></div>
@@ -243,6 +244,7 @@
       body.innerHTML = visible.length ? visible.map(row => `
         <tr>
           <td>${row.gameDate}</td>
+          <td>${row.team || '-'}</td>
           <td>${row.one || '-'}</td>
           <td>${row.two || '-'}</td>
           <td>${row.three || '-'}</td>
@@ -254,7 +256,7 @@
           <td>${row.nine || '-'}</td>
           <td>${row.pitcher || '-'}</td>
           <td>${row.opponent || '-'}</td>
-        </tr>`).join('') : '<tr><td colspan="12" class="empty">該当する今年度オーダーがありません。</td></tr>';
+        </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する今年度オーダーがありません。</td></tr>';
 
       const summary = document.getElementById('co-summary');
       const foot = document.getElementById('co-foot');
@@ -281,7 +283,7 @@
         document.getElementById('co-last-updated').textContent = lastDate ? `最新試合日: ${lastDate}` : '';
         renderCurrentOrders();
       } catch (error) {
-        document.getElementById('co-body').innerHTML = `<tr><td colspan="12" class="empty">${error.message}</td></tr>`;
+        document.getElementById('co-body').innerHTML = `<tr><td colspan="13" class="empty">${error.message}</td></tr>`;
         document.getElementById('co-summary').textContent = '読込失敗';
       }
     }
