@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="PokeEdgeのポケモン個別登録ページ。性格・技・持ち物・努力値・個体値を登録して実数値を自動計算。登録したポケモンをパーティ管理で活用できます。">
+<meta name="keywords" content="ポケモン登録,努力値,個体値,実数値,パーティ管理,PokeEdge">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="ポケモン登録 | PokeEdge">
+<meta property="og:description" content="性格・技・持ち物・努力値・個体値を登録して実数値を自動計算。登録したポケモンをパーティ管理で活用。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pokeedge.pages.dev/pokemon.html">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://pokeedge.pages.dev/pokemon.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeEdge | ポケモン登録</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-sync.js"></script>
+<script>
+(function(){
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<script>
+(function(){
+  var dark={'--bg':'#07090f','--bg2':'#0b0e1a','--panel':'#0f1423','--border':'#1a2540','--border2':'#243356','--accent':'#00c8f0','--accent2':'#ff3060','--accent3':'#ffc800','--green':'#00e676','--text':'#d8e8ff','--text2':'#4a6080','--text3':'#7a90b0'};
+  var light={'--bg':'#e8f4f8','--bg2':'#d0e8f0','--panel':'#f4fbff','--border':'#90c8e0','--border2':'#60a8cc','--accent':'#0066aa','--accent2':'#cc1040','--accent3':'#cc7700','--green':'#007744','--text':'#051828','--text2':'#2a5070','--text3':'#0a3050'};
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  var vars=t==='light'?light:dark;
+  var root=document.documentElement.style;
+  for(var k in vars)root.setProperty(k,vars[k]);
+})();
+</script>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#07090f;--bg2:#0b0e1a;--panel:#0f1423;
+  --border:#1a2540;--border2:#243356;
+  --accent:#00c8f0;--accent2:#ff3060;--accent3:#ffc800;--green:#00e676;
+  --text:#d8e8ff;--text2:#4a6080;--text3:#7a90b0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 5%,rgba(0,200,240,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 30% at 90% 90%,rgba(255,48,96,0.06) 0%,transparent 60%),
+    linear-gradient(rgba(0,200,240,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,240,0.018) 1px,transparent 1px);
+  background-size:auto,auto,52px 52px,52px 52px;}
+header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;gap:14px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 20px rgba(0,200,240,0.4);flex-shrink:0;cursor:pointer;}
+.logo em{color:var(--accent2);font-style:normal;}
+.header-sep{width:1px;height:16px;background:var(--border);flex-shrink:0;}
+.header-sub{font-size:10px;color:var(--text2);letter-spacing:2px;flex-shrink:0;}
+
+/* HERO */
+.hero{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:72px 24px 48px;}
+.hero-eyebrow{font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,88px);line-height:0.95;letter-spacing:4px;margin-bottom:24px;}
+.hero-title .hl{color:var(--accent);}
+.hero-title .hl2{color:var(--accent2);}
+.hero-desc{font-size:15px;color:var(--text3);line-height:1.9;max-width:560px;margin-bottom:40px;}
+
+/* CTAボタン */
+.cta-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:64px;}
+.cta-primary{
+  display:inline-block;padding:14px 32px;
+  background:linear-gradient(135deg,var(--accent),#007a99);
+  color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;
+  text-decoration:none;cursor:pointer;border:none;transition:all 0.18s;
+}
+.cta-primary:hover{opacity:0.85;transform:translateY(-2px);}
+.cta-secondary{
+  display:inline-block;padding:14px 32px;
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text3);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;
+  text-decoration:none;cursor:pointer;transition:all 0.18s;
+}
+.cta-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ツール選択カード */
+.tools-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.section-head{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:640px){.tools-grid{grid-template-columns:1fr;}}
+.tool-card{
+  background:var(--panel);border:1px solid var(--border);
+  padding:24px 20px;cursor:pointer;transition:all 0.2s;
+  text-decoration:none;display:block;position:relative;overflow:hidden;
+}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transition:transform 0.2s;}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.tool-card:hover::before{transform:scaleX(1);}
+.tool-card-icon{font-size:28px;margin-bottom:12px;}
+.tool-card-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent);margin-bottom:8px;}
+.tool-card-desc{font-size:12px;color:var(--text3);line-height:1.8;}
+.tool-card-tag{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:var(--text2);border:1px solid var(--border2);padding:2px 8px;}
+
+/* 使い方セクション */
+.usage-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:640px){.usage-grid{grid-template-columns:1fr;}}
+.usage-card{background:var(--panel);border:1px solid var(--border);padding:22px;}
+.usage-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--border2);line-height:1;margin-bottom:8px;}
+.usage-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.usage-desc{font-size:12px;color:var(--text3);line-height:1.9;}
+
+/* ユースケース */
+.case-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.case-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);}
+.case-item{background:var(--panel);padding:18px 22px;display:flex;align-items:flex-start;gap:16px;}
+.case-item:hover{background:var(--panel2);}
+.case-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.case-text{font-size:13px;color:var(--text3);line-height:1.8;}
+.case-text strong{color:var(--text);display:block;margin-bottom:3px;font-size:13px;}
+
+/* 世代バナー */
+.gen-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.gen-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:640px){.gen-cards{grid-template-columns:1fr;}}
+.gen-card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;}
+.gen-card-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;margin-bottom:6px;}
+.gen-card-name.sv{color:var(--accent);}
+.gen-card-name.champ{color:var(--accent2);}
+.gen-card-name.swsh{color:var(--accent3);}
+.gen-card-desc{font-size:11px;color:var(--text3);line-height:1.8;}
+.new-tag{display:inline-block;background:var(--accent2);color:#fff;font-size:8px;font-weight:700;padding:2px 6px;letter-spacing:1px;margin-left:8px;vertical-align:middle;}
+
+/* アフィリ */
+.affili-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 48px;}
+.affili-row{display:flex;gap:10px;flex-wrap:wrap;}
+.affili-card{display:block;background:var(--panel);border:1px solid var(--border);padding:14px 18px;text-decoration:none;transition:border-color 0.18s;flex:1;min-width:200px;}
+.affili-card:hover{border-color:var(--accent3);}
+.affili-badge{font-size:8px;color:var(--accent3);letter-spacing:2px;font-weight:700;margin-bottom:5px;}
+.affili-name{font-size:12px;color:var(--text);font-weight:700;}
+.affili-price{font-size:12px;color:var(--accent3);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.affili-cta{display:inline-block;margin-top:8px;background:var(--accent3);color:#000;font-size:9px;font-weight:700;padding:4px 10px;letter-spacing:1px;}
+
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--text2);letter-spacing:4px;}
+.footer-text{font-size:10px;color:var(--text2);line-height:1.6;}
+/* ナビゲーション */
+.header-nav{display:flex;gap:3px;margin-left:auto;flex-wrap:nowrap;overflow-x:auto;}
+.nav-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:4px 10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:1px;transition:all 0.18s;text-decoration:none;display:inline-block;white-space:nowrap;flex-shrink:0;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,200,240,0.07);}
+
+  background:radial-gradient(ellipse 50% 35% at 10% 5%,rgba(0,200,240,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 25% at 90% 90%,rgba(255,48,96,0.04) 0%,transparent 60%),
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--accent);cursor:pointer;flex-shrink:0;}
+/* レイアウト */
+.layout{position:relative;z-index:1;display:grid;grid-template-columns:280px 1fr;max-width:1100px;margin:0 auto;padding:20px 16px;gap:16px;align-items:start;}
+@media(max-width:800px){.layout{grid-template-columns:1fr;}}
+/* 登録済みリスト */
+.reg-panel{background:var(--panel);border:1px solid var(--border);padding:16px;position:sticky;top:70px;}
+.reg-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.reg-count{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px;}
+.reg-search{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-family:'Noto Sans JP',sans-serif;font-size:12px;outline:none;margin-bottom:10px;}
+.reg-search:focus{border-color:var(--accent);}
+.reg-list{max-height:calc(100vh - 240px);overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.reg-item{background:var(--bg2);border:1px solid var(--border);padding:10px 12px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;}
+.reg-item:hover,.reg-item.active{border-color:var(--accent);background:rgba(0,200,240,0.05);}
+.reg-item-name{font-size:12px;font-weight:700;flex:1;}
+.reg-item-nature{font-size:10px;color:var(--text2);}
+.reg-item-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:12px;padding:0 2px;}
+.reg-item-del:hover{color:var(--accent2);}
+.reg-new-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),#007a99);border:none;color:#000;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;margin-top:10px;transition:opacity 0.18s;}
+.reg-new-btn:hover{opacity:0.85;}
+/* 編集フォーム */
+.edit-panel{background:var(--panel);border:1px solid var(--border);padding:20px;}
+.edit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.edit-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text2);}
+.edit-pokename{font-size:22px;font-weight:700;color:var(--accent);margin-top:2px;}
+.save-btn{padding:10px 24px;background:linear-gradient(135deg,var(--green),#007a40);border:none;color:#000;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;transition:opacity 0.18s;}
+.save-btn:hover{opacity:0.85;}
+.section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.sec-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;}
+label{display:block;font-size:10px;color:var(--text2);margin-bottom:4px;margin-top:10px;letter-spacing:1px;}
+label:first-child{margin-top:0;}
+input[type=text],input[type=number],select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'Noto Sans JP',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+select option{background:var(--bg2);}
+textarea{resize:vertical;min-height:60px;line-height:1.6;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+/* ポケモン検索 */
+.search-wrap{position:relative;}
+.search-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 12px;font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--accent);}
+.dropdown{display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--panel);border:1px solid var(--border2);max-height:200px;overflow-y:auto;}
+.dropdown.show{display:block;}
+.drop-item{padding:8px 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);transition:background 0.12s;}
+.drop-item:hover{background:var(--bg2);}
+/* 種族値バー */
+.base-stat-box{background:var(--bg2);border:1px solid var(--border);padding:10px 12px;margin-top:8px;}
+.bstat-row{display:grid;grid-template-columns:48px 1fr 28px;align-items:center;gap:6px;margin-bottom:5px;}
+.bstat-label{font-size:9px;color:var(--text2);}
+.bstat-bar-bg{height:4px;background:var(--bg);overflow:hidden;}
+.bstat-bar-fg{height:100%;transition:width 0.5s;}
+.bstat-val{font-size:9px;text-align:right;font-family:'JetBrains Mono',monospace;}
+/* 実数値 */
+.real-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.real-item{background:var(--bg2);border:1px solid var(--border);padding:7px 8px;text-align:center;}
+.real-label{font-size:9px;color:var(--text2);}
+.real-val{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1.2;}
+/* EV */
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ev-item label{margin-top:0;}
+.ev-row{display:grid;grid-template-columns:1fr 48px;gap:6px;align-items:center;}
+.ev-remain{font-size:11px;color:var(--accent3);font-family:'JetBrains Mono',monospace;}
+.ev-over{color:var(--accent2)!important;}
+/* 技 */
+.moves-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.move-slot{background:var(--bg2);border:1px solid var(--border);padding:8px 10px;min-height:48px;position:relative;display:flex;align-items:center;gap:8px;}
+.move-slot.empty{opacity:0.4;}
+.move-slot-num{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--text2);flex-shrink:0;}
+.move-slot-name{font-size:12px;font-weight:700;flex:1;}
+.move-slot-type{display:inline-block;padding:1px 6px;font-size:8px;font-weight:700;}
+.move-slot-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:12px;}
+.move-slot-del:hover{color:var(--accent2);}
+/* type pills */
+.type-pill{display:inline-block;padding:2px 7px;font-size:9px;font-weight:700;letter-spacing:1px;}
+.tp-ノーマル{background:#9e9e9e;color:#fff;}.tp-ほのお,.tp-炎{background:#c62828;color:#fff;}.tp-みず,.tp-水{background:#1565c0;color:#fff;}
+.tp-でんき,.tp-電気{background:#f9a825;color:#000;}.tp-くさ,.tp-草{background:#2e7d32;color:#fff;}.tp-こおり,.tp-氷{background:#00838f;color:#fff;}
+.tp-かくとう,.tp-格闘{background:#b71c1c;color:#fff;}.tp-どく,.tp-毒{background:#6a1b9a;color:#fff;}.tp-じめん,.tp-地面{background:#6d4c41;color:#fff;}
+.tp-ひこう,.tp-飛行{background:#0277bd;color:#fff;}.tp-エスパー{background:#ad1457;color:#fff;}.tp-むし,.tp-虫{background:#558b2f;color:#fff;}
+.tp-いわ,.tp-岩{background:#4e342e;color:#fff;}.tp-ゴースト{background:#4a148c;color:#fff;}.tp-ドラゴン{background:#4527a0;color:#fff;}
+.tp-あく,.tp-悪{background:#212121;color:#fff;}.tp-はがね,.tp-鋼{background:#455a64;color:#fff;}.tp-フェアリー{background:#880e4f;color:#fff;}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:18px 20px;margin-top:36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+/* ハンバーガーメニュー（スマホ） */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;margin-left:auto;background:none;border:none;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:98;}
+.nav-overlay.show{display:block;}
+@media(max-width:768px){
+  .header-nav{
+    display:none;
+    position:fixed;
+    top:52px;right:0;
+    width:220px;
+    height:calc(100vh - 52px);
+    background:rgba(7,9,15,0.98);
+    border-left:1px solid var(--border);
+    flex-direction:column;
+    gap:0;
+    padding:12px 0;
+    z-index:99;
+    overflow-y:auto;
+    backdrop-filter:blur(20px);
+  }
+  .header-nav.open{display:flex;}
+  .nav-btn{
+    padding:14px 22px;
+    font-size:13px;
+    border:none;
+    border-bottom:1px solid var(--border);
+    width:100%;
+    text-align:left;
+    letter-spacing:1px;
+  }
+  .nav-btn:last-child{border-bottom:none;}
+  .nav-btn.active{background:rgba(0,200,240,0.08);border-left:3px solid var(--accent);}
+  .hamburger{display:flex;}
+}
+
+/* ===== ライトモード ===== */
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="location.href='index.html'">Poke<em>Edge</em></div>
+  <div class="header-sep"></div>
+  <div class="header-sub">ポケモン登録</div>
+  <div class="header-nav" id="main-nav">
+    <a class="nav-btn" href="index.html">TOP</a>
+    <a class="nav-btn" href="calc.html">ダメージ計算</a>
+    <a class="nav-btn" href="move.html">技選択判定</a>
+    <a class="nav-btn" href="party.html">パーティ管理</a>
+    <a class="nav-btn active" href="pokemon.html">ポケモン登録</a>
+    <a class="nav-btn" href="stats.html">選出率</a>
+    <a class="nav-btn" href="scope.html">アナライザー</a>
+    <a class="nav-btn" href="season.html">使用可能</a>
+    <a class="nav-btn" href="policy.html">サイト情報</a>
+  </div>
+
+  <button id="theme-btn" onclick="toggleTheme()" style="background:transparent;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-size:16px;cursor:pointer;transition:all 0.18s;flex-shrink:0;line-height:1;" title="ライト/ダークモード切替">🌙</button>
+  <div id="auth-ui" style="margin-left:8px;display:flex;align-items:center;gap:6px;flex-shrink:0;"></div>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-overlay" id="nav-overlay" onclick="closeNav()"></div>
+</header>
+
+<div class="layout">
+
+  <!-- 左: 登録済みポケモンリスト -->
+  <div class="reg-panel">
+    <div class="reg-title">
+      <span>登録済みポケモン</span>
+      <span class="reg-count" id="reg-count">0体</span>
+    </div>
+    <input class="reg-search" id="reg-search" type="text" placeholder="絞り込み検索...">
+    <div class="reg-list" id="reg-list"></div>
+    <button class="reg-new-btn" id="btn-new-pokemon">＋ 新規登録</button>
+  </div>
+
+  <!-- 右: 編集フォーム -->
+  <div class="edit-panel" id="edit-panel">
+    <div id="edit-empty" style="color:var(--text2);font-size:13px;padding:20px 0;line-height:2;">
+      左の「＋ 新規登録」からポケモンを追加してください。<br>
+      登録したポケモンはパーティ管理で選択して編成できます。
+    </div>
+
+    <div id="edit-form" style="display:none;">
+      <div class="edit-header">
+        <div>
+          <div class="edit-title">編集中</div>
+          <div class="edit-pokename" id="edit-pokename">—</div>
+          <div id="edit-types" style="display:flex;gap:4px;margin-top:4px;"></div>
+        </div>
+        <button class="save-btn" id="btn-save-pokemon">💾 保存</button>
+      </div>
+
+      <!-- ポケモン選択 -->
+      <div class="section">
+        <div class="sec-title">ポケモン</div>
+        <div id="season-filter-wrap" style="display:none;margin-bottom:6px;">
+  <select id="global-season-filter" onchange="onSeasonFilterChange()" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-size:10px;font-family:'Noto Sans JP',sans-serif;outline:none;">
+    <option value="">すべてのポケモン表示</option>
+  </select>
+</div>
+<div class="search-wrap">
+          <input class="search-input" id="poke-search" type="text" placeholder="ポケモン名を入力..." autocomplete="off">
+          <div class="dropdown" id="poke-drop"></div>
+        </div>
+        <div id="base-stats-box" style="display:none;" class="base-stat-box">
+          <div id="base-stats"></div>
+        </div>
+        <label>ニックネーム（任意）</label>
+        <input type="text" id="nickname" placeholder="例: エースウーラオス">
+      </div>
+
+      <!-- 基本設定 -->
+      <div class="section">
+        <div class="sec-title">基本設定</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label>レベル</label>
+            <input type="number" id="f-lv" value="50" min="1" max="100">
+          </div>
+          <div>
+            <label>性格</label>
+            <select id="f-nature" onchange="recalcReal()">
+              <option>おっとり</option><option>いじっぱり</option><option>やんちゃ</option>
+              <option>ゆうかん</option><option>さみしがり</option><option>ずぶとい</option>
+              <option>わんぱく</option><option>のうてんき</option><option>のんき</option>
+              <option>ひかえめ</option><option>うっかりや</option><option>おだやか</option>
+              <option>おとなしい</option><option>しんちょう</option><option>なまいき</option>
+              <option>おくびょう</option><option>せっかち</option><option>ようき</option>
+              <option>むじゃき</option><option>おとぼけ</option>
+            </select>
+          </div>
+        </div>
+        <label>持ち物</label>
+        <input type="text" id="f-item" placeholder="例: こだわりハチマキ">
+      </div>
+
+      <!-- 個体値 -->
+      <div class="section">
+        <div class="sec-title">個体値（0〜31）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <label>全ステータス共通</label>
+            <div style="display:grid;grid-template-columns:1fr 48px;gap:6px;align-items:center;">
+              <input type="range" id="iv-range" min="0" max="31" value="31" oninput="syncIV(this.value)">
+              <input type="number" id="iv-num" min="0" max="31" value="31" oninput="syncIV(this.value)">
+            </div>
+            <div style="font-size:10px;color:var(--text2);margin-top:4px;">現在: <span id="iv-disp" style="color:var(--accent3);font-family:'JetBrains Mono',monospace;">31</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.8;padding-top:16px;">
+            ※ 全ステータスに同じ個体値を適用します。<br>ステータスごとに異なる場合は個別に設定できます（準備中）。
+          </div>
+        </div>
+      </div>
+
+      <!-- 努力値 -->
+      <div class="section">
+        <div class="sec-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span id="ev-title">努力値（合計上限510）</span>
+          <span class="ev-remain" id="ev-remain">残り510</span>
+        </div>
+        <!-- ゲームモード選択 -->
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;padding:8px;background:var(--bg2);border:1px solid var(--border);">
+          <span style="font-size:10px;color:var(--text2);letter-spacing:1px;">ゲーム:</span>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="radio" name="poke-game-mode" id="poke-mode-classic" value="classic" checked onchange="onPokeModeChange()">
+            <span style="font-size:11px;color:var(--text);">従来作（最大252）</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <input type="radio" name="poke-game-mode" id="poke-mode-champions" value="champions" onchange="onPokeModeChange()">
+            <span style="font-size:11px;color:var(--accent3);">Champions（最大32）</span>
+          </label>
+        </div>
+        <div class="ev-grid">
+          <div class="ev-item">
+            <label>HP</label>
+            <div class="ev-row">
+              <input type="range" id="ev-hp-r" min="0" max="252" step="4" value="0" oninput="syncEV('hp',this.value)">
+              <input type="number" id="ev-hp" min="0" max="252" value="0" oninput="syncEV('hp',this.value)">
+            </div>
+          </div>
+          <div class="ev-item">
+            <label>こうげき</label>
+            <div class="ev-row">
+              <input type="range" id="ev-atk-r" min="0" max="252" step="4" value="0" oninput="syncEV('atk',this.value)">
+              <input type="number" id="ev-atk" min="0" max="252" value="0" oninput="syncEV('atk',this.value)">
+            </div>
+          </div>
+          <div class="ev-item">
+            <label>ぼうぎょ</label>
+            <div class="ev-row">
+              <input type="range" id="ev-def-r" min="0" max="252" step="4" value="0" oninput="syncEV('def',this.value)">
+              <input type="number" id="ev-def" min="0" max="252" value="0" oninput="syncEV('def',this.value)">
+            </div>
+          </div>
+          <div class="ev-item">
+            <label>とくこう</label>
+            <div class="ev-row">
+              <input type="range" id="ev-spa-r" min="0" max="252" step="4" value="0" oninput="syncEV('spa',this.value)">
+              <input type="number" id="ev-spa" min="0" max="252" value="0" oninput="syncEV('spa',this.value)">
+            </div>
+          </div>
+          <div class="ev-item">
+            <label>とくぼう</label>
+            <div class="ev-row">
+              <input type="range" id="ev-spd-r" min="0" max="252" step="4" value="0" oninput="syncEV('spd',this.value)">
+              <input type="number" id="ev-spd" min="0" max="252" value="0" oninput="syncEV('spd',this.value)">
+            </div>
+          </div>
+          <div class="ev-item">
+            <label>すばやさ</label>
+            <div class="ev-row">
+              <input type="range" id="ev-spe-r" min="0" max="252" step="4" value="0" oninput="syncEV('spe',this.value)">
+              <input type="number" id="ev-spe" min="0" max="252" value="0" oninput="syncEV('spe',this.value)">
+            </div>
+          </div>
+        </div>
+        <!-- 実数値 -->
+        <div class="real-grid" id="real-grid"></div>
+      </div>
+
+      <!-- 技 -->
+      <div class="section">
+        <div class="sec-title">技（最大4つ）</div>
+        <div class="moves-grid" id="moves-grid"></div>
+        <div class="search-wrap">
+          <input class="search-input" id="move-search" type="text" placeholder="技名を入力して追加..." autocomplete="off" style="font-size:12px;">
+          <div class="dropdown" id="move-drop"></div>
+        </div>
+      </div>
+
+      <!-- メモ -->
+      <div class="section">
+        <div class="sec-title">メモ</div>
+        <textarea id="f-memo" placeholder="調整意図・対面・立ち回りなど自由に記述"></textarea>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="save-btn" id="btn-save-pokemon" style="flex:1;">💾 保存</button>
+        <button id="btn-delete-pokemon" style="padding:10px 16px;background:transparent;border:1px solid var(--accent2);color:var(--accent2);font-family:'Noto Sans JP',sans-serif;font-size:11px;cursor:pointer;letter-spacing:1px;">削除</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">PokeEdge</div>
+  <div class="footer-text">非公式ファンサイト / Unofficial Fan Tool</div>
+  <div style="font-size:10px;"><a href="policy.html" style="color:var(--text2);text-decoration:none;">プライバシーポリシー / お問い合わせ</a></div>
+</footer>
+
+<script>
+
+// ===== 外部JSONデータ読み込み =====
+let POKEMON_DATA = [];
+let MOVES_DATA   = [];
+let ABILITY_MAP  = {};
+let SEASON_DATA  = {seasons:[]};
+let pokeIndex    = [];
+let moveIndex    = [];
+let _dataLoaded  = false;
+
+async function loadGameData() {
+  if(_dataLoaded) return;
+  try {
+    const [pd, md, ad, sd] = await Promise.all([
+      fetch('pokemon.json?v='+Date.now()).then(r=>r.json()),
+      fetch('moves.json?v='+Date.now()).then(r=>r.json()),
+      fetch('abilities.json?v='+Date.now()).then(r=>r.json()).catch(()=>({})),
+      fetch('season.json?v='+Date.now()).then(r=>r.json()).catch(()=>({seasons:[]})),
+    ]);
+    POKEMON_DATA = pd;
+    MOVES_DATA   = md;
+    ABILITY_MAP  = ad;
+    SEASON_DATA  = sd;
+    pokeIndex    = POKEMON_DATA.map((p,i)=>Object.assign({_i:i},p));
+    moveIndex    = MOVES_DATA.map((m,i)=>Object.assign({_i:i},m));
+    _dataLoaded  = true;
+  } catch(e) {
+    console.error('データ読み込みエラー:', e);
+    alert('データの読み込みに失敗しました。ページを再読み込みしてください。');
+  }
+}
+
+// POKEMON_DATA: 外部JSONから読み込み (loadGameData)
+// MOVES_DATA: 外部JSONから読み込み (loadGameData)
+const NATURES = {
+  'おっとり':{atk:1,def:1,spa:1,spd:1,spe:1},
+  'いじっぱり':{atk:1.1,def:1,spa:0.9,spd:1,spe:1},
+  'やんちゃ':{atk:1.1,def:1,spa:1,spd:0.9,spe:1},
+  'ゆうかん':{atk:1.1,def:1,spa:1,spd:1,spe:0.9},
+  'さみしがり':{atk:1.1,def:0.9,spa:1,spd:1,spe:1},
+  'ずぶとい':{atk:0.9,def:1.1,spa:1,spd:1,spe:1},
+  'わんぱく':{atk:1,def:1.1,spa:0.9,spd:1,spe:1},
+  'のうてんき':{atk:1,def:1.1,spa:1,spd:0.9,spe:1},
+  'のんき':{atk:1,def:1.1,spa:1,spd:1,spe:0.9},
+  'ひかえめ':{atk:0.9,def:1,spa:1.1,spd:1,spe:1},
+  'うっかりや':{atk:1,def:0.9,spa:1.1,spd:1,spe:1},
+  'おだやか':{atk:1,def:1,spa:0.9,spd:1.1,spe:1},
+  'おとなしい':{atk:1,def:1,spa:1.1,spd:1,spe:0.9},
+  'しんちょう':{atk:1,def:1,spa:0.9,spd:1.1,spe:1},
+  'なまいき':{atk:1,def:1,spa:1,spd:1.1,spe:0.9},
+  'おくびょう':{atk:1,def:1,spa:1,spd:1,spe:1.1},
+  'せっかち':{atk:1,def:0.9,spa:1,spd:1,spe:1.1},
+  'ようき':{atk:1,def:1,spa:0.9,spd:1,spe:1.1},
+  'むじゃき':{atk:1,def:1,spa:1,spd:0.9,spe:1.1},
+  'おとぼけ':{atk:1,def:1,spa:1,spd:1,spe:1},
+};
+const STAT_COLORS = {hp:'#e53935',atk:'#fb8c00',def:'#fdd835',spa:'#1e88e5',spd:'#00acc1',spe:'#43a047'};
+const STAT_LABELS = {hp:'HP',atk:'こうげき',def:'ぼうぎょ',spa:'とくこう',spd:'とくぼう',spe:'すばやさ'};
+
+// ===== 状態 =====
+let registeredPokes = []; // ローカルストレージから読み込み
+let currentId = null;     // 編集中のID
+let currentPokeData = null; // 選択中のポケモン種族値データ
+let currentMoves = [];
+
+// LS_KEY: supabase-sync.jsで定義済み
+// loadFromStorage/saveToStorage: supabase-sync.jsのloadLocal/saveLocalを使用
+function loadFromStorage() { registeredPokes = loadLocal(); }
+function saveToStorage() { saveLocal(registeredPokes); }
+
+// ===== 実数値計算 =====
+function calcHP(base,iv,ev,lv,champ){
+  if(champ) return Math.floor((Math.floor((base*2+iv)*lv/100)+10+lv)) + ev;
+  return Math.floor((Math.floor((base*2+iv+Math.floor(ev/4))*lv/100)+10+lv));
+}
+function calcStat(base,iv,ev,lv,nat,champ){
+  if(champ){
+    const bs=Math.floor((Math.floor((base*2+iv)*lv/100)+5)*nat);
+    return bs+Math.floor(ev*nat);
+  }
+  return Math.floor((Math.floor((base*2+iv+Math.floor(ev/4))*lv/100)+5)*nat);
+}
+
+// ===== フォーム値取得 =====
+function getEVs() {
+  return {
+    hp:  parseInt(document.getElementById('ev-hp').value)||0,
+    atk: parseInt(document.getElementById('ev-atk').value)||0,
+    def: parseInt(document.getElementById('ev-def').value)||0,
+    spa: parseInt(document.getElementById('ev-spa').value)||0,
+    spd: parseInt(document.getElementById('ev-spd').value)||0,
+    spe: parseInt(document.getElementById('ev-spe').value)||0,
+  };
+}
+function getEVTotal() {
+  const ev=getEVs(); return ev.hp+ev.atk+ev.def+ev.spa+ev.spd+ev.spe;
+}
+
+// ===== 同期 =====
+function syncIV(val) {
+  const v=Math.min(31,Math.max(0,parseInt(val)||0));
+  document.getElementById('iv-range').value=v;
+  document.getElementById('iv-num').value=v;
+  document.getElementById('iv-disp').textContent=v;
+  recalcReal();
+}
+function isPokeChampions() {
+  return document.getElementById('poke-mode-champions')?.checked || false;
+}
+
+function onPokeModeChange() {
+  const champ = isPokeChampions();
+  const max   = champ ? 32  : 252;
+  const step  = champ ? 1   : 4;
+  const limit = champ ? 66  : 510;
+  // タイトル更新
+  const title = document.getElementById('ev-title');
+  if(title) title.textContent = champ ? '努力値（合計上限66）' : '努力値（合計上限510）';
+  // 全スライダーのmax/step更新
+  ['hp','atk','def','spa','spd','spe'].forEach(s => {
+    const r = document.getElementById('ev-'+s+'-r');
+    const n = document.getElementById('ev-'+s);
+    if(r){ r.max=max; r.step=step; if(parseInt(r.value)>max) r.value=0; }
+    if(n){ n.max=max; if(parseInt(n.value)>max) n.value=0; }
+  });
+  updateEVRemain();
+  recalcReal();
+}
+
+function syncEV(stat,val) {
+  const evMax = isPokeChampions() ? 32 : 252;
+  const v=Math.min(evMax,Math.max(0,parseInt(val)||0));
+  document.getElementById('ev-'+stat+'-r').value=v;
+  document.getElementById('ev-'+stat).value=v;
+  updateEVRemain();
+  recalcReal();
+}
+function updateEVRemain() {
+  const limit = isPokeChampions() ? 66 : 510;
+  const total=getEVTotal();
+  const remain=limit-total;
+  const el=document.getElementById('ev-remain');
+  el.textContent='残り'+remain;
+  el.className='ev-remain'+(remain<0?' ev-over':'');
+}
+
+// ===== 実数値再計算 =====
+function recalcReal() {
+  if(!currentPokeData) return;
+  const p=currentPokeData;
+  const lv=parseInt(document.getElementById('f-lv').value)||50;
+  const iv=parseInt(document.getElementById('iv-num').value)||31;
+  const nat=NATURES[document.getElementById('f-nature').value]||{atk:1,def:1,spa:1,spd:1,spe:1};
+  const ev=getEVs();
+  const pokeChamp = isPokeChampions();
+  const vals=[
+    {k:'hp', label:'HP',   val:calcHP(p.hp,iv,ev.hp,lv,pokeChamp)},
+    {k:'atk',label:'攻撃', val:calcStat(p.atk,iv,ev.atk,lv,nat.atk,pokeChamp)},
+    {k:'def',label:'防御', val:calcStat(p.def,iv,ev.def,lv,nat.def||1,pokeChamp)},
+    {k:'spa',label:'特攻', val:calcStat(p.spa,iv,ev.spa,lv,nat.spa,pokeChamp)},
+    {k:'spd',label:'特防', val:calcStat(p.spd,iv,ev.spd,lv,nat.spd||1,pokeChamp)},
+    {k:'spe',label:'素早', val:calcStat(p.spe,iv,ev.spe,lv,nat.spe||1,pokeChamp)},
+  ];
+  document.getElementById('real-grid').innerHTML=vals.map(s=>
+    `<div class="real-item">
+      <div class="real-label">${s.label}</div>
+      <div class="real-val" style="color:${STAT_COLORS[s.k]}">${s.val}</div>
+    </div>`).join('');
+}
+
+// ===== ポケモン検索 =====
+function setupPokeSearch() {
+  const inp=document.getElementById('poke-search');
+  const drop=document.getElementById('poke-drop');
+  let timer;
+  inp.addEventListener('input',()=>{
+    clearTimeout(timer);
+    const q=inp.value.trim();
+    if(!q){drop.classList.remove('show');return;}
+    timer=setTimeout(()=>{
+      const res=getSeasonFilteredPokes().filter(p => p.name.includes(q)).slice(0,12);
+      if(!res.length){drop.classList.remove('show');return;}
+      drop.innerHTML=res.map(p=>{
+        const t1=p.type1?`<span class="type-pill tp-${p.type1}">${p.type1}</span>`:'';
+        const t2=p.type2?`<span class="type-pill tp-${p.type2}">${p.type2}</span>`:'';
+        return `<div class="drop-item" onclick="selectPoke('${p.name}')">
+          <span style="font-weight:700;">${p.name}</span>${t1}${t2}
+        </div>`;
+      }).join('');
+      drop.classList.add('show');
+    },150);
+  });
+  document.addEventListener('click',e=>{if(!inp.contains(e.target)&&!drop.contains(e.target))drop.classList.remove('show');});
+}
+
+function selectPoke(name) {
+  const p=pokeIndex.find(x=>x.name===name);
+  if(!p) return;
+  currentPokeData=p;
+  document.getElementById('poke-search').value=name;
+  document.getElementById('poke-drop').classList.remove('show');
+  document.getElementById('edit-pokename').textContent=name;
+  const t1=p.type1?`<span class="type-pill tp-${p.type1}">${p.type1}</span>`:'';
+  const t2=p.type2?`<span class="type-pill tp-${p.type2}">${p.type2}</span>`:'';
+  document.getElementById('edit-types').innerHTML=t1+t2;
+  // 種族値バー
+  const statKeys=[{k:'hp',l:'HP',c:'#e53935'},{k:'atk',l:'攻撃',c:'#fb8c00'},{k:'def',l:'防御',c:'#fdd835'},{k:'spa',l:'特攻',c:'#1e88e5'},{k:'spd',l:'特防',c:'#00acc1'},{k:'spe',l:'素早',c:'#43a047'}];
+  const box=document.getElementById('base-stats-box');
+  box.style.display='block';
+  document.getElementById('base-stats').innerHTML=statKeys.map(s=>{
+    const v=p[s.k]||0;
+    return `<div class="bstat-row">
+      <div class="bstat-label">${s.l}</div>
+      <div class="bstat-bar-bg"><div class="bstat-bar-fg" style="width:${Math.round(v/255*100)}%;background:${s.c};"></div></div>
+      <div class="bstat-val">${v}</div>
+    </div>`;
+  }).join('');
+  recalcReal();
+}
+
+// ===== 技検索 =====
+function setupMoveSearch() {
+  const inp=document.getElementById('move-search');
+  const drop=document.getElementById('move-drop');
+  let timer;
+  inp.addEventListener('input',()=>{
+    clearTimeout(timer);
+    const q=inp.value.trim();
+    if(!q){drop.classList.remove('show');return;}
+    timer=setTimeout(()=>{
+      const res=moveIndex.filter(m=>m.name.includes(q)).slice(0,14);
+      if(!res.length){drop.classList.remove('show');return;}
+      drop.innerHTML=res.map(m=>{
+        const cat=m.category==='物理'?'物理':m.category==='特殊'?'特殊':'変化';
+        return `<div class="drop-item" onclick="addMove(${m._i})">
+          <span class="type-pill tp-${m.type}" style="font-size:8px;">${m.type}</span>
+          <span style="font-weight:700;font-size:12px;">${m.name}</span>
+          <span style="font-size:10px;color:var(--text2);">${cat} / 威力${m.power||'—'}</span>
+        </div>`;
+      }).join('');
+      drop.classList.add('show');
+    },150);
+  });
+  document.addEventListener('click',e=>{if(!inp.contains(e.target)&&!drop.contains(e.target))drop.classList.remove('show');});
+}
+
+function addMove(idx) {
+  if(currentMoves.length>=4){alert('技は4つまでです');return;}
+  const m=MOVES_DATA[idx];
+  if(currentMoves.find(x=>x.name===m.name)){alert('同じ技は登録できません');return;}
+  currentMoves.push({name:m.name,type:m.type,power:m.power,category:m.category});
+  renderMoves();
+  document.getElementById('move-search').value='';
+  document.getElementById('move-drop').classList.remove('show');
+}
+function removeMove(i) {
+  currentMoves.splice(i,1);
+  renderMoves();
+}
+function renderMoves() {
+  document.getElementById('moves-grid').innerHTML=[0,1,2,3].map(i=>{
+    const mv=currentMoves[i];
+    if(mv) return `<div class="move-slot">
+      <span class="move-slot-num">${i+1}</span>
+      <span class="type-pill tp-${mv.type}" style="font-size:8px;">${mv.type}</span>
+      <span class="move-slot-name">${mv.name}</span>
+      <span style="font-size:10px;color:var(--text2);">${mv.power||'—'}</span>
+      <button class="move-slot-del" onclick="removeMove(${i})">×</button>
+    </div>`;
+    return `<div class="move-slot empty">
+      <span class="move-slot-num">${i+1}</span>
+      <span style="font-size:11px;color:var(--text2);">未選択</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== 登録済みリスト =====
+function renderRegList(filter) {
+  const list=document.getElementById('reg-list');
+  const q=(filter||'').trim();
+  const filtered=registeredPokes.filter(p=>!q||p.displayName.includes(q)||(p.pokeName&&p.pokeName.includes(q)));
+  document.getElementById('reg-count').textContent=registeredPokes.length+'体';
+  if(!filtered.length){
+    list.innerHTML='<div style="font-size:11px;color:var(--text2);padding:8px;">見つかりません</div>';
+    return;
+  }
+  list.innerHTML=filtered.map(p=>{
+    const isActive=p.id===currentId;
+    return `<div class="reg-item ${isActive?'active':''}" onclick="loadPokemon('${p.id}')">
+      <div style="flex:1;min-width:0;">
+        <div class="reg-item-name">${p.displayName}</div>
+        <div class="reg-item-nature" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;">
+          ${p.pokeName?`<span style="font-size:9px;color:var(--text2);">${p.pokeName}</span>`:''}
+          <span style="font-size:9px;color:var(--text2);">${p.nature}</span>
+          ${p.item?`<span style="font-size:9px;color:var(--accent3);">${p.item}</span>`:''}
+        </div>
+      </div>
+      <button class="reg-item-del" onclick="event.stopPropagation();deleteById('${p.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ===== 新規作成 =====
+function newPokemon() {
+  currentId = 'new_'+Date.now();
+  currentPokeData = null;
+  currentMoves = [];
+  document.getElementById('edit-empty').style.display='none';
+  document.getElementById('edit-form').style.display='block';
+  document.getElementById('edit-pokename').textContent='新規ポケモン';
+  document.getElementById('edit-types').innerHTML='';
+  document.getElementById('poke-search').value='';
+  document.getElementById('nickname').value='';
+  document.getElementById('f-lv').value=50;
+  document.getElementById('f-nature').value='おっとり';
+  document.getElementById('f-item').value='';
+  document.getElementById('f-memo').value='';
+  document.getElementById('iv-range').value=31;
+  document.getElementById('iv-num').value=31;
+  document.getElementById('iv-disp').textContent=31;
+  document.getElementById('base-stats-box').style.display='none';
+  document.getElementById('real-grid').innerHTML='';
+  ['hp','atk','def','spa','spd','spe'].forEach(k=>{
+    document.getElementById('ev-'+k+'-r').value=0;
+    document.getElementById('ev-'+k).value=0;
+  });
+  updateEVRemain();
+  renderMoves();
+  renderRegList(document.getElementById('reg-search').value);
+}
+
+// ===== 保存 =====
+async function savePokemon() {
+  if(!currentPokeData&&!document.getElementById('poke-search').value){
+    alert('ポケモンを選択してください');return;
+  }
+  const nickname=document.getElementById('nickname').value.trim();
+  const pokeName=currentPokeData?currentPokeData.name:(document.getElementById('poke-search').value||'');
+  const displayName=nickname||pokeName||'名称未設定';
+  const record={
+    id: currentId,
+    pokeName,
+    displayName,
+    nickname,
+    type1: currentPokeData?currentPokeData.type1:'',
+    type2: currentPokeData?currentPokeData.type2:'',
+    lv:  parseInt(document.getElementById('f-lv').value)||50,
+    nature: document.getElementById('f-nature').value,
+    item: document.getElementById('f-item').value,
+    iv:  parseInt(document.getElementById('iv-num').value)||31,
+    ev:  getEVs(),
+    gameMode: isPokeChampions() ? 'champions' : 'classic',
+    moves: [...currentMoves],
+    memo: document.getElementById('f-memo').value,
+    updatedAt: new Date().toLocaleDateString('ja-JP'),
+  };
+  const idx=registeredPokes.findIndex(p=>p.id===currentId);
+  if(idx>=0) registeredPokes[idx]=record;
+  else registeredPokes.unshift(record);
+  savePokemonData(registeredPokes);
+  renderRegList(document.getElementById('reg-search').value);
+  document.getElementById('edit-pokename').textContent=displayName;
+  alert(`「${displayName}」を保存しました！`);
+}
+
+// ===== 読み込み =====
+function loadPokemon(id) {
+  const rec=registeredPokes.find(p=>p.id===id);
+  if(!rec) return;
+  currentId=id;
+  currentPokeData=pokeIndex.find(x=>x.name===rec.pokeName)||null;
+  currentMoves=[...rec.moves];
+  document.getElementById('edit-empty').style.display='none';
+  document.getElementById('edit-form').style.display='block';
+  document.getElementById('edit-pokename').textContent=rec.displayName;
+  document.getElementById('poke-search').value=rec.pokeName||'';
+  document.getElementById('nickname').value=rec.nickname||'';
+  document.getElementById('f-lv').value=rec.lv||50;
+  document.getElementById('f-nature').value=rec.nature||'おっとり';
+  document.getElementById('f-item').value=rec.item||'';
+  document.getElementById('f-memo').value=rec.memo||'';
+  document.getElementById('iv-range').value=rec.iv||31;
+  document.getElementById('iv-num').value=rec.iv||31;
+  document.getElementById('iv-disp').textContent=rec.iv||31;
+  ['hp','atk','def','spa','spd','spe'].forEach(k=>{
+    const v=rec.ev?rec.ev[k]||0:0;
+    document.getElementById('ev-'+k+'-r').value=v;
+    document.getElementById('ev-'+k).value=v;
+  });
+  updateEVRemain();
+  renderMoves();
+  if(currentPokeData) selectPoke(currentPokeData.name);
+  else {
+    document.getElementById('edit-types').innerHTML='';
+    document.getElementById('base-stats-box').style.display='none';
+    document.getElementById('real-grid').innerHTML='';
+  }
+  renderRegList(document.getElementById('reg-search').value);
+}
+
+// ===== 削除 =====
+async function deleteById(id) {
+  if(!confirm('このポケモンを削除しますか？')) return;
+  registeredPokes=registeredPokes.filter(p=>p.id!==id);
+  savePokemonData(registeredPokes);
+  if(currentId===id){
+    currentId=null;
+    document.getElementById('edit-empty').style.display='block';
+    document.getElementById('edit-form').style.display='none';
+  }
+  renderRegList(document.getElementById('reg-search').value);
+}
+function deleteCurrent() {
+  if(currentId) deleteById(currentId);
+}
+
+// reg-search: window.onload内でバインド済み
+
+// ===== 初期化 =====
+window.onload = async () => {
+  await loadGameData();
+  await initAuth();
+  initSeasonFilter();
+
+  // シーズンフィルター初期化
+  const sfWrap = document.getElementById('season-filter-wrap');
+  const sfSel  = document.getElementById('global-season-filter');
+  if(sfWrap && sfSel && SEASON_DATA.seasons && SEASON_DATA.seasons.length) {
+    sfWrap.style.display = 'block';
+    SEASON_DATA.seasons.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s + '（' + (SEASON_DATA[s]||[]).length + '件）';
+      sfSel.appendChild(opt);
+    });
+  }
+
+  registeredPokes = await initPokemonData();
+  setupPokeSearch();
+  setupMoveSearch();
+  renderMoves();
+  renderRegList();
+
+  // ボタンバインド（関数定義後に実行）
+  const btnNew = document.getElementById('btn-new-pokemon');
+  const btnSave = document.getElementById('btn-save-pokemon');
+  const btnDel = document.getElementById('btn-delete-pokemon');
+  if(btnNew)  btnNew.addEventListener('click', newPokemon);
+  if(btnSave) btnSave.addEventListener('click', savePokemon);
+  if(btnDel)  btnDel.addEventListener('click', deleteCurrent);
+
+  // reg-search
+  const regSearch = document.getElementById('reg-search');
+  if(regSearch) regSearch.addEventListener('input', function(){ renderRegList(this.value); });
+};
+</script>
+<script>
+// ===== シーズンフィルター =====
+function getSeasonFilteredPokes() {
+  const sel = document.getElementById('global-season-filter');
+  const season = sel ? sel.value : '';
+  if(!season || !SEASON_DATA || !SEASON_DATA[season]) return pokeIndex;
+  return pokeIndex.filter(p => SEASON_DATA[season].includes(p.name));
+}
+function onSeasonFilterChange() {
+  document.querySelectorAll('input.search-input').forEach(inp => {
+    inp.dispatchEvent(new Event('input'));
+  });
+}
+function initSeasonFilter() {
+  const wrap = document.getElementById('season-filter-wrap');
+  const sel  = document.getElementById('global-season-filter');
+  if(!wrap || !sel) return;
+  if(SEASON_DATA && SEASON_DATA.seasons && SEASON_DATA.seasons.length) {
+    wrap.style.display = 'block';
+    sel.innerHTML = '<option value="">すべてのポケモン表示</option>';
+    SEASON_DATA.seasons.forEach(function(s) {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s + '（' + (SEASON_DATA[s]||[]).length + '件）';
+      sel.appendChild(opt);
+    });
+  }
+}
+
+
+
+// ===== テーマ切替 =====
+var THEMES = {dark:{"--bg":"#07090f","--bg2":"#0b0e1a","--panel":"#0f1423","--border":"#1a2540","--border2":"#243356","--accent":"#00c8f0","--accent2":"#ff3060","--accent3":"#ffc800","--green":"#00e676","--text":"#d8e8ff","--text2":"#4a6080","--text3":"#7a90b0"},light:{"--bg":"#e8f4f8","--bg2":"#d0e8f0","--panel":"#f4fbff","--border":"#90c8e0","--border2":"#60a8cc","--accent":"#0066aa","--accent2":"#cc1040","--accent3":"#cc7700","--green":"#007744","--text":"#051828","--text2":"#2a5070","--text3":"#0a3050"}};
+function applyTheme(theme) {
+  var vars = THEMES[theme] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  localStorage.setItem('pokeedge_theme', theme);
+  var btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+  document.documentElement.setAttribute('data-theme', theme);
+}
+function toggleTheme() {
+  var current = localStorage.getItem('pokeedge_theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+// 即時適用
+(function(){
+  var t = localStorage.getItem('pokeedge_theme') || 'dark';
+  var vars = THEMES[t] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+
+function toggleNav(){
+  const nav = document.querySelector('.header-nav');
+  const hb  = document.getElementById('hamburger');
+  const ov  = document.getElementById('nav-overlay');
+  if(!nav) return;
+  nav.classList.toggle('open');
+  hb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeNav(){
+  const nav = document.querySelector('.header-nav');
+  const hb  = document.getElementById('hamburger');
+  const ov  = document.getElementById('nav-overlay');
+  if(!nav) return;
+  nav.classList.remove('open');
+  hb.classList.remove('open');
+  ov.classList.remove('show');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.nav-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(window.innerWidth <= 768) closeNav();
+    });
+  });
+});
+
+
+</script>
+</body>
+</html>

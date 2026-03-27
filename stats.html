@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeEdge | 選出率記録</title>
+<meta name="description" content="ポケモン対戦の試合ごとに選出・初手を記録して選出率を自動集計。自分と相手両方の選出率・初手率・勝率を管理。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://poke-edge.pages.dev/stats.html">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-sync.js"></script>
+<script>
+(function(){
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<script>
+(function(){
+  var dark={'--bg':'#07090f','--bg2':'#0b0e1a','--panel':'#0f1423','--border':'#1a2540','--border2':'#243356','--accent':'#00c8f0','--accent2':'#ff3060','--accent3':'#ffc800','--green':'#00e676','--text':'#d8e8ff','--text2':'#4a6080','--text3':'#7a90b0'};
+  var light={'--bg':'#e8f4f8','--bg2':'#d0e8f0','--panel':'#f4fbff','--border':'#90c8e0','--border2':'#60a8cc','--accent':'#0066aa','--accent2':'#cc1040','--accent3':'#cc7700','--green':'#007744','--text':'#051828','--text2':'#2a5070','--text3':'#0a3050'};
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  var vars=t==='light'?light:dark;
+  var root=document.documentElement.style;
+  for(var k in vars)root.setProperty(k,vars[k]);
+})();
+</script>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#07090f;--bg2:#0b0e1a;--panel:#0f1423;
+  --border:#1a2540;--border2:#243356;
+  --accent:#00c8f0;--accent2:#ff3060;--accent3:#ffc800;--green:#00e676;
+  --text:#d8e8ff;--text2:#4a6080;--text3:#7a90b0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 5%,rgba(0,200,240,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 30% at 90% 90%,rgba(255,48,96,0.06) 0%,transparent 60%),
+    linear-gradient(rgba(0,200,240,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,240,0.018) 1px,transparent 1px);
+  background-size:auto,auto,52px 52px,52px 52px;}
+header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;gap:14px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 20px rgba(0,200,240,0.4);flex-shrink:0;cursor:pointer;}
+.logo em{color:var(--accent2);font-style:normal;}
+.header-sep{width:1px;height:16px;background:var(--border);flex-shrink:0;}
+.header-sub{font-size:10px;color:var(--text2);letter-spacing:2px;flex-shrink:0;}
+
+/* HERO */
+.hero{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:72px 24px 48px;}
+.hero-eyebrow{font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,88px);line-height:0.95;letter-spacing:4px;margin-bottom:24px;}
+.hero-title .hl{color:var(--accent);}
+.hero-title .hl2{color:var(--accent2);}
+.hero-desc{font-size:15px;color:var(--text3);line-height:1.9;max-width:560px;margin-bottom:40px;}
+
+/* CTAボタン */
+.cta-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:64px;}
+.cta-primary{
+  display:inline-block;padding:14px 32px;
+  background:linear-gradient(135deg,var(--accent),#007a99);
+  color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;
+  text-decoration:none;cursor:pointer;border:none;transition:all 0.18s;
+}
+.cta-primary:hover{opacity:0.85;transform:translateY(-2px);}
+.cta-secondary{
+  display:inline-block;padding:14px 32px;
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text3);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;
+  text-decoration:none;cursor:pointer;transition:all 0.18s;
+}
+.cta-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ツール選択カード */
+.tools-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.section-head{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:640px){.tools-grid{grid-template-columns:1fr;}}
+.tool-card{
+  background:var(--panel);border:1px solid var(--border);
+  padding:24px 20px;cursor:pointer;transition:all 0.2s;
+  text-decoration:none;display:block;position:relative;overflow:hidden;
+}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transition:transform 0.2s;}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.tool-card:hover::before{transform:scaleX(1);}
+.tool-card-icon{font-size:28px;margin-bottom:12px;}
+.tool-card-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent);margin-bottom:8px;}
+.tool-card-desc{font-size:12px;color:var(--text3);line-height:1.8;}
+.tool-card-tag{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:var(--text2);border:1px solid var(--border2);padding:2px 8px;}
+
+/* 使い方セクション */
+.usage-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:640px){.usage-grid{grid-template-columns:1fr;}}
+.usage-card{background:var(--panel);border:1px solid var(--border);padding:22px;}
+.usage-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--border2);line-height:1;margin-bottom:8px;}
+.usage-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.usage-desc{font-size:12px;color:var(--text3);line-height:1.9;}
+
+/* ユースケース */
+.case-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.case-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);}
+.case-item{background:var(--panel);padding:18px 22px;display:flex;align-items:flex-start;gap:16px;}
+.case-item:hover{background:var(--panel2);}
+.case-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.case-text{font-size:13px;color:var(--text3);line-height:1.8;}
+.case-text strong{color:var(--text);display:block;margin-bottom:3px;font-size:13px;}
+
+/* 世代バナー */
+.gen-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 64px;}
+.gen-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:640px){.gen-cards{grid-template-columns:1fr;}}
+.gen-card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;}
+.gen-card-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;margin-bottom:6px;}
+.gen-card-name.sv{color:var(--accent);}
+.gen-card-name.champ{color:var(--accent2);}
+.gen-card-name.swsh{color:var(--accent3);}
+.gen-card-desc{font-size:11px;color:var(--text3);line-height:1.8;}
+.new-tag{display:inline-block;background:var(--accent2);color:#fff;font-size:8px;font-weight:700;padding:2px 6px;letter-spacing:1px;margin-left:8px;vertical-align:middle;}
+
+/* アフィリ */
+.affili-section{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 48px;}
+.affili-row{display:flex;gap:10px;flex-wrap:wrap;}
+.affili-card{display:block;background:var(--panel);border:1px solid var(--border);padding:14px 18px;text-decoration:none;transition:border-color 0.18s;flex:1;min-width:200px;}
+.affili-card:hover{border-color:var(--accent3);}
+.affili-badge{font-size:8px;color:var(--accent3);letter-spacing:2px;font-weight:700;margin-bottom:5px;}
+.affili-name{font-size:12px;color:var(--text);font-weight:700;}
+.affili-price{font-size:12px;color:var(--accent3);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.affili-cta{display:inline-block;margin-top:8px;background:var(--accent3);color:#000;font-size:9px;font-weight:700;padding:4px 10px;letter-spacing:1px;}
+
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--text2);letter-spacing:4px;}
+.footer-text{font-size:10px;color:var(--text2);line-height:1.6;}
+/* ナビゲーション */
+.header-nav{display:flex;gap:3px;margin-left:auto;flex-wrap:nowrap;overflow-x:auto;}
+.nav-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:4px 10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:1px;transition:all 0.18s;text-decoration:none;display:inline-block;white-space:nowrap;flex-shrink:0;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,200,240,0.07);}
+
+  background:radial-gradient(ellipse 50% 35% at 10% 5%,rgba(0,200,240,0.06) 0%,transparent 60%),
+  background-size:auto,52px 52px,52px 52px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--accent);cursor:pointer;flex-shrink:0;}
+.main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:20px 16px;}
+.page-grid{display:grid;grid-template-columns:420px 1fr;gap:16px;align-items:start;}
+@media(max-width:900px){.page-grid{grid-template-columns:1fr;}}
+/* 入力フォーム */
+.form-panel{background:var(--panel);border:1px solid var(--border);padding:18px;}
+.sec{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-count{font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.block{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+/* パーティチップ */
+.party6-grid{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;}
+.poke-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);font-size:11px;}
+.poke-chip.filled{border-color:var(--border2);cursor:pointer;}
+.poke-chip.filled:hover{border-color:var(--accent2);}
+.poke-chip.empty{opacity:0.4;}
+.chip-num{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--text2);width:14px;flex-shrink:0;}
+.chip-name{flex:1;font-weight:700;font-size:12px;}
+.chip-del{color:var(--text2);font-size:11px;margin-left:auto;}
+/* 登録済みから選択 */
+.reg-pick-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
+.reg-pick{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);cursor:pointer;font-size:12px;transition:all 0.15s;flex-wrap:wrap;}
+.reg-pick:hover{border-color:var(--accent);}
+.reg-pick.in-party{border-color:var(--accent);background:rgba(0,200,240,0.06);}
+/* 選出チップ */
+.select-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.select-chip{display:flex;align-items:center;gap:5px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);cursor:pointer;font-size:12px;transition:all 0.15s;}
+.select-chip:hover{border-color:var(--accent);}
+.select-chip.selected{border-color:var(--accent);background:rgba(0,200,240,0.08);}
+.select-chip.is-lead{border-color:var(--accent3);background:rgba(255,200,0,0.08);}
+.lead-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:1px 6px;font-size:9px;cursor:pointer;letter-spacing:1px;font-family:'Noto Sans JP',sans-serif;transition:all 0.15s;}
+.lead-btn.on{border-color:var(--accent3);color:var(--accent3);background:rgba(255,200,0,0.1);}
+/* 相手入力 */
+.opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.opp-slot{position:relative;}
+.opp-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-size:12px;font-family:'Noto Sans JP',sans-serif;outline:none;transition:border-color 0.2s;}
+.opp-input:focus{border-color:var(--accent);}
+.dropdown{display:none;position:absolute;top:100%;left:0;right:0;z-index:300;background:var(--panel);border:1px solid var(--border2);max-height:180px;overflow-y:auto;}
+.dropdown.show{display:block;}
+.drop-item{padding:7px 10px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);transition:background 0.12s;}
+.drop-item:hover{background:var(--bg2);}
+.drop-name{font-weight:700;}
+/* 勝敗 */
+.result-btns{display:flex;gap:8px;}
+.result-btn{flex:1;padding:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;cursor:pointer;transition:all 0.18s;}
+.result-btn[data-r="win"].on{border-color:var(--green);color:var(--green);background:rgba(0,230,118,0.08);}
+.result-btn[data-r="lose"].on{border-color:var(--accent2);color:var(--accent2);background:rgba(255,48,96,0.08);}
+.record-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),#007a99);border:none;color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;cursor:pointer;margin-top:14px;transition:opacity 0.18s;}
+.record-btn:hover{opacity:0.85;}
+/* 集計 */
+.stats-panel{background:var(--panel);border:1px solid var(--border);padding:18px;}
+.summary-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.summary-item{background:var(--bg2);border:1px solid var(--border);padding:12px 18px;text-align:center;flex:1;min-width:80px;}
+.summary-label{font-size:9px;color:var(--text2);letter-spacing:2px;}
+.summary-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1.2;}
+.stats-head{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent3);margin-bottom:8px;}
+.stats-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;}
+.stats-table th{text-align:left;padding:5px 8px;color:var(--text2);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border);font-weight:400;}
+.stats-table td{padding:6px 8px;border-bottom:1px solid var(--border);}
+.poke-cell{font-weight:700;font-size:12px;}
+.num{font-family:'JetBrains Mono',monospace;text-align:right;}
+.bar-wrap{display:inline-block;width:60px;height:4px;background:var(--bg);overflow:hidden;vertical-align:middle;margin-right:4px;}
+.bar-fill{height:100%;transition:width 0.5s;}
+/* 履歴 */
+.history-panel{background:var(--panel);border:1px solid var(--border);padding:18px;margin-top:16px;}
+.history-item{background:var(--bg2);border:1px solid var(--border);padding:10px 12px;margin-bottom:6px;}
+.history-item.win{border-left:3px solid var(--green);}
+.history-item.lose{border-left:3px solid var(--accent2);}
+.history-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.history-result{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;}
+.history-result.win{color:var(--green);}
+.history-result.lose{color:var(--accent2);}
+.history-body{display:grid;grid-template-columns:1fr 32px 1fr;gap:8px;align-items:start;}
+.poke-tag{display:inline-block;padding:2px 7px;background:var(--panel);border:1px solid var(--border);font-size:11px;}
+.poke-tag.lead-tag{border-color:var(--accent3);color:var(--accent3);}
+.opp-tag{background:rgba(255,48,96,0.05);border-color:rgba(255,48,96,0.2);}
+.del-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--text2);font-size:10px;padding:2px 8px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.del-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+/* type pills */
+.tp{display:inline-block;padding:1px 5px;font-size:8px;font-weight:700;}
+.tp-ノーマル{background:#546e7a;color:#fff;}.tp-ほのお,.tp-炎{background:#c62828;color:#fff;}.tp-みず,.tp-水{background:#1565c0;color:#fff;}
+.tp-でんき,.tp-電気{background:#f9a825;color:#000;}.tp-くさ,.tp-草{background:#2e7d32;color:#fff;}.tp-こおり,.tp-氷{background:#00838f;color:#fff;}
+.tp-かくとう,.tp-格闘{background:#b71c1c;color:#fff;}.tp-どく,.tp-毒{background:#6a1b9a;color:#fff;}.tp-じめん,.tp-地面{background:#6d4c41;color:#fff;}
+.tp-ひこう,.tp-飛行{background:#0277bd;color:#fff;}.tp-エスパー{background:#ad1457;color:#fff;}.tp-むし,.tp-虫{background:#558b2f;color:#fff;}
+.tp-いわ,.tp-岩{background:#4e342e;color:#fff;}.tp-ゴースト{background:#4a148c;color:#fff;}.tp-ドラゴン{background:#4527a0;color:#fff;}
+.tp-あく,.tp-悪{background:#212121;color:#fff;}.tp-はがね,.tp-鋼{background:#455a64;color:#fff;}.tp-フェアリー{background:#880e4f;color:#fff;}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:18px 20px;margin-top:36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+/* ハンバーガーメニュー（スマホ） */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;margin-left:auto;background:none;border:none;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:98;}
+.nav-overlay.show{display:block;}
+@media(max-width:768px){
+  .header-nav{
+    display:none;
+    position:fixed;
+    top:52px;right:0;
+    width:220px;
+    height:calc(100vh - 52px);
+    background:rgba(7,9,15,0.98);
+    border-left:1px solid var(--border);
+    flex-direction:column;
+    gap:0;
+    padding:12px 0;
+    z-index:99;
+    overflow-y:auto;
+    backdrop-filter:blur(20px);
+  }
+  .header-nav.open{display:flex;}
+  .nav-btn{
+    padding:14px 22px;
+    font-size:13px;
+    border:none;
+    border-bottom:1px solid var(--border);
+    width:100%;
+    text-align:left;
+    letter-spacing:1px;
+  }
+  .nav-btn:last-child{border-bottom:none;}
+  .nav-btn.active{background:rgba(0,200,240,0.08);border-left:3px solid var(--accent);}
+  .hamburger{display:flex;}
+}
+
+/* ===== ライトモード ===== */
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="location.href='index.html'">Poke<em>Edge</em></div>
+  <div class="header-sep"></div>
+  <div class="header-sub">選出率</div>
+  <div class="header-nav" id="main-nav">
+    <a class="nav-btn" href="index.html">TOP</a>
+    <a class="nav-btn" href="calc.html">ダメージ計算</a>
+    <a class="nav-btn" href="move.html">技選択判定</a>
+    <a class="nav-btn" href="party.html">パーティ管理</a>
+    <a class="nav-btn" href="pokemon.html">ポケモン登録</a>
+    <a class="nav-btn active" href="stats.html">選出率</a>
+    <a class="nav-btn" href="scope.html">アナライザー</a>
+    <a class="nav-btn" href="season.html">使用可能</a>
+    <a class="nav-btn" href="policy.html">サイト情報</a>
+  </div>
+
+  <button id="theme-btn" onclick="toggleTheme()" style="background:transparent;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-size:16px;cursor:pointer;transition:all 0.18s;flex-shrink:0;line-height:1;" title="ライト/ダークモード切替">🌙</button>
+  <div id="auth-ui" style="margin-left:8px;display:flex;align-items:center;gap:6px;flex-shrink:0;"></div>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-overlay" id="nav-overlay" onclick="closeNav()"></div>
+</header>
+
+<div class="main">
+  <div class="page-grid">
+
+    <!-- 左: 入力フォーム -->
+    <div class="form-panel">
+
+      <!-- 自パーティ6匹 -->
+      <div class="block">
+        <div class="sec">自パーティ 6匹</div>
+        <div class="reg-pick-list" id="my-reg-list"></div>
+        <div class="party6-grid" id="my-party6"></div>
+      </div>
+
+      <!-- 自選出3匹 -->
+      <div class="block">
+        <div class="sec">自選出 <span class="sec-count" id="my-sel-count">0/3</span></div>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">クリックで選出 → 「初手」ボタンで初手指定</div>
+        <div class="select-chips" id="my-select3"></div>
+      </div>
+
+      <!-- 相手パーティ6匹 -->
+      <div class="block">
+        <div class="sec">相手パーティ 6匹</div>
+        <div class="opp-grid">
+          <div class="opp-slot">
+            <input class="opp-input" id="opp6-0" type="text" placeholder="相手1匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-0"></div>
+          </div><div class="opp-slot">
+            <input class="opp-input" id="opp6-1" type="text" placeholder="相手2匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-1"></div>
+          </div><div class="opp-slot">
+            <input class="opp-input" id="opp6-2" type="text" placeholder="相手3匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-2"></div>
+          </div><div class="opp-slot">
+            <input class="opp-input" id="opp6-3" type="text" placeholder="相手4匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-3"></div>
+          </div><div class="opp-slot">
+            <input class="opp-input" id="opp6-4" type="text" placeholder="相手5匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-4"></div>
+          </div><div class="opp-slot">
+            <input class="opp-input" id="opp6-5" type="text" placeholder="相手6匹目" autocomplete="off">
+            <div class="dropdown" id="opp6-drop-5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 相手選出3匹 -->
+      <div class="block">
+        <div class="sec">相手選出 <span class="sec-count" id="opp-sel-count">0/3</span></div>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">相手パーティから選出した3匹を選択</div>
+        <div class="select-chips" id="opp-select3"></div>
+      </div>
+
+      <!-- 勝敗 -->
+      <div class="block">
+        <div class="sec">勝敗</div>
+        <div class="result-btns">
+          <button class="result-btn" data-r="win" onclick="setResult('win')">WIN</button>
+          <button class="result-btn" data-r="lose" onclick="setResult('lose')">LOSE</button>
+        </div>
+      </div>
+
+      <button class="record-btn" onclick="recordBattle()">📝 記録する</button>
+    </div>
+
+    <!-- 右: 集計 + 履歴 -->
+    <div>
+      <div class="stats-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <span style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent3);">集計</span>
+          <button onclick="if(confirm('全記録を削除しますか？')){localStorage.removeItem('pokeedge_battles_v1');renderStats();renderHistory();}" style="background:none;border:1px solid var(--border);color:var(--text2);font-size:10px;padding:3px 10px;cursor:pointer;">全消去</button>
+        </div>
+        <div class="summary-row">
+          <div class="summary-item"><div class="summary-label">試合数</div><div class="summary-val" id="total-count">0</div></div>
+          <div class="summary-item"><div class="summary-label">勝率</div><div class="summary-val" id="win-rate">—</div></div>
+          <div class="summary-item" style="min-width:120px;"><div class="summary-label">戦績</div><div class="summary-val" style="font-size:18px;" id="win-count">—</div></div>
+        </div>
+        <div id="stats-area"></div>
+      </div>
+
+      <div class="history-panel">
+        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;">対戦履歴（直近30件）</div>
+        <div id="history-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">PokeEdge</div>
+  <div class="footer-text">非公式ファンサイト / Unofficial Fan Tool</div>
+  <div style="font-size:10px;"><a href="policy.html" style="color:var(--text2);text-decoration:none;">プライバシーポリシー / お問い合わせ</a></div>
+</footer>
+
+<script>
+
+// ===== 外部JSONデータ読み込み =====
+let POKEMON_DATA = [];
+let MOVES_DATA   = [];
+let ABILITY_MAP  = {};
+let SEASON_DATA  = {seasons:[]};
+let pokeIndex    = [];
+let moveIndex    = [];
+let _dataLoaded  = false;
+
+async function loadGameData() {
+  if(_dataLoaded) return;
+  try {
+    const [pd, md, ad, sd] = await Promise.all([
+      fetch('pokemon.json?v='+Date.now()).then(r=>r.json()),
+      fetch('moves.json?v='+Date.now()).then(r=>r.json()),
+      fetch('abilities.json?v='+Date.now()).then(r=>r.json()).catch(()=>({})),
+      fetch('season.json?v='+Date.now()).then(r=>r.json()).catch(()=>({seasons:[]})),
+    ]);
+    POKEMON_DATA = pd;
+    MOVES_DATA   = md;
+    ABILITY_MAP  = ad;
+    SEASON_DATA  = sd;
+    pokeIndex    = POKEMON_DATA.map((p,i)=>Object.assign({_i:i},p));
+    moveIndex    = MOVES_DATA.map((m,i)=>Object.assign({_i:i},m));
+    _dataLoaded  = true;
+  } catch(e) {
+    console.error('データ読み込みエラー:', e);
+    alert('データの読み込みに失敗しました。ページを再読み込みしてください。');
+  }
+}
+
+
+// POKEMON_DATA: 外部JSONから読み込み (loadGameData)
+// LS_KEY: supabase-sync.jsで定義済み
+const LS_REG = 'pokeedge_pokemon_v1';
+
+// ===== ストレージ =====
+// loadBattles: supabase-sync.jsのloadBattleRecordsを使用
+// saveBattles: supabase-sync.jsのsaveBattleRecordを使用
+function loadMyReg(){ try{ return JSON.parse(localStorage.getItem(LS_REG)||'[]'); }catch(e){ return []; } }
+
+// ===== 状態 =====
+let myParty6   = Array(6).fill(null);  // 自パーティ6匹
+let mySelect3  = Array(3).fill(null);  // 自選出3匹
+let myLead     = null;                 // 自初手
+let oppParty6  = Array(6).fill(null);  // 相手6匹
+let oppSelect3 = Array(3).fill(null);  // 相手選出3匹
+let oppLead    = null;                 // 相手初手
+let result     = null;                 // 勝敗
+
+// ===== 検索 =====
+function setupSearch(inputId, dropId, onSelect){
+  const inp = document.getElementById(inputId);
+  const drop = document.getElementById(dropId);
+  if(!inp) return;
+  let timer;
+  inp.addEventListener('input',()=>{
+    clearTimeout(timer);
+    const q = inp.value.trim();
+    if(!q){ drop.classList.remove('show'); return; }
+    timer = setTimeout(()=>{
+      const res = pokeIndex.filter(p=>p.name.includes(q)).slice(0,10);
+      if(!res.length){ drop.classList.remove('show'); return; }
+      drop.innerHTML = res.map(p=>{
+        const t1=p.type1?`<span class="tp tp-${p.type1}">${p.type1}</span>`:'';
+        const t2=p.type2?`<span class="tp tp-${p.type2}">${p.type2}</span>`:'';
+        return `<div class="drop-item" onclick="dropSelect('${inputId}','${dropId}','${p.name}')">`
+          +`<span class="drop-name">${p.name}</span>${t1}${t2}</div>`;
+      }).join('');
+      drop.classList.add('show');
+    },150);
+  });
+  inp._onSelect = onSelect;
+  document.addEventListener('click',e=>{
+    if(!inp.contains(e.target)&&!drop.contains(e.target)) drop.classList.remove('show');
+  });
+}
+function dropSelect(inputId, dropId, name){
+  const inp = document.getElementById(inputId);
+  document.getElementById(dropId).classList.remove('show');
+  inp.value = name;
+  const p = pokeIndex.find(x=>x.name===name);
+  if(inp._onSelect && p) inp._onSelect(p);
+}
+
+// ===== 自パーティ: 登録済みから選択 or 直接検索 =====
+function initMyPartyFromReg(){
+  const regs = loadMyReg();
+  const el = document.getElementById('my-reg-list');
+  if(!regs.length){
+    el.innerHTML='<div style="font-size:11px;color:var(--text2);">登録済みポケモンがいません。<a href="pokemon.html" style="color:var(--accent);">ポケモン登録</a>から追加してください。</div>';
+    return;
+  }
+  el.innerHTML = regs.map(r=>{
+    const inP = myParty6.some(m=>m&&m._regId===r.id);
+    const t1=r.type1?`<span class="tp tp-${r.type1}" style="font-size:8px;">${r.type1}</span>`:'';
+    const t2=r.type2?`<span class="tp tp-${r.type2}" style="font-size:8px;">${r.type2}</span>`:'';
+    return `<div class="reg-pick ${inP?'in-party':''}" onclick="toggleMyParty('${r.id}')" data-id="${r.id}">
+      <span style="font-size:12px;font-weight:700;">${r.displayName}</span>${t1}${t2}
+      ${inP?'<span style="font-size:9px;color:var(--accent);margin-left:auto;">✓</span>':''}
+    </div>`;
+  }).join('');
+}
+
+function toggleMyParty(id){
+  const regs = loadMyReg();
+  const rec = regs.find(r=>r.id===id);
+  if(!rec) return;
+  const idx = myParty6.findIndex(m=>m&&m._regId===id);
+  if(idx>=0){
+    myParty6[idx]=null;
+  } else {
+    const empty = myParty6.findIndex(m=>m===null);
+    if(empty<0){ alert('自パーティは6匹までです'); return; }
+    const p = pokeIndex.find(x=>x.name===rec.pokeName)||{name:rec.pokeName,type1:rec.type1,type2:rec.type2};
+    myParty6[empty] = {...p, _regId:rec.id, displayName:rec.displayName};
+  }
+  renderMyParty6();
+  initMyPartyFromReg();
+  renderMySelect();
+}
+
+function renderMyParty6(){
+  const el = document.getElementById('my-party6');
+  el.innerHTML = Array(6).fill(null).map((_,i)=>{
+    const m = myParty6[i];
+    if(m){
+      const t1=m.type1?`<span class="tp tp-${m.type1}" style="font-size:7px;">${m.type1}</span>`:'';
+      const t2=m.type2?`<span class="tp tp-${m.type2}" style="font-size:7px;">${m.type2}</span>`:'';
+      return `<div class="poke-chip filled" onclick="removeMyParty(${i})">
+        <span class="chip-num">${i+1}</span>
+        <span class="chip-name">${m.displayName||m.name}</span>
+        ${t1}${t2}
+        <span class="chip-del">×</span>
+      </div>`;
+    }
+    return `<div class="poke-chip empty"><span class="chip-num">${i+1}</span><span style="font-size:10px;color:var(--text2);">空き</span></div>`;
+  }).join('');
+}
+
+function removeMyParty(i){
+  myParty6[i]=null;
+  // 選出・初手からも外す
+  const name = myParty6[i]?.name;
+  mySelect3 = mySelect3.map(m=>m&&m===myParty6[i]?null:m);
+  if(myLead===myParty6[i]) myLead=null;
+  myParty6[i]=null;
+  renderMyParty6();
+  initMyPartyFromReg();
+  renderMySelect();
+}
+
+// ===== 自選出3匹 =====
+function renderMySelect(){
+  const el = document.getElementById('my-select3');
+  const available = myParty6.filter(Boolean);
+  if(!available.length){
+    el.innerHTML='<div style="font-size:11px;color:var(--text2);">自パーティを先に設定してください</div>';
+    return;
+  }
+  el.innerHTML = available.map(m=>{
+    const inSel = mySelect3.includes(m);
+    const isLead = myLead===m;
+    const t1=m.type1?`<span class="tp tp-${m.type1}" style="font-size:7px;">${m.type1}</span>`:'';
+    return `<div class="select-chip ${inSel?'selected':''} ${isLead?'is-lead':''}" onclick="toggleMySelect('${m.name}')">
+      <span class="chip-name">${m.displayName||m.name}</span>${t1}
+      ${inSel?`<button class="lead-btn ${isLead?'on':''}" onclick="event.stopPropagation();toggleMyLead('${m.name}')">初手</button>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('my-sel-count').textContent = mySelect3.filter(Boolean).length + '/3';
+}
+
+function toggleMySelect(name){
+  const m = myParty6.find(x=>x&&x.name===name);
+  if(!m) return;
+  const idx = mySelect3.indexOf(m);
+  if(idx>=0){
+    mySelect3[idx]=null;
+    if(myLead===m) myLead=null;
+  } else {
+    const empty = mySelect3.findIndex(x=>x===null);
+    if(empty<0){ alert('選出は3匹までです'); return; }
+    mySelect3[empty]=m;
+  }
+  renderMySelect();
+}
+
+function toggleMyLead(name){
+  const m = myParty6.find(x=>x&&x.name===name);
+  if(!m) return;
+  myLead = (myLead===m) ? null : m;
+  renderMySelect();
+}
+
+// ===== 相手パーティ =====
+function setupOppSearches(){
+  for(let i=0;i<6;i++){
+    setupSearch(`opp6-${i}`,`opp6-drop-${i}`, p=>{
+      oppParty6[i]=p;
+      renderOppParty6();
+      renderOppSelect();
+    });
+  }
+}
+
+function renderOppParty6(){
+  // 入力済みのものを表示
+  for(let i=0;i<6;i++){
+    const m=oppParty6[i];
+    const el=document.getElementById(`opp6-name-${i}`);
+    if(el && m){
+      el.textContent=m.name;
+      el.style.display='block';
+    }
+  }
+}
+
+// ===== 相手選出3匹 =====
+function renderOppSelect(){
+  const el = document.getElementById('opp-select3');
+  const available = oppParty6.filter(Boolean);
+  if(!available.length){
+    el.innerHTML='<div style="font-size:11px;color:var(--text2);">相手パーティを先に入力してください</div>';
+    return;
+  }
+  el.innerHTML = available.map(m=>{
+    const inSel = oppSelect3.includes(m);
+    const isLead = oppLead===m;
+    const t1=m.type1?`<span class="tp tp-${m.type1}" style="font-size:7px;">${m.type1}</span>`:'';
+    return `<div class="select-chip ${inSel?'selected':''} ${isLead?'is-lead':''}" onclick="toggleOppSelect('${m.name}')">
+      <span class="chip-name">${m.name}</span>${t1}
+      ${inSel?`<button class="lead-btn ${isLead?'on':''}" onclick="event.stopPropagation();toggleOppLead('${m.name}')">初手</button>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('opp-sel-count').textContent = oppSelect3.filter(Boolean).length + '/3';
+}
+
+function toggleOppSelect(name){
+  const m = oppParty6.find(x=>x&&x.name===name);
+  if(!m) return;
+  const idx = oppSelect3.indexOf(m);
+  if(idx>=0){
+    oppSelect3[idx]=null;
+    if(oppLead===m) oppLead=null;
+  } else {
+    const empty = oppSelect3.findIndex(x=>x===null);
+    if(empty<0){ alert('選出は3匹までです'); return; }
+    oppSelect3[empty]=m;
+  }
+  renderOppSelect();
+}
+
+function toggleOppLead(name){
+  const m = oppParty6.find(x=>x&&x.name===name);
+  if(!m) return;
+  oppLead = (oppLead===m) ? null : m;
+  renderOppSelect();
+}
+
+// ===== 記録 =====
+async function recordBattle(){
+  const mySel = mySelect3.filter(Boolean);
+  const oppSel = oppSelect3.filter(Boolean);
+  if(mySel.length<1){ alert('自分の選出を最低1匹選択してください'); return; }
+  if(!result){ alert('勝敗を選択してください'); return; }
+
+  const battle = {
+    id: Date.now(),
+    date: new Date().toLocaleDateString('ja-JP'),
+    result,
+    my: {
+      party6: myParty6.filter(Boolean).map(m=>({name:m.displayName||m.name, type1:m.type1, type2:m.type2})),
+      select3: mySel.map(m=>({name:m.displayName||m.name, type1:m.type1, type2:m.type2})),
+      lead: myLead ? {name:myLead.displayName||myLead.name, type1:myLead.type1, type2:myLead.type2} : null,
+    },
+    opp: {
+      party6: oppParty6.filter(Boolean).map(m=>({name:m.name, type1:m.type1, type2:m.type2})),
+      select3: oppSel.map(m=>({name:m.name, type1:m.type1, type2:m.type2})),
+      lead: oppLead ? {name:oppLead.name, type1:oppLead.type1, type2:oppLead.type2} : null,
+    },
+  };
+
+  await saveBattleRecord(battle);
+  renderStats();
+  renderHistory();
+  resetForm();
+  alert('記録しました！');
+}
+
+function resetForm(){
+  myParty6=Array(6).fill(null);
+  mySelect3=Array(3).fill(null);
+  myLead=null;
+  oppParty6=Array(6).fill(null);
+  oppSelect3=Array(3).fill(null);
+  oppLead=null;
+  result=null;
+  document.querySelectorAll('.result-btn').forEach(b=>b.classList.remove('on'));
+  for(let i=0;i<6;i++){
+    const inp=document.getElementById(`opp6-${i}`);
+    if(inp) inp.value='';
+    const nm=document.getElementById(`opp6-name-${i}`);
+    if(nm){ nm.textContent=''; nm.style.display='none'; }
+  }
+  renderMyParty6();
+  initMyPartyFromReg();
+  renderMySelect();
+  renderOppSelect();
+}
+
+// ===== 集計 =====
+async function renderStats(){
+  const battles = await loadBattleRecords();
+  const total = battles.length;
+  if(!total){
+    document.getElementById('stats-area').innerHTML='<div style="font-size:12px;color:var(--text2);padding:12px 0;">まだ記録がありません</div>';
+    return;
+  }
+
+  const wins = battles.filter(b=>b.result==='win').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('win-rate').textContent = Math.round(wins/total*100) + '%';
+  document.getElementById('win-count').textContent = wins + '勝' + (total-wins) + '敗';
+
+  // 自分の選出率集計
+  const myMap = {};
+  battles.forEach(b=>{
+    b.my.select3.forEach(m=>{
+      if(!myMap[m.name]) myMap[m.name]={sel:0,lead:0,win:0,type1:m.type1,type2:m.type2};
+      myMap[m.name].sel++;
+      if(b.result==='win') myMap[m.name].win++;
+    });
+    if(b.my.lead){
+      if(!myMap[b.my.lead.name]) myMap[b.my.lead.name]={sel:0,lead:0,win:0,type1:b.my.lead.type1,type2:b.my.lead.type2};
+      myMap[b.my.lead.name].lead++;
+    }
+  });
+
+  // 相手の選出率集計
+  const oppMap = {};
+  battles.forEach(b=>{
+    b.opp.select3.forEach(m=>{
+      if(!oppMap[m.name]) oppMap[m.name]={sel:0,lead:0,type1:m.type1,type2:m.type2};
+      oppMap[m.name].sel++;
+    });
+    if(b.opp.lead){
+      if(!oppMap[b.opp.lead.name]) oppMap[b.opp.lead.name]={sel:0,lead:0,type1:b.opp.lead.type1,type2:b.opp.lead.type2};
+      oppMap[b.opp.lead.name].lead++;
+    }
+  });
+
+  const myRows = Object.entries(myMap).sort((a,b)=>b[1].sel-a[1].sel);
+  const oppRows = Object.entries(oppMap).sort((a,b)=>b[1].sel-a[1].sel);
+
+  document.getElementById('stats-area').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div class="stats-head">自分の選出率</div>
+        <table class="stats-table">
+          <thead><tr><th>ポケモン</th><th>選出</th><th>選出率</th><th>初手</th><th>初手率</th><th>勝率</th></tr></thead>
+          <tbody>${myRows.map(([name,d])=>`
+            <tr>
+              <td><span class="poke-cell">${name}</span>
+                ${d.type1?`<span class="tp tp-${d.type1}" style="font-size:7px;">${d.type1}</span>`:''}
+              </td>
+              <td class="num">${d.sel}/${total}</td>
+              <td><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(d.sel/total*100)}%;background:var(--accent);"></div></div><span class="num">${Math.round(d.sel/total*100)}%</span></td>
+              <td class="num">${d.lead}</td>
+              <td><div class="bar-wrap"><div class="bar-fill" style="width:${d.lead?Math.round(d.lead/total*100):0}%;background:var(--accent3);"></div></div><span class="num">${d.lead?Math.round(d.lead/total*100):0}%</span></td>
+              <td class="num" style="color:${d.sel?Math.round(d.win/d.sel*100)>=50?'var(--green)':'var(--accent2)':'var(--text2)'}">${d.sel?Math.round(d.win/d.sel*100):0}%</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="stats-head">相手の選出率</div>
+        <table class="stats-table">
+          <thead><tr><th>ポケモン</th><th>選出</th><th>選出率</th><th>初手</th><th>初手率</th></tr></thead>
+          <tbody>${oppRows.map(([name,d])=>`
+            <tr>
+              <td><span class="poke-cell">${name}</span>
+                ${d.type1?`<span class="tp tp-${d.type1}" style="font-size:7px;">${d.type1}</span>`:''}
+              </td>
+              <td class="num">${d.sel}/${total}</td>
+              <td><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(d.sel/total*100)}%;background:var(--accent2);"></div></div><span class="num">${Math.round(d.sel/total*100)}%</span></td>
+              <td class="num">${d.lead}</td>
+              <td><div class="bar-wrap"><div class="bar-fill" style="width:${d.lead?Math.round(d.lead/total*100):0}%;background:var(--accent3);"></div></div><span class="num">${d.lead?Math.round(d.lead/total*100):0}%</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ===== 履歴 =====
+async function renderHistory(){
+  const battles = await loadBattleRecords();
+  const el = document.getElementById('history-list');
+  if(!battles.length){ el.innerHTML='<div style="font-size:11px;color:var(--text2);">記録がありません</div>'; return; }
+  el.innerHTML = battles.slice(0,30).map((b,i)=>`
+    <div class="history-item ${b.result}">
+      <div class="history-header">
+        <span class="history-result ${b.result}">${b.result==='win'?'WIN':'LOSE'}</span>
+        <span style="font-size:11px;color:var(--text2);">${b.date}</span>
+        <button class="del-btn" onclick="deleteBattle(${b.id})">削除</button>
+      </div>
+      <div class="history-body">
+        <div>
+          <div style="font-size:9px;color:var(--text2);margin-bottom:3px;">自分の選出 ${b.my.lead?'/ 初手: '+b.my.lead.name:''}</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            ${b.my.select3.map(m=>`<span class="poke-tag ${m.name===b.my.lead?.name?'lead-tag':''}">${m.name}</span>`).join('')}
+          </div>
+        </div>
+        <div style="font-size:18px;color:var(--border2);align-self:center;">vs</div>
+        <div>
+          <div style="font-size:9px;color:var(--text2);margin-bottom:3px;">相手の選出 ${b.opp.lead?'/ 初手: '+b.opp.lead.name:''}</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            ${b.opp.select3.map(m=>`<span class="poke-tag opp-tag ${m.name===b.opp.lead?.name?'lead-tag':''}">${m.name}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function deleteBattle(id){
+  if(!confirm('この記録を削除しますか？')) return;
+  const battles = loadBattles().filter(b=>b.id!==id);
+  saveBattles(battles);
+  renderStats();
+  renderHistory();
+}
+
+function setResult(r){
+  result = r;
+  document.querySelectorAll('.result-btn').forEach(b=>b.classList.toggle('on', b.dataset.r===r));
+}
+
+// ===== 初期化 =====
+window.onload = async ()=>{
+  await loadGameData();
+  await initAuth();
+  renderMyParty6();
+  initMyPartyFromReg();
+  renderMySelect();
+  renderOppSelect();
+  setupOppSearches();
+  renderStats();
+  renderHistory();
+};
+
+</script>
+<script>
+
+
+// ===== テーマ切替 =====
+var THEMES = {dark:{"--bg":"#07090f","--bg2":"#0b0e1a","--panel":"#0f1423","--border":"#1a2540","--border2":"#243356","--accent":"#00c8f0","--accent2":"#ff3060","--accent3":"#ffc800","--green":"#00e676","--text":"#d8e8ff","--text2":"#4a6080","--text3":"#7a90b0"},light:{"--bg":"#e8f4f8","--bg2":"#d0e8f0","--panel":"#f4fbff","--border":"#90c8e0","--border2":"#60a8cc","--accent":"#0066aa","--accent2":"#cc1040","--accent3":"#cc7700","--green":"#007744","--text":"#051828","--text2":"#2a5070","--text3":"#0a3050"}};
+function applyTheme(theme) {
+  var vars = THEMES[theme] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  localStorage.setItem('pokeedge_theme', theme);
+  var btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+  document.documentElement.setAttribute('data-theme', theme);
+}
+function toggleTheme() {
+  var current = localStorage.getItem('pokeedge_theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+// 即時適用
+(function(){
+  var t = localStorage.getItem('pokeedge_theme') || 'dark';
+  var vars = THEMES[t] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+
+function toggleNav(){
+  const nav = document.querySelector('.header-nav');
+  const hb  = document.getElementById('hamburger');
+  const ov  = document.getElementById('nav-overlay');
+  if(!nav) return;
+  nav.classList.toggle('open');
+  hb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeNav(){
+  const nav = document.querySelector('.header-nav');
+  const hb  = document.getElementById('hamburger');
+  const ov  = document.getElementById('nav-overlay');
+  if(!nav) return;
+  nav.classList.remove('open');
+  hb.classList.remove('open');
+  ov.classList.remove('show');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.nav-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(window.innerWidth <= 768) closeNav();
+    });
+  });
+});
+</script>
+</body>
+</html>

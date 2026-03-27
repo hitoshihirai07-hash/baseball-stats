@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeEdge | ログイン</title>
+<script>
+(function(){
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<script>
+(function(){
+  var dark={'--bg':'#07090f','--bg2':'#0b0e1a','--panel':'#0f1423','--border':'#1a2540','--border2':'#243356','--accent':'#00c8f0','--accent2':'#ff3060','--accent3':'#ffc800','--green':'#00e676','--text':'#d8e8ff','--text2':'#4a6080','--text3':'#7a90b0'};
+  var light={'--bg':'#e8f4f8','--bg2':'#d0e8f0','--panel':'#f4fbff','--border':'#90c8e0','--border2':'#60a8cc','--accent':'#0066aa','--accent2':'#cc1040','--accent3':'#cc7700','--green':'#007744','--text':'#051828','--text2':'#2a5070','--text3':'#0a3050'};
+  var t=localStorage.getItem('pokeedge_theme')||'dark';
+  var vars=t==='light'?light:dark;
+  var root=document.documentElement.style;
+  for(var k in vars)root.setProperty(k,vars[k]);
+})();
+</script>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#07090f;--bg2:#0b0e1a;--panel:#0f1423;--border:#1a2540;--border2:#243356;--accent:#00c8f0;--accent2:#ff3060;--accent3:#ffc800;--green:#00e676;--text:#d8e8ff;--text2:#4a6080;--text3:#7a90b0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 50% 35% at 10% 5%,rgba(0,200,240,0.06) 0%,transparent 60%),linear-gradient(rgba(0,200,240,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,240,0.018) 1px,transparent 1px);background-size:auto,52px 52px,52px 52px;}
+header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;gap:14px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--accent);cursor:pointer;}
+.logo em{color:var(--accent2);font-style:normal;}
+.main{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
+.card{background:var(--panel);border:1px solid var(--border);padding:36px;width:100%;max-width:400px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--accent);margin-bottom:4px;}
+.card-sub{font-size:11px;color:var(--text2);letter-spacing:2px;margin-bottom:28px;}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--text2);border-bottom:2px solid transparent;transition:all 0.15s;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.form-group{margin-bottom:16px;}
+label{display:block;font-size:10px;color:var(--text2);letter-spacing:1px;margin-bottom:5px;}
+input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
+input:focus{border-color:var(--accent);}
+.btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),#007a99);border:none;color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;transition:opacity 0.18s;margin-top:8px;}
+.btn-primary:hover{opacity:.85;}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.msg{padding:10px 12px;font-size:12px;margin-top:14px;display:none;}
+.msg.ok{background:rgba(0,230,118,0.1);border:1px solid var(--green);color:var(--green);}
+.msg.err{background:rgba(255,48,96,0.1);border:1px solid var(--accent2);color:var(--accent2);}
+.back-link{text-align:center;margin-top:18px;font-size:12px;color:var(--text2);}
+.back-link a{color:var(--accent);text-decoration:none;}
+
+/* ===== ライトモード ===== */
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="location.href='index.html'">Poke<em>Edge</em></div>
+</header>
+<div class="main">
+  <div class="card">
+    <div class="card-title">POKEEDGE</div>
+    <div class="card-sub">アカウントでデータをクラウド同期</div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">ログイン</div>
+      <div class="tab" onclick="switchTab('signup')">新規登録</div>
+    </div>
+
+    <!-- ログインフォーム -->
+    <div id="form-login">
+      <div class="form-group">
+        <label>メールアドレス</label>
+        <input type="email" id="login-email" placeholder="example@email.com">
+      </div>
+      <div class="form-group">
+        <label>パスワード</label>
+        <input type="password" id="login-pass" placeholder="パスワード" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">ログイン</button>
+    </div>
+
+    <!-- 新規登録フォーム -->
+    <div id="form-signup" style="display:none;">
+      <div class="form-group">
+        <label>メールアドレス</label>
+        <input type="email" id="signup-email" placeholder="example@email.com">
+      </div>
+      <div class="form-group">
+        <label>パスワード（8文字以上）</label>
+        <input type="password" id="signup-pass" placeholder="パスワード">
+      </div>
+      <div class="form-group">
+        <label>パスワード（確認）</label>
+        <input type="password" id="signup-pass2" placeholder="パスワード（再入力）" onkeydown="if(event.key==='Enter')doSignup()">
+      </div>
+      <button class="btn-primary" onclick="doSignup()">アカウント作成</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+    <div class="back-link"><a href="index.html">← サイトトップに戻る</a></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wxfnpzmvtzgrbwkpkgst.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm5wem12dHpncmJ3a3BrZ3N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzAyNjcsImV4cCI6MjA5MDAwNjI2N30.l64CD1MfTRU-2su06nQJlRX06iQi7KWVv-yaqFw8WGE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('form-login').style.display  = tab==='login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = tab==='signup' ? '' : 'none';
+  showMsg('','');
+}
+
+function showMsg(type, text) {
+  const el = document.getElementById('msg');
+  el.className = 'msg' + (type ? ' '+type : '');
+  el.style.display = text ? 'block' : 'none';
+  el.textContent = text;
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if(!email||!pass) { showMsg('err','メールアドレスとパスワードを入力してください'); return; }
+  showMsg('','ログイン中...');
+  const {error} = await sb.auth.signInWithPassword({email, password:pass});
+  if(error) { showMsg('err', 'ログイン失敗: '+error.message); return; }
+  showMsg('ok','ログイン成功！リダイレクト中...');
+  const redirect = new URLSearchParams(location.search).get('redirect') || 'pokemon.html';
+  setTimeout(()=>location.href=redirect, 800);
+}
+
+async function doSignup() {
+  const email = document.getElementById('signup-email').value.trim();
+  const pass  = document.getElementById('signup-pass').value;
+  const pass2 = document.getElementById('signup-pass2').value;
+  if(!email||!pass) { showMsg('err','メールアドレスとパスワードを入力してください'); return; }
+  if(pass.length<8) { showMsg('err','パスワードは8文字以上にしてください'); return; }
+  if(pass!==pass2)  { showMsg('err','パスワードが一致しません'); return; }
+  showMsg('','アカウント作成中...');
+  const {error} = await sb.auth.signUp({email, password:pass});
+  if(error) { showMsg('err','登録失敗: '+error.message); return; }
+  showMsg('ok','確認メールを送信しました。メールのリンクをクリックして登録を完了してください。');
+}
+
+
+
+// 既にログイン済みなら自動リダイレクト
+sb.auth.getSession().then(({data:{session}})=>{
+  if(session) {
+    const redirect = new URLSearchParams(location.search).get('redirect') || 'pokemon.html';
+    location.href = redirect;
+  }
+});
+</script>
+<script>
+
+// ===== テーマ切替 =====
+var THEMES = {dark:{"--bg":"#07090f","--bg2":"#0b0e1a","--panel":"#0f1423","--border":"#1a2540","--border2":"#243356","--accent":"#00c8f0","--accent2":"#ff3060","--accent3":"#ffc800","--green":"#00e676","--text":"#d8e8ff","--text2":"#4a6080","--text3":"#7a90b0"},light:{"--bg":"#e8f4f8","--bg2":"#d0e8f0","--panel":"#f4fbff","--border":"#90c8e0","--border2":"#60a8cc","--accent":"#0066aa","--accent2":"#cc1040","--accent3":"#cc7700","--green":"#007744","--text":"#051828","--text2":"#2a5070","--text3":"#0a3050"}};
+function applyTheme(theme) {
+  var vars = THEMES[theme] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  localStorage.setItem('pokeedge_theme', theme);
+  var btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+  document.documentElement.setAttribute('data-theme', theme);
+}
+function toggleTheme() {
+  var current = localStorage.getItem('pokeedge_theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+// 即時適用
+(function(){
+  var t = localStorage.getItem('pokeedge_theme') || 'dark';
+  var vars = THEMES[t] || THEMES.dark;
+  var root = document.documentElement.style;
+  for(var k in vars) root.setProperty(k, vars[k]);
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+</script>
+</body>
+</html>
