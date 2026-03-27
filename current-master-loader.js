@@ -1,17 +1,17 @@
 // current-master-loader.js
-// 今年度ページ用の選手マスタCSVと今年度オーダーCSVを読み込む
+// 今年度ページ用の選手マスタCSVと2026オーダーCSVを読み込む
 (function () {
-    const PLAYER_PATH = 'data/current_player_master.csv';
-    const ORDER_PATH = '2026lineup.csv';
+    const PATH = 'data/current_player_master.csv';
+    const LINEUP_PATH = '2026lineup.csv';
 
     window.CURRENT_PLAYER_MASTER = window.CURRENT_PLAYER_MASTER || [];
-    window.CURRENT_ORDER_2026 = window.CURRENT_ORDER_2026 || [];
+    window.CURRENT_LINEUP_2026 = window.CURRENT_LINEUP_2026 || [];
 
     const state = {
         loaded: false,
         promise: null,
-        currentOrderLoaded: false,
-        currentOrderPromise: null
+        lineupLoaded: false,
+        lineupPromise: null
     };
 
     function normalizeTeam(team) {
@@ -45,11 +45,7 @@
         return out.map(v => v.trim());
     }
 
-    function normalizeHeaderKey(value) {
-        return String(value || '').replace(/[\s\u3000]+/g, '').trim();
-    }
-
-    function parsePlayerCSV(text) {
+    function parsePlayerMasterCSV(text) {
         const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
         if (!lines.length) return [];
         const header = parseCSVLine(lines[0]);
@@ -74,43 +70,42 @@
         }).filter(row => row.name && row.team);
     }
 
-    function parseCurrentOrderCSV(text) {
+    function firstValue(row, keys) {
+        for (const key of keys) {
+            const value = row[key];
+            if (value != null && String(value).trim()) return String(value).trim();
+        }
+        return '';
+    }
+
+    function parseLineupCSV(text) {
         const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
         if (!lines.length) return [];
-        const header = parseCSVLine(lines[0]).map(normalizeHeaderKey);
+        const header = parseCSVLine(lines[0]);
         return lines.slice(1).map(line => {
             const cols = parseCSVLine(line);
             const row = {};
             header.forEach((key, idx) => row[key] = cols[idx] ?? '');
-            const ninth = String(row['9'] || '').trim();
             return {
-                gameId: String(row['試合ID'] || '').trim(),
-                date: String(row['試合日'] || '').trim(),
-                team: normalizeTeam(row['チーム']),
-                slot1: String(row['1'] || '').trim(),
-                slot2: String(row['2'] || '').trim(),
-                slot3: String(row['3'] || '').trim(),
-                slot4: String(row['4'] || '').trim(),
-                slot5: String(row['5'] || '').trim(),
-                slot6: String(row['6'] || '').trim(),
-                slot7: String(row['7'] || '').trim(),
-                slot8: String(row['8'] || '').trim(),
-                slot9: ninth,
-                pitcher: String(row['10'] || ninth || '').trim()
+                gameId: firstValue(row, ['試合ID', 'game_id']),
+                date: firstValue(row, ['試合日', 'game_date']),
+                team: normalizeTeam(firstValue(row, ['チーム', 'team'])),
+                slots: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => firstValue(row, [String(n), `${n} `])),
+                pitcher: firstValue(row, ['投手', '10', '10 '])
             };
         }).filter(row => row.team && row.date);
     }
 
-    async function ensurePlayers() {
+    async function ensure() {
         if (state.loaded) return window.CURRENT_PLAYER_MASTER;
         if (state.promise) return state.promise;
-        state.promise = fetch(PLAYER_PATH)
+        state.promise = fetch(PATH)
             .then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${PLAYER_PATH}`);
+                if (!res.ok) throw new Error(`Failed to load ${PATH}`);
                 return res.text();
             })
             .then(text => {
-                window.CURRENT_PLAYER_MASTER = parsePlayerCSV(text);
+                window.CURRENT_PLAYER_MASTER = parsePlayerMasterCSV(text);
                 state.loaded = true;
                 return window.CURRENT_PLAYER_MASTER;
             })
@@ -121,35 +116,29 @@
         return state.promise;
     }
 
-    async function ensureCurrentOrder() {
-        if (state.currentOrderLoaded) return window.CURRENT_ORDER_2026;
-        if (state.currentOrderPromise) return state.currentOrderPromise;
-        state.currentOrderPromise = fetch(ORDER_PATH)
+    async function ensureLineup2026() {
+        if (state.lineupLoaded) return window.CURRENT_LINEUP_2026;
+        if (state.lineupPromise) return state.lineupPromise;
+        state.lineupPromise = fetch(LINEUP_PATH)
             .then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${ORDER_PATH}`);
+                if (!res.ok) throw new Error(`Failed to load ${LINEUP_PATH}`);
                 return res.text();
             })
             .then(text => {
-                window.CURRENT_ORDER_2026 = parseCurrentOrderCSV(text);
-                state.currentOrderLoaded = true;
-                return window.CURRENT_ORDER_2026;
+                window.CURRENT_LINEUP_2026 = parseLineupCSV(text);
+                state.lineupLoaded = true;
+                return window.CURRENT_LINEUP_2026;
             })
             .catch(error => {
-                state.currentOrderPromise = null;
+                state.lineupPromise = null;
                 throw error;
             });
-        return state.currentOrderPromise;
-    }
-
-    async function ensure() {
-        await Promise.all([ensurePlayers(), ensureCurrentOrder()]);
-        return window.CURRENT_PLAYER_MASTER;
+        return state.lineupPromise;
     }
 
     window.CurrentMasterStore = {
         ensure,
-        ensurePlayers,
-        ensureCurrentOrder,
+        ensureLineup2026,
         state
     };
 })();

@@ -253,6 +253,66 @@
             margin-left: auto;
         }
 
+        .current-lineup-block {
+            display: none;
+            margin: .5rem 0 1rem;
+            padding: .9rem 1rem 1rem;
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+        }
+
+        .current-lineup-block.active {
+            display: block;
+        }
+
+        .current-lineup-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin-bottom: .6rem;
+            flex-wrap: wrap;
+        }
+
+        .current-lineup-title {
+            font-size: .92rem;
+            font-weight: 700;
+            color: var(--tx);
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+        }
+
+        .current-lineup-title::before {
+            content: '';
+            width: 4px;
+            height: 1em;
+            background: var(--ac);
+            border-radius: 999px;
+        }
+
+        .current-lineup-empty {
+            color: var(--tx2);
+            font-size: .82rem;
+            padding: .2rem 0;
+        }
+
+        .current-lineup-table table {
+            min-width: 920px;
+        }
+
+        .current-lineup-table th,
+        .current-lineup-table td {
+            text-align: center;
+        }
+
+        .current-lineup-table th:first-child,
+        .current-lineup-table td:first-child {
+            text-align: left;
+            min-width: 120px;
+        }
+
         .split-wrap,
         .normal-wrap {
             display: none;
@@ -1480,9 +1540,9 @@
             <div class="sh">
                 <h2 class="stitle">今年度 選手マスタ</h2>
             </div>
-            <p class="section-note">12球団の選手マスタを土台に、今年度ぶんのオーダーもこのページ内で確認できるようにしました。過去年度の打順履歴は「オーダー」に分けています。</p>
+            <p class="section-note">まずは12球団の選手マスタを収録しました。打順や個人成績などの追加要素は、このページを土台に順次足していく想定です。</p>
             <div class="filters">
-                <div class="fg"><label>球団</label><select id="cy-team" onchange="renderCurrentMaster(); initCurrentOrderFilters(); renderCurrentOrder(true)">
+                <div class="fg"><label>球団</label><select id="cy-team" onchange="renderCurrentMaster()">
                         <option value="">全球団</option>
                     </select></div>
                 <div class="fg"><label>区分</label><select id="cy-division" onchange="renderCurrentMaster()">
@@ -1502,27 +1562,13 @@
                 <div class="sb"><input type="text" id="cy-search" placeholder="選手名で検索" oninput="renderCurrentMaster(true)" /></div>
             </div>
             <div class="mode-note" id="current-master-note"></div>
-            <div class="pcard" style="margin-bottom:1rem">
-                <div class="sh" style="margin-bottom:.75rem">
-                    <h3 class="stitle" style="font-size:1.05rem">今年度オーダー（2026）</h3>
+            <div class="current-lineup-block" id="current-lineup-block">
+                <div class="current-lineup-head">
+                    <div class="current-lineup-title">今年度オーダー（2026）</div>
+                    <div class="mode-note" id="current-lineup-note"></div>
                 </div>
-                <div class="filters">
-                    <div class="fg"><label>球団</label><select id="current-order-team" onchange="renderCurrentOrder(true)">
-                            <option value="">球団を選択</option>
-                        </select></div>
-                    <div class="fg"><label>並び順</label><select id="current-order-sort" onchange="renderCurrentOrder(true)">
-                            <option value="desc">新しい順</option>
-                            <option value="asc">古い順</option>
-                        </select></div>
-                    <div class="fg"><label>表示数</label><select id="current-order-limit" onchange="renderCurrentOrder(true)">
-                            <option value="10">10試合</option>
-                            <option value="30">30試合</option>
-                            <option value="50">50試合</option>
-                            <option value="9999">全件</option>
-                        </select></div>
-                </div>
-                <div class="mode-note" id="current-order-note">球団を選ぶと今年度オーダーを表示します。</div>
-                <div class="tw">
+                <div class="current-lineup-empty" id="current-lineup-empty">球団を選ぶと今年度オーダーを表示します。</div>
+                <div class="tw current-lineup-table" id="current-lineup-wrap" style="display:none;">
                     <table>
                         <thead>
                             <tr>
@@ -1539,12 +1585,9 @@
                                 <th>投手</th>
                             </tr>
                         </thead>
-                        <tbody id="current-order-body">
-                            <tr><td colspan="11" style="text-align:center;color:var(--tx2)">球団を選択してください</td></tr>
-                        </tbody>
+                        <tbody id="current-lineup-body"></tbody>
                     </table>
                 </div>
-                <div class="pg" id="current-order-pagination"></div>
             </div>
             <div class="tw">
                 <table>
@@ -2313,10 +2356,6 @@
             page: 1
         };
 
-        const currentOrderState = {
-            page: 1
-        };
-
         function currentTeamOrder(name) {
             const order = [
                 '読売ジャイアンツ',
@@ -2402,6 +2441,7 @@
             note.textContent = total
                 ? `${total}件を表示中（支配下 ${registered} / 育成 ${development}）`
                 : '該当する選手がありません。';
+            renderCurrentLineup();
 
             const perPage = limit === 9999 ? total || 1 : limit;
             const totalPages = Math.max(1, Math.ceil(Math.max(total, 1) / perPage));
@@ -2435,87 +2475,61 @@
             renderCurrentMaster();
         }
 
-        function initCurrentOrderFilters() {
-            const teamSel = document.getElementById('current-order-team');
-            if (!teamSel) return;
-            const prevTeam = teamSel.value;
-            const teams = [...new Set((window.CURRENT_ORDER_2026 || []).map(row => row.team))]
-                .filter(Boolean)
-                .sort((a, b) => currentTeamOrder(a) - currentTeamOrder(b) || a.localeCompare(b, 'ja'));
-
-            teamSel.innerHTML = '<option value="">球団を選択</option>' + teams.map(team => `<option value="${team}">${team}</option>`).join('');
-
-            const currentTeam = document.getElementById('cy-team')?.value || '';
-            if (currentTeam && [...teamSel.options].some(opt => opt.value === currentTeam)) {
-                teamSel.value = currentTeam;
-            } else if (prevTeam && [...teamSel.options].some(opt => opt.value === prevTeam)) {
-                teamSel.value = prevTeam;
-            }
+        function currentLineupRowsByTeam(team) {
+            const rows = window.CURRENT_LINEUP_2026 || [];
+            return rows
+                .filter(row => row.team === team)
+                .sort((a, b) => String(b.date).localeCompare(String(a.date), 'ja'));
         }
 
-        function renderCurrentOrder(resetPage = false) {
-            const body = document.getElementById('current-order-body');
-            const pager = document.getElementById('current-order-pagination');
-            const note = document.getElementById('current-order-note');
-            const teamSel = document.getElementById('current-order-team');
-            if (!body || !pager || !note || !teamSel) return;
+        function renderCurrentLineup() {
+            const block = document.getElementById('current-lineup-block');
+            const note = document.getElementById('current-lineup-note');
+            const empty = document.getElementById('current-lineup-empty');
+            const wrap = document.getElementById('current-lineup-wrap');
+            const body = document.getElementById('current-lineup-body');
+            if (!block || !note || !empty || !wrap || !body) return;
 
-            if (resetPage) currentOrderState.page = 1;
-
-            const selectedTeam = teamSel.value || '';
-            const sortType = document.getElementById('current-order-sort')?.value || 'desc';
-            const limit = Number(document.getElementById('current-order-limit')?.value || 10);
-            const rows = [...(window.CURRENT_ORDER_2026 || [])]
-                .filter(row => !selectedTeam || row.team === selectedTeam)
-                .sort((a, b) => {
-                    const dateDiff = String(a.date).localeCompare(String(b.date));
-                    if (dateDiff !== 0) return sortType === 'asc' ? dateDiff : -dateDiff;
-                    return sortType === 'asc'
-                        ? String(a.gameId).localeCompare(String(b.gameId))
-                        : String(b.gameId).localeCompare(String(a.gameId));
-                });
-
-            if (!selectedTeam) {
-                note.textContent = '球団を選ぶと今年度オーダーを表示します。';
-                body.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--tx2)">球団を選択してください</td></tr>';
-                pager.innerHTML = '';
+            const team = document.getElementById('cy-team')?.value || '';
+            if (!team) {
+                block.classList.remove('active');
+                note.textContent = '';
+                empty.textContent = '球団を選ぶと今年度オーダーを表示します。';
+                wrap.style.display = 'none';
+                body.innerHTML = '';
                 return;
             }
 
-            note.textContent = rows.length
-                ? `${selectedTeam} ${rows.length}試合を表示中`
-                : `${selectedTeam} のオーダーはまだありません。`;
+            block.classList.add('active');
+            const rows = currentLineupRowsByTeam(team);
+            if (!rows.length) {
+                note.textContent = `${team}の今年度オーダーはまだありません。`;
+                empty.textContent = `${team}のデータを2026lineup.csvに追記すると、ここに表示されます。`;
+                wrap.style.display = 'none';
+                body.innerHTML = '';
+                return;
+            }
 
-            const perPage = limit === 9999 ? rows.length || 1 : limit;
-            const totalPages = Math.max(1, Math.ceil(Math.max(rows.length, 1) / perPage));
-            if (currentOrderState.page > totalPages) currentOrderState.page = totalPages;
-            const start = (currentOrderState.page - 1) * perPage;
-            const pageRows = rows.slice(start, start + perPage);
-
-            body.innerHTML = pageRows.length ? pageRows.map(row => `
+            note.textContent = `${team} ${rows.length}試合`;
+            empty.textContent = '';
+            wrap.style.display = 'block';
+            body.innerHTML = rows.map(row => {
+                const slots = Array.isArray(row.slots) ? row.slots : [];
+                return `
                 <tr>
                     <td>${row.date || '-'}</td>
-                    <td>${row.slot1 || '-'}</td>
-                    <td>${row.slot2 || '-'}</td>
-                    <td>${row.slot3 || '-'}</td>
-                    <td>${row.slot4 || '-'}</td>
-                    <td>${row.slot5 || '-'}</td>
-                    <td>${row.slot6 || '-'}</td>
-                    <td>${row.slot7 || '-'}</td>
-                    <td>${row.slot8 || '-'}</td>
-                    <td>${row.slot9 || '-'}</td>
+                    <td>${slots[0] || '-'}</td>
+                    <td>${slots[1] || '-'}</td>
+                    <td>${slots[2] || '-'}</td>
+                    <td>${slots[3] || '-'}</td>
+                    <td>${slots[4] || '-'}</td>
+                    <td>${slots[5] || '-'}</td>
+                    <td>${slots[6] || '-'}</td>
+                    <td>${slots[7] || '-'}</td>
+                    <td>${slots[8] || '-'}</td>
                     <td>${row.pitcher || '-'}</td>
-                </tr>`).join('') : '<tr><td colspan="11" style="text-align:center;color:var(--tx2)">該当データがありません</td></tr>';
-
-            pager.innerHTML = totalPages <= 1 ? '' : `
-                <button ${currentOrderState.page === 1 ? 'disabled' : ''} onclick="changeCurrentOrderPage(-1)">← 前へ</button>
-                <span>${currentOrderState.page} / ${totalPages}</span>
-                <button ${currentOrderState.page === totalPages ? 'disabled' : ''} onclick="changeCurrentOrderPage(1)">次へ →</button>`;
-        }
-
-        function changeCurrentOrderPage(diff) {
-            currentOrderState.page = Math.max(1, currentOrderState.page + diff);
-            renderCurrentOrder();
+                </tr>`;
+            }).join('');
         }
 
         // ============================================================
@@ -3365,8 +3379,10 @@
                 }
                 if (id === 'current' && window.CurrentMasterStore) {
                     await window.CurrentMasterStore.ensure();
+                    if (typeof window.CurrentMasterStore.ensureLineup2026 === 'function') {
+                        try { await window.CurrentMasterStore.ensureLineup2026(); } catch (error) { console.warn('current lineup load failed', error); }
+                    }
                     initCurrentMasterFilters();
-                    initCurrentOrderFilters();
                 }
 
                 if (id === 'order') {
@@ -3393,7 +3409,7 @@
                 if (id === 'batting') { fb(); }
                 if (id === 'pitching') { fp(); }
                 if (id === 'team') { tF = [...TEAM_DATA]; rt(); }
-                if (id === 'current') { renderCurrentMaster(); renderCurrentOrder(); }
+                if (id === 'current') { renderCurrentMaster(); }
                 if (id === 'order') await fo();
                 if (id === 'records') renderRecords();
                 if (id === 'myorder') initOrderBuilder();
@@ -3525,6 +3541,9 @@
             if (window.CurrentMasterStore) {
                 try {
                     await window.CurrentMasterStore.ensure();
+                    if (typeof window.CurrentMasterStore.ensureLineup2026 === 'function') {
+                        try { await window.CurrentMasterStore.ensureLineup2026(); } catch (error) { console.warn('current lineup load failed', error); }
+                    }
                     initCurrentMasterFilters();
                 } catch (error) {
                     console.warn(error);
