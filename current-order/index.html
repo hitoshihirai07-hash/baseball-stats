@@ -59,6 +59,9 @@ td{font-size:.9rem}
 .team-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.7rem;padding:0 .45rem;border-radius:999px;background:rgba(59,130,246,.16);border:1px solid rgba(59,130,246,.35);font-size:.72rem;font-weight:800;margin-right:.5rem;color:#bfdbfe}
 .section-block + .section-block{margin-top:1rem}
 .small{font-size:.78rem;color:var(--tx2)}
+.order-cell{display:flex;flex-direction:column;gap:.2rem;line-height:1.25}
+.order-name{font-weight:700}
+.order-pos{font-size:.76rem;color:var(--tx2)}
 @media (max-width: 1080px){.btn-grid{grid-template-columns:1fr}}
 @media (max-width: 900px){header{padding:0 .8rem}.hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}nav{width:100%;overflow:auto;flex-wrap:nowrap}.hero,.main{padding:1rem .9rem}.fg{width:100%}.fg label{min-width:4rem}select,input[type=text]{flex:1;min-width:0}.page-tab{width:100%}table{min-width:760px}}
 </style>
@@ -211,13 +214,8 @@ window.CurrentPagesCommon = (function () {
   const C = window.CurrentPagesCommon;
   const state = { rows: [] };
 
-  function rowValueByPattern(row, patterns) {
-    const entries = Object.entries(row).map(([key, value]) => [String(key || '').trim().replace(/\s+/g, ''), value || '']);
-    for (const pattern of patterns) {
-      const found = entries.find(([key]) => pattern.test(key));
-      if (found) return found[1] || '';
-    }
-    return '';
+  function normalizeHeaderKey(value) {
+    return String(value || '').trim().replace(/\s+/g, '').replace(/\.\d+$/, '');
   }
 
   function sanitizeName(value) {
@@ -228,25 +226,59 @@ window.CurrentPagesCommon = (function () {
     return text;
   }
 
+  function parseLineupText(text) {
+    const lines = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
+    if (!lines.length) return [];
+    const header = C.parseCSVLine(lines[0]);
+    const keys = header.map(normalizeHeaderKey);
+
+    function findIndex(pattern, occurrence = 1) {
+      let count = 0;
+      for (let i = 0; i < keys.length; i += 1) {
+        if (pattern.test(keys[i])) {
+          count += 1;
+          if (count === occurrence) return i;
+        }
+      }
+      return -1;
+    }
+
+    function cell(cols, index) {
+      return index >= 0 ? String(cols[index] || '').trim() : '';
+    }
+
+    return lines.slice(1).map((line, sourceIndex) => {
+      const cols = C.parseCSVLine(line);
+      const row = {
+        sourceIndex,
+        gameId: cell(cols, findIndex(/^試合id$/i)),
+        gameDate: cell(cols, findIndex(/^試合日$/)),
+        team: C.normalizeTeam(cell(cols, findIndex(/^チーム$/))),
+        opponent: C.normalizeTeam(cell(cols, findIndex(/^対戦相手$/))),
+        slots: []
+      };
+      for (let n = 1; n <= 10; n += 1) {
+        row.slots.push({
+          name: sanitizeName(cell(cols, findIndex(new RegExp(`^${n}$`)))),
+          pos: cell(cols, findIndex(/^守備位置$/, n))
+        });
+      }
+      return row;
+    }).filter(row => row.gameDate && row.team);
+  }
+
+  function renderSlotCell(slot) {
+    const name = sanitizeName(slot && slot.name);
+    const pos = String(slot && slot.pos || '').trim();
+    if (!name && !pos) return '-';
+    return `<div class="order-cell">${name ? `<div class="order-name">${name}</div>` : ''}${pos ? `<div class="order-pos">${pos}</div>` : ''}</div>`;
+  }
+
   async function loadCurrentOrders() {
-    const rows = await C.loadCSV('/2026lineup.csv');
-    const mapped = rows.map((row, sourceIndex) => ({
-      sourceIndex,
-      gameId: rowValueByPattern(row, [/^試合id$/i]),
-      gameDate: rowValueByPattern(row, [/^試合日$/]),
-      team: C.normalizeTeam(rowValueByPattern(row, [/^チーム$/])),
-      one: sanitizeName(rowValueByPattern(row, [/^1$/])),
-      two: sanitizeName(rowValueByPattern(row, [/^2$/])),
-      three: sanitizeName(rowValueByPattern(row, [/^3$/])),
-      four: sanitizeName(rowValueByPattern(row, [/^4$/])),
-      five: sanitizeName(rowValueByPattern(row, [/^5$/])),
-      six: sanitizeName(rowValueByPattern(row, [/^6$/])),
-      seven: sanitizeName(rowValueByPattern(row, [/^7$/])),
-      eight: sanitizeName(rowValueByPattern(row, [/^8$/])),
-      nine: sanitizeName(rowValueByPattern(row, [/^9$/])),
-      pitcher: sanitizeName(rowValueByPattern(row, [/^投手$/, /^10$/])),
-      opponent: C.normalizeTeam(rowValueByPattern(row, [/^対戦相手$/]))
-    })).filter(row => row.gameDate && row.team);
+    const res = await fetch('/2026lineup.csv');
+    if (!res.ok) throw new Error('打順の読込に失敗しました');
+    const text = await res.text();
+    const mapped = parseLineupText(text);
 
     const byGame = new Map();
     mapped.forEach(row => {
@@ -288,16 +320,16 @@ window.CurrentPagesCommon = (function () {
       <tr>
         <td>${row.gameDate}</td>
         <td>${C.teamBadge(row.team)}${row.team}</td>
-        <td>${row.one || '-'}</td>
-        <td>${row.two || '-'}</td>
-        <td>${row.three || '-'}</td>
-        <td>${row.four || '-'}</td>
-        <td>${row.five || '-'}</td>
-        <td>${row.six || '-'}</td>
-        <td>${row.seven || '-'}</td>
-        <td>${row.eight || '-'}</td>
-        <td>${row.nine || '-'}</td>
-        <td>${row.pitcher || '-'}</td>
+        <td>${renderSlotCell(row.slots[0])}</td>
+        <td>${renderSlotCell(row.slots[1])}</td>
+        <td>${renderSlotCell(row.slots[2])}</td>
+        <td>${renderSlotCell(row.slots[3])}</td>
+        <td>${renderSlotCell(row.slots[4])}</td>
+        <td>${renderSlotCell(row.slots[5])}</td>
+        <td>${renderSlotCell(row.slots[6])}</td>
+        <td>${renderSlotCell(row.slots[7])}</td>
+        <td>${renderSlotCell(row.slots[8])}</td>
+        <td>${renderSlotCell(row.slots[9])}</td>
         <td>${row.opponent || '-'}</td>
       </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する打順がありません。</td></tr>';
     document.getElementById('co-summary').textContent = `${team || '全球団'} ${filtered.length}試合`;
