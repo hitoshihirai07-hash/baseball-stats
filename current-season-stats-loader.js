@@ -1,4 +1,3 @@
-// current-season-stats-loader.js
 (function () {
     const BATTER_PATH = '2026stats_batter.csv';
     const PITCHER_PATH = '2026stats_pitcher.csv';
@@ -79,11 +78,11 @@
         if (state.promise) return state.promise;
         state.promise = Promise.all([
             fetch(BATTER_PATH).then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${BATTER_PATH}`);
+                if (!res.ok) throw new Error('今年度データの読込に失敗しました');
                 return res.text();
             }),
             fetch(PITCHER_PATH).then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${PITCHER_PATH}`);
+                if (!res.ok) throw new Error('今年度データの読込に失敗しました');
                 return res.text();
             })
         ]).then(([batterText, pitcherText]) => {
