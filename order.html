@@ -2977,9 +2977,18 @@
         // ============================================================
         // FILTER & RENDER: Order
         // ============================================================
+        function normalizeOrderTeamName(name) {
+            const aliases = {
+                'オリックスバファローズ': 'オリックス・バファローズ',
+                'オリックス・バファローズ': 'オリックス・バファローズ'
+            };
+            return aliases[name] || name;
+        }
+
         async function fo() {
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
+            const normalizedTeam = normalizeOrderTeamName(t);
             const body = document.getElementById('ob');
             if (body) body.innerHTML = '<tr><td colspan="12" style="padding:1rem;text-align:center;opacity:.7">読み込み中...</td></tr>';
             if (window.DataStore) {
@@ -2988,7 +2997,7 @@
             }
             oF = ORDER_DATA.filter(d => {
                 if (y && String(d[0]) !== y) return false;
-                if (t && d[2] !== t) return false;
+                if (t && normalizeOrderTeamName(d[2]) !== normalizedTeam) return false;
                 return true;
             });
             oPage = 1; ro(); renderOrderTop3();
@@ -3012,12 +3021,13 @@
         function renderOrderTop3() {
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
+            const top3Key = ORDER_TOP3[t] ? t : normalizeOrderTeamName(t);
             const container = document.getElementById('order-top3');
-            if (!y || !t || !ORDER_TOP3[t] || !ORDER_TOP3[t][y]) {
+            if (!y || !t || !ORDER_TOP3[top3Key] || !ORDER_TOP3[top3Key][y]) {
                 container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">年度とチームを選択してください</div>';
                 return;
             }
-            const data = ORDER_TOP3[t][y];
+            const data = ORDER_TOP3[top3Key][y];
             let html = '';
             for (let i = 1; i <= 9; i++) {
                 const tops = data[i] || [];
