@@ -98,7 +98,6 @@ td{font-size:.9rem}
   <section class="hero">
     <div class="hero-in">
       <h1>今年度 <em>打順</em></h1>
-      <p>今年の試合日ごとの打順一覧です。自チーム名と対戦相手を残した形で表示します。</p>
       <div class="page-tabs">
         <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
         <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
@@ -111,7 +110,6 @@ td{font-size:.9rem}
   <main class="main grid">
     <section class="card">
       <h2>今年度打順一覧</h2>
-      <p class="note">球団を選ぶと、その球団の試合日ごとの打順を確認できます。表示順は新しい順が初期値です。</p>
       <div class="filters">
         <div class="fg"><label>球団</label><select id="co-team"></select></div>
         <div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
@@ -302,11 +300,12 @@ window.CurrentPagesCommon = (function () {
       const rows = await C.loadCSV('/2026lineup.csv');
       const header = rows.length ? Object.keys(rows[0]) : [];
       const hasOpponentColumn = header.some(col => /対戦相手/.test(col)) || header.length >= 14;
-      return rows.map(row => {
+      return rows.map((row, sourceIndex) => {
         const cols = header.map(key => row[key] || '');
         const order = cols.slice(3, 12);
         return {
           gameId: cols[0] || '',
+          sourceIndex,
           gameDate: cols[1] || '',
           team: cols[2] || '',
           teamNormalized: C.normalizeLoose(cols[2] || ''),
@@ -318,26 +317,30 @@ window.CurrentPagesCommon = (function () {
     }
 
     function fillTeams() {
-      const teams = [...new Map(state.rows.map(row => [row.teamNormalized, row.team])).values()];
-      C.fillTeamSelect(document.getElementById('co-team'), teams, '全球団', C.getTeamFromQuery());
+      const select = document.getElementById('co-team');
+      const teams = [...new Map(state.rows.map(row => [row.teamNormalized, row.team])).values()]
+        .sort((a, b) => C.teamOrder(a) - C.teamOrder(b) || String(a).localeCompare(String(b), 'ja'));
+      select.innerHTML = teams.map(team => `<option value="${team}">${team}</option>`).join('');
+      const preferred = C.normalizeLoose(C.getTeamFromQuery());
+      const target = teams.find(team => C.normalizeLoose(team) === preferred);
+      select.value = target || teams[0] || '';
     }
 
     function renderCurrentOrders() {
       const team = document.getElementById('co-team').value || '';
       const sort = document.getElementById('co-sort').value;
       const limit = Number(document.getElementById('co-limit').value || 10);
-      const filtered = state.rows.filter(row => !team || row.teamNormalized === C.normalizeLoose(team)).sort((a,b) => {
+      const filtered = state.rows.filter(row => row.teamNormalized === C.normalizeLoose(team)).sort((a,b) => {
         const d = String(a.gameDate).localeCompare(String(b.gameDate));
         if (d !== 0) return sort === 'asc' ? d : -d;
-        const g = String(a.gameId).localeCompare(String(b.gameId));
-        return sort === 'asc' ? g : -g;
+        return a.sourceIndex - b.sourceIndex;
       });
       const visible = limit === 9999 ? filtered : filtered.slice(0, limit);
       document.getElementById('co-body').innerHTML = visible.length ? visible.map(row => `
         <tr>
           <td>${row.gameDate}</td><td>${C.teamBadge(row.team)}${row.team}</td><td>${row.one || '-'}</td><td>${row.two || '-'}</td><td>${row.three || '-'}</td><td>${row.four || '-'}</td><td>${row.five || '-'}</td><td>${row.six || '-'}</td><td>${row.seven || '-'}</td><td>${row.eight || '-'}</td><td>${row.nine || '-'}</td><td>${row.pitcher || '-'}</td><td>${row.opponent || '-'}</td>
         </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する打順がありません。</td></tr>';
-      const label = team || '全球団';
+      const label = team || '-';
       document.getElementById('co-summary').textContent = `${label} ${filtered.length}試合`;
       document.getElementById('co-foot').textContent = visible.length ? `${label} ${visible.length}試合を表示中` : `${label} の表示データはありません。`;
       C.updateTeamQuery(team);

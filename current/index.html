@@ -99,7 +99,6 @@ td{font-size:.9rem}
   <section class="hero">
     <div class="hero-in">
       <h1>今年度 <em>トップ</em></h1>
-      <p>今年の確認場所を4つに分けました。ここは入口だけにして、順位表を見たあとに、選手マスタ・成績・打順へそのまま移動できる形です。球団を選んでから移動すると、その球団の表示で開きます。</p>
       <div class="page-tabs">
         <a class="page-tab active" href="/current/">今年度トップ</a>
         <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
@@ -111,30 +110,28 @@ td{font-size:.9rem}
 
   <main class="main grid">
     <section class="card">
-      <h2>今年度の見方</h2>
-      <p class="note">最初のページでは説明と順位表だけを置いています。重い表は別ページへ分けたので、迷いにくくしてあります。</p>
+      <h2>移動</h2>
       <div class="filters">
         <div class="fg"><label>球団</label><select id="current-team-jump"><option value="">全球団</option></select></div>
       </div>
       <div class="link-grid">
         <a class="link-card" data-team-link="/current-master/" href="/current-master/">
           <h3>選手マスタ</h3>
-          <p>今年の所属や投打、区分を確認する入口です。</p>
+          <p>選手マスタ</p>
         </a>
         <a class="link-card" data-team-link="/current-stats/" href="/current-stats/">
           <h3>成績</h3>
-          <p>打撃と投手を同じページで確認できます。</p>
+          <p>成績</p>
         </a>
         <a class="link-card" data-team-link="/current-order/" href="/current-order/">
           <h3>打順</h3>
-          <p>試合日ごとの並びと対戦相手を確認できます。</p>
+          <p>打順</p>
         </a>
       </div>
     </section>
 
     <section class="card">
       <h2>順位表</h2>
-      <p class="note">今年の順位表です。更新用データを差し替えると、この表も変わります。</p>
       <div class="summary-row">
         <div class="summary-chip" id="standings-summary">読込中</div>
       </div>
