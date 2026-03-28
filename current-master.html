@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>NPB Stats | 今年度 選手マスタ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="current-pages.css" />
+</head>
+<body>
+  <header>
+    <div class="hi">
+      <a class="logo" href="index.html">NPB <span>Stats</span></a>
+      <nav>
+        <a href="index.html">ホーム</a>
+        <a href="current.html" class="active">今年度</a>
+        <a href="batting.html">打撃成績</a>
+        <a href="pitching.html">投手成績</a>
+        <a href="simulator.html">シミュレーター</a>
+        <a href="order.html">オーダー</a>
+        <a href="myorder.html">俺のオーダー</a>
+        <a href="pro-report.html">分析レポート</a>
+        <a href="team.html">チーム成績</a>
+        <a href="records.html">成績記録</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-in">
+      <h1>今年度 <em>選手マスタ</em></h1>
+      <p>今年の所属一覧を確認するページです。球団を選んだ状態で、成績や打順へそのまま移動できます。</p>
+      <div class="page-tabs">
+        <a class="page-tab" data-team-link="current.html" href="current.html">今年度トップ</a>
+        <a class="page-tab active" href="current-master.html">選手マスタ</a>
+        <a class="page-tab" data-team-link="current-stats.html" href="current-stats.html">成績</a>
+        <a class="page-tab" data-team-link="current-order.html" href="current-order.html">打順</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="main grid">
+    <section class="card">
+      <h2>選手一覧</h2>
+      <p class="note">球団・区分・ポジションで絞り込めます。上の球団選択は他ページの移動先にも引き継ぎます。</p>
+      <div class="filters">
+        <div class="fg"><label>球団</label><select id="cy-team"></select></div>
+        <div class="fg"><label>区分</label><select id="cy-division"><option value="">全区分</option><option value="支配下">支配下</option><option value="育成">育成</option></select></div>
+        <div class="fg"><label>ポジション</label><select id="cy-position"></select></div>
+        <div class="fg"><label>表示数</label><select id="cy-limit"><option value="50">50件</option><option value="100">100件</option><option value="200">200件</option><option value="9999">全件</option></select></div>
+        <div class="fg"><label>検索</label><input type="text" id="cy-search" placeholder="選手名で検索" /></div>
+      </div>
+      <div class="mini-links">
+        <a class="btn sub" data-team-link="current-stats.html" href="current-stats.html">この球団の成績へ</a>
+        <a class="btn sub" data-team-link="current-order.html" href="current-order.html">この球団の打順へ</a>
+      </div>
+      <div class="summary-row">
+        <div class="summary-chip" id="current-master-note">読込中</div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>球団</th><th>区分</th><th>選手名</th><th>ポジション</th><th>生年月日</th><th>身長</th><th>体重</th><th>投</th><th>打</th><th>更新日</th>
+            </tr>
+          </thead>
+          <tbody id="current-master-body"><tr><td colspan="11" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-master-pagination"></div>
+    </section>
+  </main>
+
+  <script src="current-pages-common.js"></script>
+  <script src="current-master-loader.js"></script>
+  <script>
+    const currentMasterState = { page: 1 };
+    const C = window.CurrentPagesCommon;
+
+    function initCurrentMasterFilters() {
+      const rows = window.CURRENT_PLAYER_MASTER || [];
+      const teamSel = document.getElementById('cy-team');
+      const posSel = document.getElementById('cy-position');
+      const prevTeam = teamSel.value;
+      const prevPos = posSel.value;
+      const teams = [...new Set(rows.map(row => row.team))];
+      const positions = [...new Set(rows.map(row => row.position).filter(Boolean))].sort((a,b) => a.localeCompare(b,'ja'));
+      C.fillTeamSelect(teamSel, teams, '全球団', prevTeam || C.getTeamFromQuery());
+      posSel.innerHTML = '<option value="">全ポジション</option>' + positions.map(pos => `<option value="${pos}">${pos}</option>`).join('');
+      if ([...posSel.options].some(opt => opt.value === prevPos)) posSel.value = prevPos;
+    }
+
+    function renderCurrentMaster(resetPage = false) {
+      if (resetPage) currentMasterState.page = 1;
+      const rows = [...(window.CURRENT_PLAYER_MASTER || [])];
+      const team = document.getElementById('cy-team').value || '';
+      const division = document.getElementById('cy-division').value || '';
+      const position = document.getElementById('cy-position').value || '';
+      const keyword = (document.getElementById('cy-search').value || '').trim().toLowerCase();
+      const limit = Number(document.getElementById('cy-limit').value || 50);
+      const filtered = rows
+        .filter(row => !team || row.team === team)
+        .filter(row => !division || row.division === division)
+        .filter(row => !position || row.position === position)
+        .filter(row => !keyword || String(row.name || '').toLowerCase().includes(keyword))
+        .sort((a,b) => {
+          const teamDiff = C.teamOrder(a.team) - C.teamOrder(b.team);
+          if (teamDiff !== 0) return teamDiff;
+          const divisionDiff = (a.division === '支配下' ? 0 : 1) - (b.division === '支配下' ? 0 : 1);
+          if (divisionDiff !== 0) return divisionDiff;
+          const positionDiff = String(a.position).localeCompare(String(b.position),'ja');
+          if (positionDiff !== 0) return positionDiff;
+          const numberDiff = C.numberValue(a.no) - C.numberValue(b.no);
+          if (numberDiff !== 0) return numberDiff;
+          return String(a.name).localeCompare(String(b.name),'ja');
+        });
+
+      const total = filtered.length;
+      const registered = filtered.filter(row => row.division === '支配下').length;
+      const development = filtered.filter(row => row.division === '育成').length;
+      document.getElementById('current-master-note').textContent = total ? `${total}件（支配下 ${registered} / 育成 ${development}）` : '該当する選手がありません。';
+
+      const perPage = limit === 9999 ? Math.max(total,1) : limit;
+      const totalPages = Math.max(1, Math.ceil(Math.max(total,1) / perPage));
+      if (currentMasterState.page > totalPages) currentMasterState.page = totalPages;
+      const start = (currentMasterState.page - 1) * perPage;
+      const pageRows = filtered.slice(start, start + perPage);
+      document.getElementById('current-master-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
+        <tr>
+          <td>${start + idx + 1}</td>
+          <td>${C.teamBadge(row.team)}${row.team}</td>
+          <td>${row.division || '-'}</td>
+          <td><b>${row.name}</b></td>
+          <td>${row.position || '-'}</td>
+          <td>${row.birthDate || '-'}</td>
+          <td>${row.height || '-'}</td>
+          <td>${row.weight || '-'}</td>
+          <td>${row.throwHand || '-'}</td>
+          <td>${row.batHand || '-'}</td>
+          <td>${row.updatedAt || '-'}</td>
+        </tr>`).join('') : '<tr><td colspan="11" class="empty">該当データがありません。</td></tr>';
+
+      document.getElementById('current-master-pagination').innerHTML = totalPages <= 1 ? '' : `
+        <button ${currentMasterState.page === 1 ? 'disabled' : ''} onclick="changeCurrentMasterPage(-1)">← 前へ</button>
+        <span>${currentMasterState.page} / ${totalPages}</span>
+        <button ${currentMasterState.page === totalPages ? 'disabled' : ''} onclick="changeCurrentMasterPage(1)">次へ →</button>`;
+
+      C.updateTeamQuery(team);
+      C.syncPageLinks(team);
+    }
+
+    function changeCurrentMasterPage(diff) {
+      currentMasterState.page = Math.max(1, currentMasterState.page + diff);
+      renderCurrentMaster();
+    }
+
+    (async function init() {
+      try {
+        await window.CurrentMasterStore.ensure();
+        initCurrentMasterFilters();
+        ['cy-team','cy-division','cy-position','cy-limit'].forEach(id => document.getElementById(id).addEventListener('change', () => renderCurrentMaster(true)));
+        document.getElementById('cy-search').addEventListener('input', () => renderCurrentMaster(true));
+        renderCurrentMaster(true);
+      } catch (error) {
+        document.getElementById('current-master-body').innerHTML = `<tr><td colspan="11" class="empty">${error.message}</td></tr>`;
+        document.getElementById('current-master-note').textContent = '読込失敗';
+      }
+    })();
+  </script>
+</body>
+</html>

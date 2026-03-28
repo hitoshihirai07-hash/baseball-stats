@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>NPB Stats | 今年度 成績</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="current-pages.css" />
+</head>
+<body>
+  <header>
+    <div class="hi">
+      <a class="logo" href="index.html">NPB <span>Stats</span></a>
+      <nav>
+        <a href="index.html">ホーム</a>
+        <a href="current.html" class="active">今年度</a>
+        <a href="batting.html">打撃成績</a>
+        <a href="pitching.html">投手成績</a>
+        <a href="simulator.html">シミュレーター</a>
+        <a href="order.html">オーダー</a>
+        <a href="myorder.html">俺のオーダー</a>
+        <a href="pro-report.html">分析レポート</a>
+        <a href="team.html">チーム成績</a>
+        <a href="records.html">成績記録</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-in">
+      <h1>今年度 <em>成績</em></h1>
+      <p>打撃と投手を1ページにまとめています。球団を選ぶと、上も下も同じ球団で見られます。</p>
+      <div class="page-tabs">
+        <a class="page-tab" data-team-link="current.html" href="current.html">今年度トップ</a>
+        <a class="page-tab" data-team-link="current-master.html" href="current-master.html">選手マスタ</a>
+        <a class="page-tab active" href="current-stats.html">成績</a>
+        <a class="page-tab" data-team-link="current-order.html" href="current-order.html">打順</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="main grid">
+    <section class="card">
+      <h2>絞り込み</h2>
+      <div class="filters">
+        <div class="fg"><label>球団</label><select id="cs-team"></select></div>
+      </div>
+      <div class="mini-links">
+        <a class="btn sub" data-team-link="current-master.html" href="current-master.html">この球団の選手マスタへ</a>
+        <a class="btn sub" data-team-link="current-order.html" href="current-order.html">この球団の打順へ</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>今年度 打撃成績</h2>
+      <p class="note">更新用データを差し替えると、この表も変わります。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="csb-search" placeholder="選手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="csb-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-batter-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>試合</th><th>打率</th><th>本塁打</th><th>打点</th><th>安打</th><th>盗塁</th><th>出塁率</th><th>長打率</th><th>OPS</th><th>打席</th></tr></thead>
+          <tbody id="current-batter-body"><tr><td colspan="13" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-batter-pagination"></div>
+    </section>
+
+    <section class="card">
+      <h2>今年度 投手成績</h2>
+      <p class="note">打撃と同じ球団条件で表示します。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="csp-search" placeholder="投手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="csp-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-pitcher-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>登板</th><th>勝利</th><th>敗戦</th><th>セーブ</th><th>ＨＰ</th><th>防御率</th><th>奪三振</th><th>勝率</th><th>投球回</th></tr></thead>
+          <tbody id="current-pitcher-body"><tr><td colspan="12" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-pitcher-pagination"></div>
+    </section>
+  </main>
+
+  <script src="current-pages-common.js"></script>
+  <script src="current-season-stats-loader.js"></script>
+  <script>
+    const C = window.CurrentPagesCommon;
+    const currentBatterState = { page: 1 };
+    const currentPitcherState = { page: 1 };
+
+    function initTeamFilter() {
+      const rows = [...(window.CURRENT_SEASON_BATTER_STATS || []), ...(window.CURRENT_SEASON_PITCHER_STATS || [])];
+      const teams = [...new Set(rows.map(row => row.team).filter(Boolean))];
+      C.fillTeamSelect(document.getElementById('cs-team'), teams, '全球団', C.getTeamFromQuery());
+      C.syncPageLinks(document.getElementById('cs-team').value || '');
+    }
+
+    function renderCurrentBatterStats(resetPage = false) {
+      if (resetPage) currentBatterState.page = 1;
+      const rows = [...(window.CURRENT_SEASON_BATTER_STATS || [])];
+      const team = document.getElementById('cs-team').value || '';
+      const keyword = (document.getElementById('csb-search').value || '').trim().toLowerCase();
+      const limit = Number(document.getElementById('csb-limit').value || 30);
+      const filtered = rows.filter(row => !team || row.team === team).filter(row => !keyword || String(row['選手名'] || '').toLowerCase().includes(keyword));
+      const total = filtered.length;
+      document.getElementById('current-batter-note').textContent = total ? `${total}件を表示中` : '該当する打撃成績がありません。';
+      const perPage = limit === 9999 ? Math.max(total,1) : limit;
+      const totalPages = Math.max(1, Math.ceil(Math.max(total,1) / perPage));
+      if (currentBatterState.page > totalPages) currentBatterState.page = totalPages;
+      const start = (currentBatterState.page - 1) * perPage;
+      const pageRows = filtered.slice(start, start + perPage);
+      document.getElementById('current-batter-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['試合'] || '-'}</td><td>${row['打率'] || '-'}</td><td>${row['本塁打'] || '-'}</td><td>${row['打点'] || '-'}</td><td>${row['安打'] || '-'}</td><td>${row['盗塁'] || '-'}</td><td>${row['出塁率'] || '-'}</td><td>${row['長打率'] || '-'}</td><td>${row['OPS'] || '-'}</td><td>${row['打席'] || '-'}</td></tr>`).join('') : '<tr><td colspan="13" class="empty">該当データがありません。</td></tr>';
+      document.getElementById('current-batter-pagination').innerHTML = totalPages <= 1 ? '' : `
+        <button ${currentBatterState.page === 1 ? 'disabled' : ''} onclick="changeCurrentBatterPage(-1)">← 前へ</button>
+        <span>${currentBatterState.page} / ${totalPages}</span>
+        <button ${currentBatterState.page === totalPages ? 'disabled' : ''} onclick="changeCurrentBatterPage(1)">次へ →</button>`;
+      C.updateTeamQuery(team);
+      C.syncPageLinks(team);
+    }
+
+    function changeCurrentBatterPage(diff) { currentBatterState.page = Math.max(1, currentBatterState.page + diff); renderCurrentBatterStats(); }
+
+    function renderCurrentPitcherStats(resetPage = false) {
+      if (resetPage) currentPitcherState.page = 1;
+      const rows = [...(window.CURRENT_SEASON_PITCHER_STATS || [])];
+      const team = document.getElementById('cs-team').value || '';
+      const keyword = (document.getElementById('csp-search').value || '').trim().toLowerCase();
+      const limit = Number(document.getElementById('csp-limit').value || 30);
+      const filtered = rows.filter(row => !team || row.team === team).filter(row => !keyword || String(row['選手名'] || '').toLowerCase().includes(keyword));
+      const total = filtered.length;
+      document.getElementById('current-pitcher-note').textContent = total ? `${total}件を表示中` : '該当する投手成績がありません。';
+      const perPage = limit === 9999 ? Math.max(total,1) : limit;
+      const totalPages = Math.max(1, Math.ceil(Math.max(total,1) / perPage));
+      if (currentPitcherState.page > totalPages) currentPitcherState.page = totalPages;
+      const start = (currentPitcherState.page - 1) * perPage;
+      const pageRows = filtered.slice(start, start + perPage);
+      document.getElementById('current-pitcher-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['登板'] || '-'}</td><td>${row['勝利'] || '-'}</td><td>${row['敗戦'] || '-'}</td><td>${row['セーブ'] || '-'}</td><td>${row['ＨＰ'] || '-'}</td><td>${row['防御率'] || '-'}</td><td>${row['奪三振'] || '-'}</td><td>${row['勝率'] || '-'}</td><td>${row['投球回'] || '-'}</td></tr>`).join('') : '<tr><td colspan="12" class="empty">該当データがありません。</td></tr>';
+      document.getElementById('current-pitcher-pagination').innerHTML = totalPages <= 1 ? '' : `
+        <button ${currentPitcherState.page === 1 ? 'disabled' : ''} onclick="changeCurrentPitcherPage(-1)">← 前へ</button>
+        <span>${currentPitcherState.page} / ${totalPages}</span>
+        <button ${currentPitcherState.page === totalPages ? 'disabled' : ''} onclick="changeCurrentPitcherPage(1)">次へ →</button>`;
+    }
+
+    function changeCurrentPitcherPage(diff) { currentPitcherState.page = Math.max(1, currentPitcherState.page + diff); renderCurrentPitcherStats(); }
+
+    (async function init() {
+      try {
+        await window.CurrentSeasonStatsStore.ensure();
+        initTeamFilter();
+        document.getElementById('cs-team').addEventListener('change', () => { renderCurrentBatterStats(true); renderCurrentPitcherStats(true); });
+        document.getElementById('csb-search').addEventListener('input', () => renderCurrentBatterStats(true));
+        document.getElementById('csb-limit').addEventListener('change', () => renderCurrentBatterStats(true));
+        document.getElementById('csp-search').addEventListener('input', () => renderCurrentPitcherStats(true));
+        document.getElementById('csp-limit').addEventListener('change', () => renderCurrentPitcherStats(true));
+        renderCurrentBatterStats(true);
+        renderCurrentPitcherStats(true);
+      } catch (error) {
+        document.getElementById('current-batter-body').innerHTML = `<tr><td colspan="13" class="empty">${error.message}</td></tr>`;
+        document.getElementById('current-pitcher-body').innerHTML = `<tr><td colspan="12" class="empty">${error.message}</td></tr>`;
+        document.getElementById('current-batter-note').textContent = '読込失敗';
+        document.getElementById('current-pitcher-note').textContent = '読込失敗';
+      }
+    })();
+  </script>
+</body>
+</html>
