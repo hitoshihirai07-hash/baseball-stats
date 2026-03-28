@@ -25,19 +25,11 @@ nav a:hover,nav a.active{background:rgba(245,158,11,.15);color:var(--ac)}
 .hero-in{max-width:1400px;margin:0 auto}
 .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;margin-bottom:.5rem}
 .hero h1 em{font-style:normal;background:linear-gradient(90deg,#f59e0b,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:var(--tx2);font-size:.92rem;line-height:1.8;max-width:960px}
-.hero-actions,.hero-buttons,.mini-links{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ac);color:#08111f;border:none;padding:.75rem 1.15rem;border-radius:10px;font-weight:800;font-size:.88rem;text-decoration:none;cursor:pointer}
-.btn.sub{background:var(--bg3);color:var(--tx);border:1px solid var(--bd)}
-.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
 .main{max-width:1400px;margin:0 auto;padding:1.5rem}
 .grid{display:grid;gap:1rem}
-.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.1rem 1.1rem 1.25rem;box-shadow:0 18px 40px rgba(0,0,0,.22)}
 .card h2,.card h3{font-size:1.08rem;font-weight:800;display:flex;align-items:center;gap:.55rem;margin-bottom:1rem}
 .card h2::before,.card h3::before{content:'';width:4px;height:1.1em;background:var(--ac);border-radius:2px}
-.note{color:var(--tx2);font-size:.84rem;line-height:1.8;margin-top:-.2rem;margin-bottom:1rem}
 .filters{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem}
 .fg{display:flex;align-items:center;gap:.45rem}
 .fg label{font-size:.78rem;color:var(--tx2);white-space:nowrap}
@@ -46,12 +38,11 @@ select:hover,input[type=text]:hover{border-color:var(--ac2)}
 select:focus,input[type=text]:focus{border-color:var(--ac)}
 .summary-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
 .summary-chip{display:inline-flex;align-items:center;gap:.45rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);padding:.42rem .72rem;border-radius:999px;color:#fbbf24;font-weight:700;font-size:.82rem}
-.link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
-.link-card{background:linear-gradient(180deg,rgba(245,158,11,.08),rgba(17,24,39,.75));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:1rem;text-decoration:none;color:var(--tx)}
-.link-card h3{font-size:1rem;font-weight:800;margin-bottom:.45rem}
+.btn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.link-card,.action-btn{background:linear-gradient(180deg,rgba(245,158,11,.08),rgba(17,24,39,.75));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:1rem;text-decoration:none;color:var(--tx);display:block}
+.link-card h3{font-size:1rem;font-weight:800;margin-bottom:.2rem}
 .link-card h3::before{display:none}
-.link-card p{color:var(--tx2);font-size:.84rem;line-height:1.7}
-.link-card:hover{border-color:rgba(245,158,11,.5);transform:translateY(-1px)}
+.link-card:hover,.action-btn:hover{border-color:rgba(245,158,11,.5);transform:translateY(-1px)}
 .tw{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:auto}
 table{width:100%;border-collapse:collapse;min-width:900px}
 thead tr{background:var(--bg3);border-bottom:2px solid var(--ac)}
@@ -62,24 +53,21 @@ tbody tr:hover{background:rgba(59,130,246,.06)}
 tbody tr:last-child{border-bottom:none}
 td{font-size:.9rem}
 .empty{text-align:center;color:var(--tx2);padding:2rem 1rem}
-.pg{display:flex;justify-content:center;align-items:center;gap:.75rem;margin-top:1rem}
-.pg button{background:var(--bg3);border:1px solid var(--bd);color:var(--tx);padding:.48rem .75rem;border-radius:8px;cursor:pointer;font-family:inherit}
-.pg button:disabled{opacity:.45;cursor:not-allowed}
 .page-tabs{display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1rem}
 .page-tab{display:inline-flex;align-items:center;justify-content:center;padding:.6rem .95rem;border-radius:999px;text-decoration:none;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);color:var(--tx);font-weight:700;font-size:.84rem}
 .page-tab.active{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.4);color:#fbbf24}
 .team-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.7rem;padding:0 .45rem;border-radius:999px;background:rgba(59,130,246,.16);border:1px solid rgba(59,130,246,.35);font-size:.72rem;font-weight:800;margin-right:.5rem;color:#bfdbfe}
-.status-bar{display:flex;gap:1rem;flex-wrap:wrap;font-size:.84rem;color:var(--tx2)}
+.section-block + .section-block{margin-top:1rem}
 .small{font-size:.78rem;color:var(--tx2)}
-@media (max-width: 1080px){.grid-3,.grid-2,.link-grid{grid-template-columns:1fr}}
-@media (max-width: 900px){header{padding:0 .8rem}.hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}nav{width:100%;overflow:auto;flex-wrap:nowrap}.hero,.main{padding:1rem .9rem}.fg{width:100%}.fg label{min-width:4rem}select,input[type=text]{flex:1;min-width:0}.btn,.page-tab{width:100%}.hero-buttons,.page-tabs,.mini-links{width:100%}table{min-width:760px}}
-
+@media (max-width: 1080px){.btn-grid{grid-template-columns:1fr}}
+@media (max-width: 900px){header{padding:0 .8rem}.hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}nav{width:100%;overflow:auto;flex-wrap:nowrap}.hero,.main{padding:1rem .9rem}.fg{width:100%}.fg label{min-width:4rem}select,input[type=text]{flex:1;min-width:0}.page-tab{width:100%}table{min-width:760px}}
 </style>
 </head>
 <body>
   <header>
     <div class="hi">
       <a class="logo" href="/index.html">NPB <span>Stats</span></a>
+      
       <nav>
         <a href="/index.html">ホーム</a>
         <a href="/current/" class="active">今年度</a>
@@ -92,6 +80,7 @@ td{font-size:.9rem}
         <a href="/team.html">チーム成績</a>
         <a href="/records.html">成績記録</a>
       </nav>
+
     </div>
   </header>
 
@@ -115,10 +104,6 @@ td{font-size:.9rem}
         <div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
         <div class="fg"><label>表示数</label><select id="co-limit"><option value="10">10試合</option><option value="30">30試合</option><option value="50">50試合</option><option value="9999">全試合</option></select></div>
       </div>
-      <div class="mini-links">
-        <a class="btn sub" data-team-link="/current-master/" href="/current-master/">この球団の選手マスタへ</a>
-        <a class="btn sub" data-team-link="/current-stats/" href="/current-stats/">この球団の成績へ</a>
-      </div>
       <div class="summary-row">
         <div class="summary-chip" id="co-summary">読込中</div>
         <div class="summary-chip" id="co-last-updated">-</div>
@@ -133,90 +118,44 @@ td{font-size:.9rem}
     </section>
   </main>
 
-  
   <script>
 window.CurrentPagesCommon = (function () {
   const TEAM_ORDER = [
     '読売ジャイアンツ','阪神タイガース','横浜DeNAベイスターズ','広島東洋カープ','中日ドラゴンズ','東京ヤクルトスワローズ',
     '福岡ソフトバンクホークス','北海道日本ハムファイターズ','オリックスバファローズ','埼玉西武ライオンズ','東北楽天ゴールデンイーグルス','千葉ロッテマリーンズ'
   ];
-
   const TEAM_ABBR = {
-    '読売ジャイアンツ': '巨',
-    '阪神タイガース': '神',
-    '横浜DeNAベイスターズ': 'De',
-    '広島東洋カープ': '広',
-    '中日ドラゴンズ': '中',
-    '東京ヤクルトスワローズ': 'ヤ',
-    '福岡ソフトバンクホークス': 'ソ',
-    '北海道日本ハムファイターズ': '日',
-    'オリックス・バファローズ': 'オ',
-    'オリックスバファローズ': 'オ',
-    '埼玉西武ライオンズ': '西',
-    '東北楽天ゴールデンイーグルス': '楽',
-    '千葉ロッテマリーンズ': 'ロ'
+    '読売ジャイアンツ':'巨','阪神タイガース':'神','横浜DeNAベイスターズ':'De','広島東洋カープ':'広','中日ドラゴンズ':'中','東京ヤクルトスワローズ':'ヤ',
+    '福岡ソフトバンクホークス':'ソ','北海道日本ハムファイターズ':'日','オリックス・バファローズ':'オ','オリックスバファローズ':'オ','埼玉西武ライオンズ':'西','東北楽天ゴールデンイーグルス':'楽','千葉ロッテマリーンズ':'ロ'
   };
-
   function normalizeTeam(team) {
     const raw = String(team || '').trim();
     const map = {
-      '巨人': '読売ジャイアンツ',
-      '阪神': '阪神タイガース',
-      'DeNA': '横浜DeNAベイスターズ',
-      '横浜DeNA': '横浜DeNAベイスターズ',
-      '広島': '広島東洋カープ',
-      '中日': '中日ドラゴンズ',
-      'ヤクルト': '東京ヤクルトスワローズ',
-      'ソフトバンク': '福岡ソフトバンクホークス',
-      '西武': '埼玉西武ライオンズ',
-      '楽天': '東北楽天ゴールデンイーグルス',
-      'ロッテ': '千葉ロッテマリーンズ',
-      '日本ハム': '北海道日本ハムファイターズ',
-      '日ハム': '北海道日本ハムファイターズ',
-      'オリックス': 'オリックスバファローズ',
-      'オリックス・バファローズ': 'オリックスバファローズ'
+      '巨人':'読売ジャイアンツ','阪神':'阪神タイガース','DeNA':'横浜DeNAベイスターズ','横浜DeNA':'横浜DeNAベイスターズ','広島':'広島東洋カープ',
+      '中日':'中日ドラゴンズ','ヤクルト':'東京ヤクルトスワローズ','ソフトバンク':'福岡ソフトバンクホークス','西武':'埼玉西武ライオンズ',
+      '楽天':'東北楽天ゴールデンイーグルス','ロッテ':'千葉ロッテマリーンズ','日本ハム':'北海道日本ハムファイターズ','日ハム':'北海道日本ハムファイターズ',
+      'オリックス':'オリックスバファローズ','オリックス・バファローズ':'オリックスバファローズ'
     };
     return map[raw] || raw;
   }
-
-  function normalizeLoose(team) {
-    return String(normalizeTeam(team) || '').replace(/[・･\s]/g, '');
-  }
-
+  function normalizeLoose(team) { return String(normalizeTeam(team) || '').replace(/[・･\s]/g, ''); }
   function teamOrder(team) {
     const normalized = normalizeLoose(team);
     const idx = TEAM_ORDER.map(normalizeLoose).indexOf(normalized);
     return idx === -1 ? 999 : idx;
   }
-
   function teamBadge(team) {
     const label = TEAM_ABBR[team] || TEAM_ABBR[normalizeTeam(team)] || '球';
     return `<span class="team-badge">${label}</span>`;
   }
-
-  function numberValue(value) {
-    const cleaned = String(value || '').replace(/[^0-9]/g, '');
-    if (!cleaned) return Number.MAX_SAFE_INTEGER;
-    const n = Number(cleaned);
-    return Number.isFinite(n) ? n : Number.MAX_SAFE_INTEGER;
-  }
-
   function parseCSVLine(line) {
-    const out = [];
-    let cur = '';
-    let inQuotes = false;
+    const out = []; let cur = ''; let inQuotes = false;
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') {
-        if (inQuotes && line[i + 1] === '"') {
-          cur += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
+        if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; } else { inQuotes = !inQuotes; }
       } else if (ch === ',' && !inQuotes) {
-        out.push(cur);
-        cur = '';
+        out.push(cur); cur = '';
       } else {
         cur += ch;
       }
@@ -224,10 +163,9 @@ window.CurrentPagesCommon = (function () {
     out.push(cur);
     return out.map(v => v.trim());
   }
-
   async function loadCSV(path) {
     const res = await fetch(path);
-    if (!res.ok) throw new Error('今年度データの読込に失敗しました');
+    if (!res.ok) throw new Error('読込に失敗しました');
     const text = await res.text();
     const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
     if (!lines.length) return [];
@@ -239,127 +177,149 @@ window.CurrentPagesCommon = (function () {
       return row;
     });
   }
-
-  function fillTeamSelect(select, teams, includeAllLabel = '全球団', preferred = '') {
-    const normalizedPreferred = normalizeLoose(preferred);
-    select.innerHTML = `<option value="">${includeAllLabel}</option>` + teams
-      .sort((a, b) => teamOrder(a) - teamOrder(b) || String(a).localeCompare(String(b), 'ja'))
-      .map(team => `<option value="${team}">${team}</option>`).join('');
+  function fillTeamSelect(select, teams, includeAllLabel, preferredTeam) {
+    const sorted = [...teams].sort((a, b) => teamOrder(a) - teamOrder(b) || String(a).localeCompare(String(b), 'ja'));
+    select.innerHTML = (includeAllLabel ? `<option value="">${includeAllLabel}</option>` : '') + sorted.map(team => `<option value="${team}">${team}</option>`).join('');
+    const normalizedPreferred = normalizeLoose(preferredTeam || '');
     if (normalizedPreferred) {
       const target = [...select.options].find(opt => normalizeLoose(opt.value) === normalizedPreferred);
       if (target) select.value = target.value;
     }
   }
-
   function getTeamFromQuery() {
     const params = new URLSearchParams(location.search);
     return params.get('team') || '';
   }
-
   function updateTeamQuery(team) {
     const params = new URLSearchParams(location.search);
     if (team) params.set('team', team); else params.delete('team');
     const query = params.toString();
     history.replaceState(null, '', location.pathname + (query ? `?${query}` : ''));
   }
-
-  function buildPageHref(path, team) {
-    return path + (team ? `?team=${encodeURIComponent(team)}` : '');
-  }
-
+  function buildPageHref(path, team) { return path + (team ? `?team=${encodeURIComponent(team)}` : ''); }
   function syncPageLinks(team) {
     document.querySelectorAll('[data-team-link]').forEach(el => {
       const path = el.getAttribute('data-team-link') || '';
       if (path) el.setAttribute('href', buildPageHref(path, team));
     });
   }
-
-  return {
-    TEAM_ORDER,
-    normalizeTeam,
-    normalizeLoose,
-    teamOrder,
-    teamBadge,
-    numberValue,
-    parseCSVLine,
-    loadCSV,
-    fillTeamSelect,
-    getTeamFromQuery,
-    updateTeamQuery,
-    buildPageHref,
-    syncPageLinks
-  };
+  return {TEAM_ORDER, normalizeTeam, normalizeLoose, teamOrder, teamBadge, parseCSVLine, loadCSV, fillTeamSelect, getTeamFromQuery, updateTeamQuery, buildPageHref, syncPageLinks};
 })();
-
 </script>
-<script>
-    const C = window.CurrentPagesCommon;
-    const state = { rows: [] };
+  <script>
+(function () {
+  const C = window.CurrentPagesCommon;
+  const state = { rows: [] };
 
-    async function loadCurrentOrders() {
-      const rows = await C.loadCSV('/2026lineup.csv');
-      const header = rows.length ? Object.keys(rows[0]) : [];
-      const hasOpponentColumn = header.some(col => /対戦相手/.test(col)) || header.length >= 14;
-      return rows.map((row, sourceIndex) => {
-        const cols = header.map(key => row[key] || '');
-        const order = cols.slice(3, 12);
-        return {
-          gameId: cols[0] || '',
-          sourceIndex,
-          gameDate: cols[1] || '',
-          team: cols[2] || '',
-          teamNormalized: C.normalizeLoose(cols[2] || ''),
-          one: order[0] || '', two: order[1] || '', three: order[2] || '', four: order[3] || '', five: order[4] || '', six: order[5] || '', seven: order[6] || '', eight: order[7] || '', nine: order[8] || '',
-          pitcher: cols[12] || order[8] || '',
-          opponent: hasOpponentColumn ? (cols[13] || '') : ''
-        };
-      }).filter(row => row.gameDate && row.team);
+  function rowValueByPattern(row, patterns) {
+    const entries = Object.entries(row).map(([key, value]) => [String(key || '').trim().replace(/\s+/g, ''), value || '']);
+    for (const pattern of patterns) {
+      const found = entries.find(([key]) => pattern.test(key));
+      if (found) return found[1] || '';
     }
+    return '';
+  }
 
-    function fillTeams() {
-      const select = document.getElementById('co-team');
-      const teams = [...new Map(state.rows.map(row => [row.teamNormalized, row.team])).values()]
-        .sort((a, b) => C.teamOrder(a) - C.teamOrder(b) || String(a).localeCompare(String(b), 'ja'));
-      select.innerHTML = teams.map(team => `<option value="${team}">${team}</option>`).join('');
-      const preferred = C.normalizeLoose(C.getTeamFromQuery());
-      const target = teams.find(team => C.normalizeLoose(team) === preferred);
-      select.value = target || teams[0] || '';
+  function sanitizeName(value) {
+    const text = String(value || '').trim();
+    if (!text) return '';
+    if (/^\d{8}_[a-z]+(?:-[a-z]+)+-\d+$/i.test(text)) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return '';
+    return text;
+  }
+
+  async function loadCurrentOrders() {
+    const rows = await C.loadCSV('/2026lineup.csv');
+    const mapped = rows.map((row, sourceIndex) => ({
+      sourceIndex,
+      gameId: rowValueByPattern(row, [/^試合id$/i]),
+      gameDate: rowValueByPattern(row, [/^試合日$/]),
+      team: C.normalizeTeam(rowValueByPattern(row, [/^チーム$/])),
+      one: sanitizeName(rowValueByPattern(row, [/^1$/])),
+      two: sanitizeName(rowValueByPattern(row, [/^2$/])),
+      three: sanitizeName(rowValueByPattern(row, [/^3$/])),
+      four: sanitizeName(rowValueByPattern(row, [/^4$/])),
+      five: sanitizeName(rowValueByPattern(row, [/^5$/])),
+      six: sanitizeName(rowValueByPattern(row, [/^6$/])),
+      seven: sanitizeName(rowValueByPattern(row, [/^7$/])),
+      eight: sanitizeName(rowValueByPattern(row, [/^8$/])),
+      nine: sanitizeName(rowValueByPattern(row, [/^9$/])),
+      pitcher: sanitizeName(rowValueByPattern(row, [/^投手$/, /^10$/])),
+      opponent: C.normalizeTeam(rowValueByPattern(row, [/^対戦相手$/]))
+    })).filter(row => row.gameDate && row.team);
+
+    const byGame = new Map();
+    mapped.forEach(row => {
+      const key = String(row.gameId || '').trim();
+      if (!key) return;
+      if (!byGame.has(key)) byGame.set(key, []);
+      byGame.get(key).push(row);
+    });
+    mapped.forEach(row => {
+      if (row.opponent) return;
+      const gameRows = byGame.get(String(row.gameId || '').trim()) || [];
+      const other = gameRows.find(candidate => C.normalizeLoose(candidate.team) !== C.normalizeLoose(row.team));
+      row.opponent = other ? other.team : '';
+    });
+    return mapped;
+  }
+
+  function fillTeams() {
+    const select = document.getElementById('co-team');
+    const teams = [...new Map(state.rows.map(row => [C.normalizeLoose(row.team), row.team])).values()]
+      .sort((a, b) => C.teamOrder(a) - C.teamOrder(b) || String(a).localeCompare(String(b), 'ja'));
+    select.innerHTML = teams.map(team => `<option value="${team}">${team}</option>`).join('');
+    const preferred = C.normalizeLoose(C.getTeamFromQuery());
+    const target = teams.find(team => C.normalizeLoose(team) === preferred);
+    select.value = target || teams[0] || '';
+  }
+
+  function renderCurrentOrders() {
+    const team = document.getElementById('co-team').value || '';
+    const sort = document.getElementById('co-sort').value;
+    const limit = Number(document.getElementById('co-limit').value || 10);
+    const filtered = state.rows.filter(row => row.team && C.normalizeLoose(row.team) === C.normalizeLoose(team)).sort((a, b) => {
+      const d = String(a.gameDate).localeCompare(String(b.gameDate));
+      if (d !== 0) return sort === 'asc' ? d : -d;
+      return sort === 'asc' ? a.sourceIndex - b.sourceIndex : b.sourceIndex - a.sourceIndex;
+    });
+    const visible = limit === 9999 ? filtered : filtered.slice(0, limit);
+    document.getElementById('co-body').innerHTML = visible.length ? visible.map(row => `
+      <tr>
+        <td>${row.gameDate}</td>
+        <td>${C.teamBadge(row.team)}${row.team}</td>
+        <td>${row.one || '-'}</td>
+        <td>${row.two || '-'}</td>
+        <td>${row.three || '-'}</td>
+        <td>${row.four || '-'}</td>
+        <td>${row.five || '-'}</td>
+        <td>${row.six || '-'}</td>
+        <td>${row.seven || '-'}</td>
+        <td>${row.eight || '-'}</td>
+        <td>${row.nine || '-'}</td>
+        <td>${row.pitcher || '-'}</td>
+        <td>${row.opponent || '-'}</td>
+      </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する打順がありません。</td></tr>';
+    document.getElementById('co-summary').textContent = `${team || '-'} ${filtered.length}試合`;
+    const dates = filtered.map(row => row.gameDate).filter(Boolean).sort();
+    document.getElementById('co-last-updated').textContent = dates.length ? `最新試合日: ${dates[dates.length - 1]}` : '-';
+    document.getElementById('co-foot').textContent = visible.length ? `${team} ${visible.length}試合を表示中` : `${team} の表示データはありません。`;
+    C.updateTeamQuery(team);
+    C.syncPageLinks(team);
+  }
+
+  (async function init() {
+    try {
+      state.rows = await loadCurrentOrders();
+      fillTeams();
+      ['co-team','co-sort','co-limit'].forEach(id => document.getElementById(id).addEventListener('change', renderCurrentOrders));
+      renderCurrentOrders();
+    } catch (error) {
+      document.getElementById('co-body').innerHTML = `<tr><td colspan="13" class="empty">${error.message}</td></tr>`;
+      document.getElementById('co-summary').textContent = '読込失敗';
     }
-
-    function renderCurrentOrders() {
-      const team = document.getElementById('co-team').value || '';
-      const sort = document.getElementById('co-sort').value;
-      const limit = Number(document.getElementById('co-limit').value || 10);
-      const filtered = state.rows.filter(row => row.teamNormalized === C.normalizeLoose(team)).sort((a,b) => {
-        const d = String(a.gameDate).localeCompare(String(b.gameDate));
-        if (d !== 0) return sort === 'asc' ? d : -d;
-        return a.sourceIndex - b.sourceIndex;
-      });
-      const visible = limit === 9999 ? filtered : filtered.slice(0, limit);
-      document.getElementById('co-body').innerHTML = visible.length ? visible.map(row => `
-        <tr>
-          <td>${row.gameDate}</td><td>${C.teamBadge(row.team)}${row.team}</td><td>${row.one || '-'}</td><td>${row.two || '-'}</td><td>${row.three || '-'}</td><td>${row.four || '-'}</td><td>${row.five || '-'}</td><td>${row.six || '-'}</td><td>${row.seven || '-'}</td><td>${row.eight || '-'}</td><td>${row.nine || '-'}</td><td>${row.pitcher || '-'}</td><td>${row.opponent || '-'}</td>
-        </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する打順がありません。</td></tr>';
-      const label = team || '-';
-      document.getElementById('co-summary').textContent = `${label} ${filtered.length}試合`;
-      document.getElementById('co-foot').textContent = visible.length ? `${label} ${visible.length}試合を表示中` : `${label} の表示データはありません。`;
-      C.updateTeamQuery(team);
-      C.syncPageLinks(team);
-    }
-
-    (async function init() {
-      try {
-        state.rows = await loadCurrentOrders();
-        fillTeams();
-        const lastDate = state.rows.map(row => row.gameDate).sort().slice(-1)[0] || '-';
-        document.getElementById('co-last-updated').textContent = `最新試合日: ${lastDate}`;
-        ['co-team','co-sort','co-limit'].forEach(id => document.getElementById(id).addEventListener('change', renderCurrentOrders));
-        renderCurrentOrders();
-      } catch (error) {
-        document.getElementById('co-body').innerHTML = `<tr><td colspan="13" class="empty">${error.message}</td></tr>`;
-        document.getElementById('co-summary').textContent = '読込失敗';
-      }
-    })();
-  </script>
+  })();
+})();
+</script>
 </body>
 </html>
