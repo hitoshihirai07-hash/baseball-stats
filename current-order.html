@@ -268,17 +268,17 @@ window.CurrentPagesCommon = (function () {
     const select = document.getElementById('co-team');
     const teams = [...new Map(state.rows.map(row => [C.normalizeLoose(row.team), row.team])).values()]
       .sort((a, b) => C.teamOrder(a) - C.teamOrder(b) || String(a).localeCompare(String(b), 'ja'));
-    select.innerHTML = teams.map(team => `<option value="${team}">${team}</option>`).join('');
+    select.innerHTML = `<option value="">全球団</option>` + teams.map(team => `<option value="${team}">${team}</option>`).join('');
     const preferred = C.normalizeLoose(C.getTeamFromQuery());
     const target = teams.find(team => C.normalizeLoose(team) === preferred);
-    select.value = target || teams[0] || '';
+    select.value = target || '';
   }
 
   function renderCurrentOrders() {
     const team = document.getElementById('co-team').value || '';
     const sort = document.getElementById('co-sort').value;
     const limit = Number(document.getElementById('co-limit').value || 10);
-    const filtered = state.rows.filter(row => row.team && C.normalizeLoose(row.team) === C.normalizeLoose(team)).sort((a, b) => {
+    const filtered = state.rows.filter(row => row.team && (!team || C.normalizeLoose(row.team) === C.normalizeLoose(team))).sort((a, b) => {
       const d = String(a.gameDate).localeCompare(String(b.gameDate));
       if (d !== 0) return sort === 'asc' ? d : -d;
       return sort === 'asc' ? a.sourceIndex - b.sourceIndex : b.sourceIndex - a.sourceIndex;
@@ -300,10 +300,10 @@ window.CurrentPagesCommon = (function () {
         <td>${row.pitcher || '-'}</td>
         <td>${row.opponent || '-'}</td>
       </tr>`).join('') : '<tr><td colspan="13" class="empty">該当する打順がありません。</td></tr>';
-    document.getElementById('co-summary').textContent = `${team || '-'} ${filtered.length}試合`;
+    document.getElementById('co-summary').textContent = `${team || '全球団'} ${filtered.length}試合`;
     const dates = filtered.map(row => row.gameDate).filter(Boolean).sort();
     document.getElementById('co-last-updated').textContent = dates.length ? `最新試合日: ${dates[dates.length - 1]}` : '-';
-    document.getElementById('co-foot').textContent = visible.length ? `${team} ${visible.length}試合を表示中` : `${team} の表示データはありません。`;
+    document.getElementById('co-foot').textContent = visible.length ? `${team || '全球団'} ${visible.length}試合を表示中` : `${team || '全球団'} の表示データはありません。`;
     C.updateTeamQuery(team);
     C.syncPageLinks(team);
   }
