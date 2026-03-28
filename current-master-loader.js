@@ -1,5 +1,3 @@
-// current-master-loader.js
-// 今年度ページ用の選手マスタCSVを読み込む
 (function () {
     const PATH = 'data/current_player_master.csv';
 
@@ -71,7 +69,7 @@
         if (state.promise) return state.promise;
         state.promise = fetch(PATH)
             .then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${PATH}`);
+                if (!res.ok) throw new Error('今年度データの読込に失敗しました');
                 return res.text();
             })
             .then(text => {
