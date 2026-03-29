@@ -28,8 +28,8 @@
             'ロッテ': '千葉ロッテマリーンズ',
             '日本ハム': '北海道日本ハムファイターズ',
             '日ハム': '北海道日本ハムファイターズ',
-            'オリックス': 'オリックスバファローズ',
-            'オリックス・バファローズ': 'オリックスバファローズ'
+            'オリックス': 'オリックス・バファローズ',
+            'オリックス・バファローズ': 'オリックス・バファローズ'
         };
         return map[raw] || raw;
     }
@@ -66,7 +66,7 @@
             const cols = parseCSVLine(line);
             const row = {};
             header.forEach((key, idx) => row[key] = cols[idx] ?? '');
-            row.rawTeam = String(row['チーム'] || '').trim();
+            row.rawTeam = String(row['チーム'] || row['球団'] || '').trim();
             row.team = normalizeTeam(row.rawTeam);
             return row;
         }).filter(row => row['選手名']);
