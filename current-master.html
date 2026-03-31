@@ -109,9 +109,11 @@ td{font-size:.9rem}
   </section>
 
   <main class="main grid">
+    <section id="player-detail-panel-host"></section>
+
     <section class="card">
       <h2>選手一覧</h2>
-      <p class="note">球団・区分・ポジションで絞り込めます。上の球団選択は他ページの移動先にも引き継ぎます。</p>
+      <p class="note">球団・区分・ポジションで絞り込めます。選手名をクリックすると詳細を開きます。上の球団選択は他ページの移動先にも引き継ぎます。</p>
       <div class="filters">
         <div class="fg"><label>球団</label><select id="cy-team"></select></div>
         <div class="fg"><label>区分</label><select id="cy-division"><option value="">全区分</option><option value="支配下">支配下</option><option value="育成">育成</option></select></div>
@@ -394,6 +396,7 @@ window.CurrentPagesCommon = (function () {
 })();
 
 </script>
+<script src="/player-detail-panel.js"></script>
 <script>
     const currentMasterState = { page: 1 };
     const C = window.CurrentPagesCommon;
@@ -451,7 +454,7 @@ window.CurrentPagesCommon = (function () {
           <td>${start + idx + 1}</td>
           <td>${C.teamBadge(row.team)}${row.team}</td>
           <td>${row.division || '-'}</td>
-          <td><b>${row.name}</b></td>
+          <td><button type="button" class="player-link-btn player-detail-trigger" data-name="${row.name || ''}" data-team="${row.team || ''}" data-role="${String(row.position || '').includes('投') ? 'pitcher' : 'batter'}" data-position="${row.position || ''}" data-no="${row.no || ''}" data-division="${row.division || ''}" data-birth-date="${row.birthDate || ''}" data-height="${row.height || ''}" data-weight="${row.weight || ''}" data-throw-hand="${row.throwHand || ''}" data-bat-hand="${row.batHand || ''}" data-updated-at="${row.updatedAt || ''}"><b>${row.name}</b></button></td>
           <td>${row.position || '-'}</td>
           <td>${row.birthDate || '-'}</td>
           <td>${row.height || '-'}</td>
