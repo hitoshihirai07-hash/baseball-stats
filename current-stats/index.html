@@ -109,11 +109,14 @@ td{font-size:.9rem}
   </section>
 
   <main class="main grid">
+    <section id="player-detail-panel-host"></section>
+
     <section class="card">
       <h2>絞り込み</h2>
       <div class="filters">
         <div class="fg"><label>球団</label><select id="cs-team"></select></div>
       </div>
+      <p class="note">選手名をクリックすると、基本情報と2026年・2020〜2025年の成績詳細を表示します。</p>
       <div class="mini-links">
         <a class="btn sub" data-team-link="/current-master/" href="/current-master/">この球団の選手マスタへ</a>
         <a class="btn sub" data-team-link="/current-order/" href="/current-order/">この球団の打順へ</a>
@@ -169,7 +172,6 @@ td{font-size:.9rem}
         </table>
       </div>
       <div class="pg" id="current-pitcher-pagination"></div>
-    </section>
 
     <section class="card">
       <h2>今年度 投手左右別被打成績</h2>
@@ -484,6 +486,7 @@ window.CurrentPagesCommon = (function () {
 })();
 
 </script>
+<script src="/player-detail-panel.js"></script>
 <script>
     const C = window.CurrentPagesCommon;
     const currentBatterState = { page: 1 };
@@ -513,7 +516,7 @@ window.CurrentPagesCommon = (function () {
       const start = (currentBatterState.page - 1) * perPage;
       const pageRows = filtered.slice(start, start + perPage);
       document.getElementById('current-batter-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
-        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['試合'] || '-'}</td><td>${row['打率'] || '-'}</td><td>${row['本塁打'] || '-'}</td><td>${row['打点'] || '-'}</td><td>${row['安打'] || '-'}</td><td>${row['盗塁'] || '-'}</td><td>${row['出塁率'] || '-'}</td><td>${row['長打率'] || '-'}</td><td>${row['OPS'] || '-'}</td><td>${row['打席'] || '-'}</td></tr>`).join('') : '<tr><td colspan="13" class="empty">該当データがありません。</td></tr>';
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><button type="button" class="player-link-btn player-detail-trigger" data-name="${row['選手名'] || ''}" data-team="${row.team || ''}" data-role="batter"><b>${row['選手名'] || '-'}</b></button></td><td>${row['試合'] || '-'}</td><td>${row['打率'] || '-'}</td><td>${row['本塁打'] || '-'}</td><td>${row['打点'] || '-'}</td><td>${row['安打'] || '-'}</td><td>${row['盗塁'] || '-'}</td><td>${row['出塁率'] || '-'}</td><td>${row['長打率'] || '-'}</td><td>${row['OPS'] || '-'}</td><td>${row['打席'] || '-'}</td></tr>`).join('') : '<tr><td colspan="13" class="empty">該当データがありません。</td></tr>';
       document.getElementById('current-batter-pagination').innerHTML = totalPages <= 1 ? '' : `
         <button ${currentBatterState.page === 1 ? 'disabled' : ''} onclick="changeCurrentBatterPage(-1)">← 前へ</button>
         <span>${currentBatterState.page} / ${totalPages}</span>
@@ -548,7 +551,7 @@ window.CurrentPagesCommon = (function () {
       const start = (currentBatterLrState.page - 1) * perPage;
       const pageRows = filtered.slice(start, start + perPage);
       document.getElementById('current-batter-lr-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
-        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['区分'] || '-'}</td><td>${row['打率'] || '-'}</td><td>${row['打数'] || '-'}</td><td>${row['安打'] || '-'}</td><td>${row['本塁打'] || '-'}</td><td>${row['打点'] || '-'}</td><td>${row['更新日'] || '-'}</td></tr>`).join('') : '<tr><td colspan="10" class="empty">該当データがありません。</td></tr>';
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><button type="button" class="player-link-btn player-detail-trigger" data-name="${row['選手名'] || ''}" data-team="${row.team || ''}" data-role="batter"><b>${row['選手名'] || '-'}</b></button></td><td>${row['区分'] || '-'}</td><td>${row['打率'] || '-'}</td><td>${row['打数'] || '-'}</td><td>${row['安打'] || '-'}</td><td>${row['本塁打'] || '-'}</td><td>${row['打点'] || '-'}</td><td>${row['更新日'] || '-'}</td></tr>`).join('') : '<tr><td colspan="10" class="empty">該当データがありません。</td></tr>';
       document.getElementById('current-batter-lr-pagination').innerHTML = totalPages <= 1 ? '' : `
         <button ${currentBatterLrState.page === 1 ? 'disabled' : ''} onclick="changeCurrentBatterLrPage(-1)">← 前へ</button>
         <span>${currentBatterLrState.page} / ${totalPages}</span>
@@ -572,7 +575,7 @@ window.CurrentPagesCommon = (function () {
       const start = (currentPitcherState.page - 1) * perPage;
       const pageRows = filtered.slice(start, start + perPage);
       document.getElementById('current-pitcher-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
-        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['登板'] || '-'}</td><td>${row['勝利'] || '-'}</td><td>${row['敗戦'] || '-'}</td><td>${row['セーブ'] || '-'}</td><td>${row['ＨＰ'] || '-'}</td><td>${row['防御率'] || '-'}</td><td>${row['奪三振'] || '-'}</td><td>${row['勝率'] || '-'}</td><td>${row['投球回'] || '-'}</td></tr>`).join('') : '<tr><td colspan="12" class="empty">該当データがありません。</td></tr>';
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><button type="button" class="player-link-btn player-detail-trigger" data-name="${row['選手名'] || ''}" data-team="${row.team || ''}" data-role="pitcher"><b>${row['選手名'] || '-'}</b></button></td><td>${row['登板'] || '-'}</td><td>${row['勝利'] || '-'}</td><td>${row['敗戦'] || '-'}</td><td>${row['セーブ'] || '-'}</td><td>${row['ＨＰ'] || '-'}</td><td>${row['防御率'] || '-'}</td><td>${row['奪三振'] || '-'}</td><td>${row['勝率'] || '-'}</td><td>${row['投球回'] || '-'}</td></tr>`).join('') : '<tr><td colspan="12" class="empty">該当データがありません。</td></tr>';
       document.getElementById('current-pitcher-pagination').innerHTML = totalPages <= 1 ? '' : `
         <button ${currentPitcherState.page === 1 ? 'disabled' : ''} onclick="changeCurrentPitcherPage(-1)">← 前へ</button>
         <span>${currentPitcherState.page} / ${totalPages}</span>
@@ -580,7 +583,6 @@ window.CurrentPagesCommon = (function () {
     }
 
     function changeCurrentPitcherPage(diff) { currentPitcherState.page = Math.max(1, currentPitcherState.page + diff); renderCurrentPitcherStats(); }
-
 
     function renderCurrentPitcherLrStats(resetPage = false) {
       if (resetPage) currentPitcherLrState.page = 1;
@@ -606,7 +608,7 @@ window.CurrentPagesCommon = (function () {
       const start = (currentPitcherLrState.page - 1) * perPage;
       const pageRows = filtered.slice(start, start + perPage);
       document.getElementById('current-pitcher-lr-body').innerHTML = pageRows.length ? pageRows.map((row, idx) => `
-        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><b>${row['選手名'] || '-'}</b></td><td>${row['区分'] || '-'}</td><td>${row['被打率'] || '-'}</td><td>${row['被打数'] || '-'}</td><td>${row['被安打'] || '-'}</td><td>${row['被本塁打'] || '-'}</td><td>${row['奪三振'] || '-'}</td><td>${row['与四球'] || '-'}</td><td>${row['与死球'] || '-'}</td></tr>`).join('') : '<tr><td colspan="11" class="empty">該当データがありません。</td></tr>';
+        <tr><td>${start + idx + 1}</td><td>${C.teamBadge(row.team)}${row.team}</td><td><button type="button" class="player-link-btn player-detail-trigger" data-name="${row['選手名'] || ''}" data-team="${row.team || ''}" data-role="pitcher"><b>${row['選手名'] || '-'}</b></button></td><td>${row['区分'] || '-'}</td><td>${row['被打率'] || '-'}</td><td>${row['被打数'] || '-'}</td><td>${row['被安打'] || '-'}</td><td>${row['被本塁打'] || '-'}</td><td>${row['奪三振'] || '-'}</td><td>${row['与四球'] || '-'}</td><td>${row['与死球'] || '-'}</td></tr>`).join('') : '<tr><td colspan="11" class="empty">該当データがありません。</td></tr>';
       document.getElementById('current-pitcher-lr-pagination').innerHTML = totalPages <= 1 ? '' : `
         <button ${currentPitcherLrState.page === 1 ? 'disabled' : ''} onclick="changeCurrentPitcherLrPage(-1)">← 前へ</button>
         <span>${currentPitcherLrState.page} / ${totalPages}</span>
