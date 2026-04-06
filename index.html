@@ -1567,7 +1567,7 @@
                             <div id="sim-pit-hand-auto" class="mode-note">選手データから自動判定</div>
                         </div>
                     </div>
-                    <div id="sim-split-note" class="mode-note" style="margin-bottom:1rem;"></div>
+                    <div id="sim-split-note" class="mode-note" style="margin-bottom:1rem;">打者と投手を選ぶと、対戦想定に応じた結果を表示します。</div>
 
                     <button id="sim-run-btn" class="pbtn" style="margin:1rem 0 2rem; padding: 1rem 2rem; font-size: 1rem;"
                         onclick="runSim()" disabled>分析を実行</button>
@@ -1576,21 +1576,20 @@
                         <div class="sim-res-row"><span>安打確率</span>
                             <div class="bar-track">
                                 <div id="br-h" class="bar-fill" style="background:var(--gr)"></div>
-                            </div> <b id="bv-h">0%</b>
+                            </div> <b id="bv-h">選択後</b>
                         </div>
                         <div class="sim-res-row"><span>本塁打確率</span>
                             <div class="bar-track">
                                 <div id="br-hr" class="bar-fill" style="background:var(--re)"></div>
-                            </div> <b id="bv-hr">0%</b>
+                            </div> <b id="bv-hr">選択後</b>
                         </div>
                         <div class="sim-res-row"><span>三振確率</span>
                             <div class="bar-track">
                                 <div id="br-k" class="bar-fill" style="background:var(--ac2)"></div>
-                            </div> <b id="bv-k">0%</b>
+                            </div> <b id="bv-k">選択後</b>
                         </div>
                         <div id="sim-win"
-                            style="margin-top:1.5rem;text-align:center;font-weight:900;font-size:1.4rem;color:var(--ac); border-top: 1px solid var(--bd); padding-top: 1rem;">
-                        </div>
+                            style="margin-top:1.5rem;text-align:center;font-weight:900;font-size:1.4rem;color:var(--ac); border-top: 1px solid var(--bd); padding-top: 1rem;">選手を選ぶと表示します</div>
                     </div>
                 </div>
 
@@ -1915,17 +1914,18 @@
                 <div>
                     <div class="summary-panel">
                         <h3 style="margin-bottom: 1rem; color: var(--ac); font-size: 1.1rem;">🔥 打線合計スタッツ</h3>
+                        <div class="mode-note" style="margin-bottom:1rem;">打順に選手を入れると、打線全体の集計とシミュレーション結果を表示します。</div>
                         <div class="summary-item">
                             <span>チーム打率</span>
-                            <span class="summary-val" id="mo-sum-avg">.000</span>
+                            <span class="summary-val" id="mo-sum-avg">—</span>
                         </div>
                         <div class="summary-item">
                             <span>合計本塁打</span>
-                            <span class="summary-val" id="mo-sum-hr">0</span>
+                            <span class="summary-val" id="mo-sum-hr">—</span>
                         </div>
                         <div class="summary-item">
                             <span>チームOPS</span>
-                            <span class="summary-val" id="mo-sum-ops">.000</span>
+                            <span class="summary-val" id="mo-sum-ops">—</span>
                         </div>
 
                         <div class="vs-pitcher-card">
@@ -1951,13 +1951,13 @@
                         <button id="mo-run-btn" class="sim-run-btn" onclick="runAdvancedSim()"
                             disabled>シミュレーション実行</button>
 
-                        <div id="mo-result" class="sim-result-large">
+                        <div id="mo-result" class="sim-result-large" style="display:none;">
                             <div style="color:var(--tx2); font-size:.9rem; font-weight:700;">1試合（9イニング）の得点期待値</div>
-                            <div class="expected-runs" id="mo-expected-runs">0.00</div>
+                            <div class="expected-runs" id="mo-expected-runs">—</div>
                             <div
                                 style="margin-top: 1rem; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
                                 <div style="font-size: .8rem; color: var(--tx2); margin-bottom:.5rem;">勝敗予測</div>
-                                <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
+                                <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">シミュレーション後に表示</div>
                             </div>
                             <div
                                 style="margin-top: 1rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
