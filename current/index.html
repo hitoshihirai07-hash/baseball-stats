@@ -61,6 +61,13 @@ td{font-size:.9rem}
 .small{font-size:.78rem;color:var(--tx2)}
 @media (max-width: 1080px){.btn-grid{grid-template-columns:1fr}}
 @media (max-width: 900px){header{padding:0 .8rem}.hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}nav{width:100%;overflow:auto;flex-wrap:nowrap}.hero,.main{padding:1rem .9rem}.fg{width:100%}.fg label{min-width:4rem}select,input[type=text]{flex:1;min-width:0}.page-tab{width:100%}table{min-width:760px}}
+
+.site-footer{border-top:1px solid var(--bd);margin-top:2rem;background:rgba(17,24,39,.85)}
+.site-footer-inner{max-width:1400px;margin:0 auto;padding:1rem 1.5rem;display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap;color:var(--tx2);font-size:.82rem}
+.site-footer-nav{display:flex;gap:.9rem;flex-wrap:wrap}
+.site-footer-nav a{color:var(--tx2);text-decoration:none;font-weight:700}
+.site-footer-nav a:hover{color:var(--ac)}
+
 </style>
 </head>
 <body>
@@ -210,64 +217,6 @@ window.CurrentPagesCommon = (function () {
   const teamSelect = document.getElementById('current-team-jump');
   let sections = [];
 
-  function isStandingsContinuationRow_(cols, hasPrevious) {
-    if (!hasPrevious) return false;
-    const trimmed = cols.map(v => String(v || '').trim());
-    const first = trimmed[0] || '';
-    if (!first) return false;
-    if (/^\(\d+\)/.test(first)) return true;
-    const nonEmpty = trimmed.filter(Boolean);
-    return nonEmpty.length <= 2 && first.includes(',');
-  }
-
-  function normalizeContinuationValues_(cols) {
-    let values = cols.map(v => String(v || '').trim()).filter(Boolean);
-    if (values.length === 1 && values[0].includes(',')) {
-      values = C.parseCSVLine(values[0]).map(v => String(v || '').trim()).filter(Boolean);
-    }
-    if (values.length >= 2 && /^\(\d+\)$/.test(values[0])) {
-      values = [values[0] + ',' + values[1]].concat(values.slice(2));
-    }
-    return values;
-  }
-
-  function buildStandingsRows_(group) {
-    const header = group[0].map(v => String(v || '').trim());
-    const rows = [];
-    let previous = null;
-
-    group.slice(1).forEach(cols => {
-      const trimmed = cols.map(v => String(v || '').trim());
-      if (!trimmed.some(Boolean)) return;
-
-      if (isStandingsContinuationRow_(trimmed, !!previous)) {
-        const values = normalizeContinuationValues_(trimmed);
-        if (values.length && previous) {
-          const firstMatchupIndex = Math.max(0, header.findIndex(col => /^対|^交流戦$/.test(col)));
-          let insertIndex = Math.max(Math.min(previous.rawLength, header.length), firstMatchupIndex);
-          values.forEach(value => {
-            if (insertIndex < header.length) previous.values[insertIndex++] = value;
-          });
-          previous.rawLength = insertIndex;
-        }
-        return;
-      }
-
-      const row = {
-        values: header.map((_, idx) => trimmed[idx] || ''),
-        rawLength: Math.min(trimmed.length, header.length)
-      };
-      rows.push(row);
-      previous = row;
-    });
-
-    return rows.map(row => {
-      const obj = {};
-      header.forEach((key, idx) => obj[key] = row.values[idx] || '');
-      return obj;
-    });
-  }
-
   async function loadStandingsSections() {
     const res = await fetch('/npb_2026standings.csv');
     if (!res.ok) throw new Error('順位表の読込に失敗しました');
@@ -287,7 +236,11 @@ window.CurrentPagesCommon = (function () {
     if (current.length) groups.push(current);
     return groups.map(group => {
       const header = group[0].map(v => String(v || '').trim());
-      const rows = buildStandingsRows_(group);
+      const rows = group.slice(1).filter(row => row.some(v => String(v || '').trim())).map(cols => {
+        const obj = {};
+        header.forEach((key, idx) => obj[key] = cols[idx] || '');
+        return obj;
+      });
       const league = header.includes('対巨') ? 'セ・リーグ' : header.includes('対ソ') ? 'パ・リーグ' : '';
       return { league, header, rows };
     }).filter(section => section.header.length && section.rows.length);
@@ -330,5 +283,18 @@ window.CurrentPagesCommon = (function () {
   })();
 })();
 </script>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
+      <div class="site-footer-nav">
+        <a href="/about.html">このサイトについて</a>
+        <a href="/privacy.html">プライバシーポリシー</a>
+        <a href="/support.html">データの見かた</a>
+        <a href="/contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

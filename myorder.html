@@ -1406,8 +1406,8 @@
                     </div>
                     <div class="mini-panel">
                         <h3>サイト情報</h3>
-                        <p>このサイトについて・データについて・プライバシーポリシーをまとめています。初めて見る方はこちらから確認できます。</p>
-                        <a class="mini-link" href="support.html">データについてを見る →</a>
+                        <p>このサイトについて・お問い合わせ・プライバシーポリシーをまとめています。初めて見る方や掲載内容を確認したい方はこちらからどうぞ。</p>
+                        <a class="mini-link" href="contact.html">お問い合わせを見る →</a>
                     </div>
                 </div>
             </div>
@@ -1469,9 +1469,14 @@
                     <div class="footer-links"><a class="footer-link" href="privacy.html">プライバシーポリシーを見る</a></div>
                 </div>
                 <div class="footer-card">
-                    <h3>データについて</h3>
-                    <p>データの整え方や、表示データの更新方法をまとめています。</p>
-                    <div class="footer-links"><a class="footer-link" href="support.html">データについてを見る</a></div>
+                    <h3>お問い合わせ</h3>
+                    <p>誤記や表示崩れ、追加してほしい見方などの連絡先をまとめています。</p>
+                    <div class="footer-links"><a class="footer-link" href="contact.html">お問い合わせを見る</a></div>
+                </div>
+                <div class="footer-card">
+                    <h3>データの見かた</h3>
+                    <p>成績ページの見かたや、掲載データの更新タイミング・注意点をまとめています。</p>
+                    <div class="footer-links"><a class="footer-link" href="support.html">データの見かたを見る</a></div>
                 </div>
             </div>
         </div>
@@ -2034,78 +2039,6 @@
             </div>
         </div>
 
-        <!-- データインポート -->
-        <div class="section" id="section-import">
-            <h2 class="stitle" style="margin-bottom:1rem">📂 データ取り込み</h2>
-            <div
-                style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
-                <p style="color:var(--tx2);font-size:.88rem;margin-bottom:1rem">
-                    NPB公式サイトやデータサービスから取得した表形式データを読み込むと、全選手のデータを追加できます。<br>既存データに<strong
-                        style="color:var(--ac)">追記</strong>するか、<strong style="color:var(--re)">入れ替え</strong>るかを選べます。
-                </p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
-                    <div>
-                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">🏏 打撃成績データ</h3>
-                        <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
-                            選手名,年度,チーム,試合数,打率,本塁打,打点,安打,盗塁,OPS</p>
-                        <input type="file" id="bat-file" style="display:none"
-                            onchange="importData('batting',this)" />
-                        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                            <button onclick="document.getElementById('bat-file').click()"
-                                style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
-                                ファイルを選択</button>
-                            <button onclick="downloadTemplate('batting')"
-                                style="background:var(--bg3);color:var(--tx);border:1px solid var(--bd);padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:inherit">⬇
-                                テンプレート</button>
-                        </div>
-                        <div id="bat-import-msg" style="margin-top:.5rem;font-size:.8rem"></div>
-                    </div>
-                    <div>
-                        <h3 style="font-size:.9rem;margin-bottom:.75rem;color:var(--ac)">⚾ 投手成績データ</h3>
-                        <p style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">形式:
-                            選手名,年度,チーム,登板,勝,敗,セーブ,防御率,奪三振,WHIP,リーグ</p>
-                        <input type="file" id="pit-file" style="display:none"
-                            onchange="importData('pitching',this)" />
-                        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                            <button onclick="document.getElementById('pit-file').click()"
-                                style="background:var(--ac);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:700;font-family:inherit">📂
-                                ファイルを選択</button>
-                            <button onclick="downloadTemplate('pitching')"
-                                style="background:var(--bg3);color:var(--tx);border:1px solid var(--bd);padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:inherit">⬇
-                                テンプレート</button>
-                        </div>
-                        <div id="pit-import-msg" style="margin-top:.5rem;font-size:.8rem"></div>
-                    </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:1rem">
-                    <label style="font-size:.85rem">取り込み方法:</label>
-                    <label style="font-size:.85rem"><input type="radio" name="imode" value="merge" checked>
-                        追記</label>
-                    <label style="font-size:.85rem"><input type="radio" name="imode" value="replace"> 入れ替え</label>
-                </div>
-            </div>
-            <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:1.5rem">
-                <h3 style="font-size:.9rem;margin-bottom:1rem;color:var(--tx2)">📝 入力形式の説明</h3>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-                    <div>
-                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">打撃データの形式</p>
-                        <pre
-                            style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,試合数,打率,HR,打点,安打,盗塁,OPS
-岡本和真,2025,読売ジャイアンツ,143,.298,42,118,148,1,.928
-丸佳浩,2025,読売ジャイアンツ,135,.271,19,75,127,1,.818</pre>
-                    </div>
-                    <div>
-                        <p style="font-size:.8rem;color:var(--ac);margin-bottom:.4rem">投手データの形式</p>
-                        <pre
-                            style="background:var(--bg3);padding:.75rem;border-radius:6px;font-size:.75rem;overflow:auto">選手名,年度,チーム,登板,勝,敗,S,防御率,奪三振,WHIP,リーグ
-戸郷翔征,2025,読売ジャイアンツ,27,17,6,0,2.18,185,0.94,セ
-大竹耕太郎,2025,阪神タイガース,26,14,6,0,2.65,162,1.05,セ</pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div><!-- /main -->
 
     <footer class="site-footer">
@@ -2114,7 +2047,8 @@
             <div class="site-footer-nav">
                 <a href="about.html">このサイトについて</a>
                 <a href="privacy.html">プライバシーポリシー</a>
-                <a href="support.html">データについて</a>
+                <a href="support.html">データの見かた</a>
+                <a href="contact.html">お問い合わせ</a>
             </div>
         </div>
     </footer>
@@ -2165,21 +2099,6 @@
 
         function sn(name) {
             return TM[name]?.sn || name;
-        }
-
-        function normalizeTeamName(name) {
-            const raw = String(name || '').trim();
-            if (!raw) return '';
-            const map = {
-                'オリックス': 'オリックス・バファローズ',
-                'オリックスバファローズ': 'オリックス・バファローズ',
-                'オリックス・バファローズ': 'オリックス・バファローズ'
-            };
-            return map[raw] || raw;
-        }
-
-        function teamEquals(a, b) {
-            return normalizeTeamName(a) === normalizeTeamName(b);
         }
 
         function getResolvedNipponSeriesWinners() {
@@ -2415,7 +2334,7 @@
             const s = document.getElementById('sb-s').value.trim().toLowerCase();
             const list = BATTING_DATA.filter(d =>
                 (!y || String(d[1]) === y) &&
-                (!t || teamEquals(d[2], t)) &&
+                (!t || d[2] === t) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
             simBatCandidates = list;
@@ -2430,7 +2349,7 @@
             const s = document.getElementById('sp-s').value.trim().toLowerCase();
             const list = PITCHING_DATA.filter(d =>
                 (!y || String(d[1]) === y) &&
-                (!t || teamEquals(d[2], t)) &&
+                (!t || d[2] === t) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
             simPitCandidates = list;
@@ -3028,12 +2947,11 @@
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
             const container = document.getElementById('order-top3');
-            const top3TeamKey = t && ORDER_TOP3[t] ? t : Object.keys(ORDER_TOP3).find(key => teamEquals(key, t));
-            if (!y || !t || !top3TeamKey || !ORDER_TOP3[top3TeamKey] || !ORDER_TOP3[top3TeamKey][y]) {
+            if (!y || !t || !ORDER_TOP3[t] || !ORDER_TOP3[t][y]) {
                 container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">年度とチームを選択してください</div>';
                 return;
             }
-            const data = ORDER_TOP3[top3TeamKey][y];
+            const data = ORDER_TOP3[t][y];
             let html = '';
             for (let i = 1; i <= 9; i++) {
                 const tops = data[i] || [];
@@ -3446,7 +3364,7 @@
                     years.map(y => `<option value="${y}">${y}年</option>`).join('');
             });
 
-            const teams = [...new Set((window.SITE_SUMMARY?.teams || ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ']).map(normalizeTeamName))];
+            const teams = window.SITE_SUMMARY?.teams || ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ'];
             const st = ['sb-t', 'sp-t'];
             st.forEach(id => {
                 const el = document.getElementById(id);
@@ -3470,7 +3388,7 @@
 
             // チームリストの生成（初回のみ）
             if (tSel.options.length === 0) {
-                const teams = [...new Set(TEAM_DATA.map(d => normalizeTeamName(d.team)))].sort();
+                const teams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
                 tSel.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
                 document.getElementById('mo-vs-team').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
                 // デフォルトで別チームを選択
@@ -3480,7 +3398,7 @@
 
             // 選択年・チームの野手リストを取得（打席数順）
             moBatters = BATTING_DATA
-                .filter(d => String(d[1]) === y && teamEquals(d[2], t))
+                .filter(d => String(d[1]) === y && d[2] === t)
                 .sort((a, b) => b[12] - a[12]);
 
             moSelectedBatters.fill(null); // リセット
@@ -3630,7 +3548,7 @@
             const t = document.getElementById('mo-vs-team').value;
 
             moPitchers = PITCHING_DATA
-                .filter(d => String(d[1]) === y && teamEquals(d[2], t) && d[11] > 30)
+                .filter(d => String(d[1]) === y && d[2] === t && d[11] > 30)
                 .sort((a, b) => b[11] - a[11]);
 
             const sel = document.getElementById('mo-vs-pitcher');
