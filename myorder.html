@@ -2101,6 +2101,21 @@
             return TM[name]?.sn || name;
         }
 
+        function normalizeTeamName(name) {
+            const raw = String(name || '').trim();
+            if (!raw) return '';
+            const map = {
+                'オリックス': 'オリックス・バファローズ',
+                'オリックスバファローズ': 'オリックス・バファローズ',
+                'オリックス・バファローズ': 'オリックス・バファローズ'
+            };
+            return map[raw] || raw;
+        }
+
+        function teamEquals(a, b) {
+            return normalizeTeamName(a) === normalizeTeamName(b);
+        }
+
         function getResolvedNipponSeriesWinners() {
             const fallback = window.NIPPON_SERIES_WINNERS || {};
             const rows = Array.isArray(TEAM_DATA) ? TEAM_DATA : [];
@@ -2151,17 +2166,17 @@
             };
 
             const years = [...new Set(BATTING_DATA.map(d => d[1]))].sort((a, b) => b - a);
-            const batTeams = [...new Set(BATTING_DATA.map(d => d[2]))].sort();
-            const pitTeams = [...new Set(PITCHING_DATA.map(d => d[2]))].sort();
-            const tTeams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+            const batTeams = [...new Set(BATTING_DATA.map(d => normalizeTeamName(d[2])))].sort();
+            const pitTeams = [...new Set(PITCHING_DATA.map(d => normalizeTeamName(d[2])))].sort();
+            const tTeams = [...new Set(TEAM_DATA.map(d => normalizeTeamName(d.team)))].sort();
             const tyears = [...new Set(TEAM_DATA.map(d => d.year))].sort((a, b) => b - a);
             const pyears = [...new Set(PITCHING_DATA.map(d => d[1]))].sort((a, b) => b - a);
             const oyears = ORDER_DATA.length
                 ? [...new Set(ORDER_DATA.map(d => d[0]))].sort((a, b) => b - a)
                 : [...(window.SITE_SUMMARY?.years || [])].sort((a, b) => b - a);
             const oTeams = ORDER_DATA.length
-                ? [...new Set(ORDER_DATA.map(d => d[2]))].sort()
-                : [...(window.SITE_SUMMARY?.teams || [])].sort();
+                ? [...new Set(ORDER_DATA.map(d => normalizeTeamName(d[2])))].sort()
+                : [...new Set((window.SITE_SUMMARY?.teams || []).map(normalizeTeamName))].sort();
 
             function fill(id, items) {
                 const s = reset(id);
@@ -2334,7 +2349,7 @@
             const s = document.getElementById('sb-s').value.trim().toLowerCase();
             const list = BATTING_DATA.filter(d =>
                 (!y || String(d[1]) === y) &&
-                (!t || d[2] === t) &&
+                (!t || teamEquals(d[2], t)) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
             simBatCandidates = list;
@@ -2349,7 +2364,7 @@
             const s = document.getElementById('sp-s').value.trim().toLowerCase();
             const list = PITCHING_DATA.filter(d =>
                 (!y || String(d[1]) === y) &&
-                (!t || d[2] === t) &&
+                (!t || teamEquals(d[2], t)) &&
                 (!s || d[0].toLowerCase().includes(s))
             ).slice(0, 50);
             simPitCandidates = list;
@@ -2947,11 +2962,12 @@
             const y = document.getElementById('oy').value;
             const t = document.getElementById('ot').value;
             const container = document.getElementById('order-top3');
-            if (!y || !t || !ORDER_TOP3[t] || !ORDER_TOP3[t][y]) {
+            const top3TeamKey = t && ORDER_TOP3[t] ? t : Object.keys(ORDER_TOP3).find(key => teamEquals(key, t));
+            if (!y || !t || !top3TeamKey || !ORDER_TOP3[top3TeamKey] || !ORDER_TOP3[top3TeamKey][y]) {
                 container.innerHTML = '<div style="grid-column:1/-1;padding:2rem;text-align:center;opacity:.5">年度とチームを選択してください</div>';
                 return;
             }
-            const data = ORDER_TOP3[t][y];
+            const data = ORDER_TOP3[top3TeamKey][y];
             let html = '';
             for (let i = 1; i <= 9; i++) {
                 const tops = data[i] || [];
@@ -3364,7 +3380,7 @@
                     years.map(y => `<option value="${y}">${y}年</option>`).join('');
             });
 
-            const teams = window.SITE_SUMMARY?.teams || ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ'];
+            const teams = [...new Set((window.SITE_SUMMARY?.teams || ['読売ジャイアンツ', '阪神タイガース', '横浜DeNAベイスターズ', '広島東洋カープ', '東京ヤクルトスワローズ', '中日ドラゴンズ', '福岡ソフトバンクホークス', '北海道日本ハムファイターズ', 'オリックス・バファローズ', '東北楽天ゴールデンイーグルス', '埼玉西武ライオンズ', '千葉ロッテマリーンズ']).map(normalizeTeamName))];
             const st = ['sb-t', 'sp-t'];
             st.forEach(id => {
                 const el = document.getElementById(id);
@@ -3388,7 +3404,7 @@
 
             // チームリストの生成（初回のみ）
             if (tSel.options.length === 0) {
-                const teams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+                const teams = [...new Set(TEAM_DATA.map(d => normalizeTeamName(d.team)))].sort();
                 tSel.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
                 document.getElementById('mo-vs-team').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
                 // デフォルトで別チームを選択
@@ -3398,7 +3414,7 @@
 
             // 選択年・チームの野手リストを取得（打席数順）
             moBatters = BATTING_DATA
-                .filter(d => String(d[1]) === y && d[2] === t)
+                .filter(d => String(d[1]) === y && teamEquals(d[2], t))
                 .sort((a, b) => b[12] - a[12]);
 
             moSelectedBatters.fill(null); // リセット
@@ -3548,7 +3564,7 @@
             const t = document.getElementById('mo-vs-team').value;
 
             moPitchers = PITCHING_DATA
-                .filter(d => String(d[1]) === y && d[2] === t && d[11] > 30)
+                .filter(d => String(d[1]) === y && teamEquals(d[2], t) && d[11] > 30)
                 .sort((a, b) => b[11] - a[11]);
 
             const sel = document.getElementById('mo-vs-pitcher');
@@ -3631,7 +3647,7 @@
             proCharts = [];
 
             const years = [2020, 2021, 2022, 2023, 2024, 2025];
-            const teams = [...new Set(TEAM_DATA.map(d => d.team))].sort();
+            const teams = [...new Set(TEAM_DATA.map(d => normalizeTeamName(d.team)))].sort();
             const cols = { giants: '#ff6b2b', tigers: '#ffe033', dragons: '#2b8cff', carp: '#ff4444', swallows: '#3bc5ff', baystars: '#648fff', hawks: '#ffd52b', lions: '#2bdcff', eagles: '#e05555', marines: '#5577ff', fighters: '#4488ff', buffaloes: '#22cc66' };
 
             // 1. Win Trend Chart
@@ -3640,7 +3656,7 @@
                 return {
                     label: sn(t),
                     data: years.map(y => {
-                        const d = TEAM_DATA.find(rd => rd.team === t && rd.year === y);
+                        const d = TEAM_DATA.find(rd => teamEquals(rd.team, t) && rd.year === y);
                         return d ? d.pct : null;
                     }),
                     borderColor: cols[tag] || '#888',
@@ -3671,7 +3687,7 @@
             const eraWinNodes = [];
             years.forEach(y => {
                 teams.forEach(t => {
-                    const tStats = TEAM_DATA.find(rd => rd.team === t && rd.year === y);
+                    const tStats = TEAM_DATA.find(rd => teamEquals(rd.team, t) && rd.year === y);
                     if (!tStats) return;
 
                     const pData = PITCHING_DATA.filter(p => p[1] === y && p[2] === t);
