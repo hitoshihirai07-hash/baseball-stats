@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokeEdge | バトルアナライザー</title>
+<title>PokeEdge | バトルアナライザー v2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-sync.js"></script>
 <link rel="icon" type="image/png" href="favicon.png">
@@ -201,9 +201,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:16
 
         <!-- 名前検索で追加 -->
         <div class="reg-label">🔍 名前検索で追加</div>
-        <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;font-size:11px;color:var(--text3);">
-          <input type="checkbox" id="my-usable-only" onchange="doSearch('my',document.getElementById('my-search').value)" style="accent-color:var(--accent3);">
-          <span>使用可能ポケモンのみ表示</span>
+        <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;font-size:11px;color:var(--text);background:var(--bg2);border:1px solid var(--border2);padding:5px 8px;">
+          <input type="checkbox" id="my-usable-only" onchange="doSearch('my',document.getElementById('my-search').value)" style="accent-color:var(--accent3);width:14px;height:14px;">
+          <span>📅 使用可能ポケモンのみ表示</span>
         </label>
         <div class="sw">
           <input class="si" id="my-search" type="text" placeholder="ポケモン名を入力..." autocomplete="off" oninput="doSearch('my',this.value)">
@@ -223,9 +223,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:16
       <!-- 相手側 -->
       <div class="card">
         <div class="card-title red">相手の手持ち（最大6匹）</div>
-        <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;font-size:11px;color:var(--text3);">
-          <input type="checkbox" id="opp-usable-only" onchange="doSearch('opp',document.getElementById('opp-search').value)" style="accent-color:var(--accent2);">
-          <span>使用可能ポケモンのみ表示</span>
+        <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;font-size:11px;color:var(--text);background:var(--bg2);border:1px solid var(--border2);padding:5px 8px;">
+          <input type="checkbox" id="opp-usable-only" onchange="doSearch('opp',document.getElementById('opp-search').value)" style="accent-color:var(--accent2);width:14px;height:14px;">
+          <span>📅 使用可能ポケモンのみ表示</span>
         </label>
         <div class="sw">
           <input class="si" id="opp-search" type="text" placeholder="相手のポケモン名を入力..." autocomplete="off" oninput="doSearch('opp',this.value)">
