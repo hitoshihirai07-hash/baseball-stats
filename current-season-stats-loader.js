@@ -1,8 +1,8 @@
 (function () {
-    const BATTER_PATH = '2026stats_batter.csv';
-    const PITCHER_PATH = '2026stats_pitcher.csv';
-    const BATTER_LR_PATH = '2026_batter_left_and_right_stats.csv';
-    const PITCHER_LR_PATH = 'pitcher_left_and_right.csv';
+    const BATTER_PATH = '/2026stats_batter.csv';
+    const PITCHER_PATH = '/2026stats_pitcher.csv';
+    const BATTER_LR_PATH = '/2026_batter_left_and_right_stats.csv';
+    const PITCHER_LR_PATH = '/pitcher_left_and_right.csv';
 
     window.CURRENT_SEASON_BATTER_STATS = window.CURRENT_SEASON_BATTER_STATS || [];
     window.CURRENT_SEASON_PITCHER_STATS = window.CURRENT_SEASON_PITCHER_STATS || [];
@@ -61,7 +61,12 @@
     }
 
     function parseCSV(text) {
-        const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
+        const raw = String(text || '').replace(/^\uFEFF/, '').trim();
+        if (!raw) return [];
+        if (/^<!doctype html/i.test(raw) || /^<html[\s>]/i.test(raw)) {
+            throw new Error('今年度データの読込に失敗しました');
+        }
+        const lines = raw.split(/\r?\n/).filter(Boolean);
         if (!lines.length) return [];
         const header = parseCSVLine(lines[0]);
         return lines.slice(1).map(line => {
