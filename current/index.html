@@ -38,7 +38,7 @@ select:hover,input[type=text]:hover{border-color:var(--ac2)}
 select:focus,input[type=text]:focus{border-color:var(--ac)}
 .summary-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
 .summary-chip{display:inline-flex;align-items:center;gap:.45rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);padding:.42rem .72rem;border-radius:999px;color:#fbbf24;font-weight:700;font-size:.82rem}
-.btn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.btn-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem}
 .link-card,.action-btn{background:linear-gradient(180deg,rgba(245,158,11,.08),rgba(17,24,39,.75));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:1rem;text-decoration:none;color:var(--tx);display:block}
 .link-card h3{font-size:1rem;font-weight:800;margin-bottom:.2rem}
 .link-card h3::before{display:none}
@@ -98,6 +98,7 @@ td{font-size:.9rem}
         <a class="page-tab active" href="/current/">今年度トップ</a>
         <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
         <a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
+        <a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
         <a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
       </div>
     </div>
@@ -112,6 +113,7 @@ td{font-size:.9rem}
       <div class="btn-grid">
         <a class="link-card" data-team-link="/current-master/" href="/current-master/"><h3>選手マスタ</h3></a>
         <a class="link-card" data-team-link="/current-stats/" href="/current-stats/"><h3>成績</h3></a>
+        <a class="link-card" data-team-link="/current-qualified/" href="/current-qualified/"><h3>規定到達者</h3></a>
         <a class="link-card" data-team-link="/current-order/" href="/current-order/"><h3>打順</h3></a>
       </div>
     </section>
@@ -217,6 +219,64 @@ window.CurrentPagesCommon = (function () {
   const teamSelect = document.getElementById('current-team-jump');
   let sections = [];
 
+  function isStandingsContinuationRow_(cols, hasPrevious) {
+    if (!hasPrevious) return false;
+    const trimmed = cols.map(v => String(v || '').trim());
+    const first = trimmed[0] || '';
+    if (!first) return false;
+    if (/^\(\d+\)/.test(first)) return true;
+    const nonEmpty = trimmed.filter(Boolean);
+    return nonEmpty.length <= 2 && first.includes(',');
+  }
+
+  function normalizeContinuationValues_(cols) {
+    let values = cols.map(v => String(v || '').trim()).filter(Boolean);
+    if (values.length === 1 && values[0].includes(',')) {
+      values = C.parseCSVLine(values[0]).map(v => String(v || '').trim()).filter(Boolean);
+    }
+    if (values.length >= 2 && /^\(\d+\)$/.test(values[0])) {
+      values = [values[0] + ',' + values[1]].concat(values.slice(2));
+    }
+    return values;
+  }
+
+  function buildStandingsRows_(group) {
+    const header = group[0].map(v => String(v || '').trim());
+    const rows = [];
+    let previous = null;
+
+    group.slice(1).forEach(cols => {
+      const trimmed = cols.map(v => String(v || '').trim());
+      if (!trimmed.some(Boolean)) return;
+
+      if (isStandingsContinuationRow_(trimmed, !!previous)) {
+        const values = normalizeContinuationValues_(trimmed);
+        if (values.length && previous) {
+          const firstMatchupIndex = Math.max(0, header.findIndex(col => /^対|^交流戦$/.test(col)));
+          let insertIndex = Math.max(Math.min(previous.rawLength, header.length), firstMatchupIndex);
+          values.forEach(value => {
+            if (insertIndex < header.length) previous.values[insertIndex++] = value;
+          });
+          previous.rawLength = insertIndex;
+        }
+        return;
+      }
+
+      const row = {
+        values: header.map((_, idx) => trimmed[idx] || ''),
+        rawLength: Math.min(trimmed.length, header.length)
+      };
+      rows.push(row);
+      previous = row;
+    });
+
+    return rows.map(row => {
+      const obj = {};
+      header.forEach((key, idx) => obj[key] = row.values[idx] || '');
+      return obj;
+    });
+  }
+
   async function loadStandingsSections() {
     const res = await fetch('/npb_2026standings.csv');
     if (!res.ok) throw new Error('順位表の読込に失敗しました');
@@ -236,11 +296,7 @@ window.CurrentPagesCommon = (function () {
     if (current.length) groups.push(current);
     return groups.map(group => {
       const header = group[0].map(v => String(v || '').trim());
-      const rows = group.slice(1).filter(row => row.some(v => String(v || '').trim())).map(cols => {
-        const obj = {};
-        header.forEach((key, idx) => obj[key] = cols[idx] || '');
-        return obj;
-      });
+      const rows = buildStandingsRows_(group);
       const league = header.includes('対巨') ? 'セ・リーグ' : header.includes('対ソ') ? 'パ・リーグ' : '';
       return { league, header, rows };
     }).filter(section => section.header.length && section.rows.length);
