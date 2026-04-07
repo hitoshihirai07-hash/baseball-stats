@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <meta name="theme-color" content="#0f172a" />
-    <title>NPB Stats | オーダー</title>
+    <title>NPB打順・成績分析ラボ | オーダー</title>
     <meta name="description" content="NPBの選手マスタ、打撃成績、投手成績、打順履歴、分析レポートをまとめて確認できる野球データサイト。" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
         rel="stylesheet" />
@@ -1333,7 +1333,7 @@
 <body>
     <header>
         <div class="hi">
-            <div class="logo">⚾ NPB<span>Stats</span></div>
+            <div class="logo">⚾ NPB<span>分析ラボ</span></div>
             <nav>
                 <button data-section="home" onclick="goSection('home')">ホーム</button>
                 <button data-section="current" onclick="goSection('current')">今年度</button>
@@ -1350,11 +1350,10 @@
     </header>
     <div class="hero">
         <h1 id="hero-title">⚾ NPB <em>打順・成績分析ラボ</em></h1>
-        <p id="hero-sub">打撃成績・投手成績・打順履歴・オーダー構築を、1つの画面で横断して見られる野球データサイト</p>
+        <p id="hero-sub">今年度の選手一覧を入口に、打順分析やオーダー検討へ進める野球データサイト</p>
         <div class="hero-actions">
             <a class="hero-cta" href="#" onclick="goSection('current'); return false;">今年度を見る</a>
             <a class="hero-subcta" href="#" onclick="goSection('order'); return false;">打順分析を見る</a>
-            <a class="hero-subcta" href="#" onclick="goSection('myorder'); return false;">俺のオーダーを作る</a>
         </div>
     </div>
     <div class="strip">
@@ -1371,10 +1370,7 @@
                 <div class="n">今年度</div>
                 <div class="l">選手マスタ</div>
             </div>
-            <div class="pill">
-                <div class="n">順次追加</div>
-                <div class="l">拡張予定</div>
-            </div>
+
         </div>
     </div>
 
@@ -1385,7 +1381,7 @@
             <div class="sh">
                 <h2 class="stitle">このサイトの使いどころ</h2>
             </div>
-            <div class="home-note">まずは「今年度」の選手マスタを入口にして、必要に応じて打順分析や成績表へ深掘りできる形に整理しました。</div>
+            <div class="home-note">まずは「今年度」の選手一覧から入り、必要に応じて打順分析や成績表へ進める形に整理しています。</div>
             <div class="home-grid">
                 <div class="home-panel">
                     <h3>今年度の選手マスタを起点に見られる構成へ</h3>
@@ -1432,28 +1428,6 @@
                     <button class="pbtn" onclick="goSection('myorder')">オーダーを作る</button>
                 </div>
             </div>
-
-            <div class="sh" style="margin-top:2rem">
-                <h2 class="stitle">おすすめの見方</h2>
-            </div>
-            <div class="guide-grid">
-                <div class="guide-card">
-                    <span class="guide-step">1</span>
-                    <h3>まず今年度の所属を確認</h3>
-                    <p>最初は「今年度」で、球団・区分・ポジションごとの選手一覧を確認します。名簿の土台が合っていれば、その先の追加もだいぶ平和です。</p>
-                </div>
-                <div class="guide-card">
-                    <span class="guide-step">2</span>
-                    <h3>必要に応じて打順や成績へ</h3>
-                    <p>名簿で気になった選手は、既存の打順分析や成績表に戻って確認できます。入口が整理されるだけで、サイト全体がだいぶ迷子になりにくくなります。</p>
-                </div>
-                <div class="guide-card">
-                    <span class="guide-step">3</span>
-                    <h3>追加要素を順番に重ねる</h3>
-                    <p>次に打順、個人成績、チーム情報を少しずつ足していけば、無理なく育つ構成になります。いきなり全部盛りにすると、だいたい後で泣きます。</p>
-                </div>
-            </div>
-
             <div class="sh" style="margin-top:2rem">
                 <h2 class="stitle">サイト情報</h2>
             </div>
@@ -1534,12 +1508,12 @@
         <!-- シミュレーター -->
         <div class="section" id="section-simulator">
             <div class="sh">
-                <h2 class="stitle">Matchup Projection Engine</h2>
+                <h2 class="stitle">対戦想定シミュレーター</h2>
             </div>
             <div class="sim-grid">
                 <!-- 打者選択 -->
                 <div class="sim-panel pcard">
-                    <div class="badge">Batter</div>
+                    <div class="badge">打者</div>
                     <h4 style="margin-bottom:1rem">打者を選択</h4>
                     <div style="margin-bottom:1rem">
                         <select id="sb-y" style="width:100%;margin-bottom:.5rem" onchange="upSimB()"></select>
@@ -1596,7 +1570,7 @@
 
                 <!-- 投手選択 -->
                 <div class="sim-panel pcard">
-                    <div class="badge">Pitcher</div>
+                    <div class="badge">投手</div>
                     <h4 style="margin-bottom:1rem">投手を選択</h4>
                     <div style="margin-bottom:1rem">
                         <select id="sp-y" style="width:100%;margin-bottom:.5rem" onchange="upSimP()"></select>
@@ -1973,9 +1947,9 @@
         <!-- プロフェッショナル・レポート -->
         <div class="section" id="section-pro-report">
             <div class="sh" style="margin-bottom: 2rem;">
-                <h2 class="stitle">Professional Analytics Report</h2>
+                <h2 class="stitle">分析レポート</h2>
                 <div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
-                    順位表だけでは見えない「勝つための法則」を、多角的なデータ相関から導き出します。
+                    順位表だけでは見えにくい傾向を、複数のデータを並べながら確認できます。
                 </div>
             </div>
 
@@ -1985,12 +1959,12 @@
                     style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3);">
                     <h3
                         style="color: var(--ac2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span>🔬</span> 先進的データ分析サマリー
+                        <span>🔬</span> データ分析サマリー
                     </h3>
                     <p style="font-size: 0.95rem; line-height: 1.8; color: var(--tx);">
-                        過去6年間のNPBデータを統合解析した結果、リーグ制覇の成否を分ける最大の要因は「<b>防御率の安定性</b>」であることが定量的に証明されました。<br>
-                        右下の散布図において、左上（低防御率・高勝率）のエリアは「常勝ゾーン」と呼ばれ、2021年以降のオリックスなどがここに定着しています。<br>
-                        逆に、打撃力が記録的であっても防御率が4.00を超えると、勝率は5割を下回る傾向にあります。
+                        過去6年間のNPBデータを並べて見ると、<b>防御率の安定性</b>は勝率とあわせて見たい指標のひとつです。<br>
+                        右下の散布図では、左上（低防御率・高勝率）に勝率が高いチームが集まりやすく、2021年以降のオリックスなど継続してこの付近に入る年度も見られます。<br>
+                        打撃成績が高水準でも、防御率が4.00を超える年度は勝率が伸びにくい傾向があります。
                     </p>
                 </div>
                 <div class="pcard"
@@ -3142,7 +3116,7 @@
                 records: '🥇 NPB <em>歴代最高記録</em>'
             };
             const subs = {
-                home: '今年度の選手マスタを起点に、打順・成績・分析を横断して見られる野球データサイト',
+                home: '今年度の選手一覧を入口に、打順分析やオーダー検討へ進める野球データサイト',
                 current: '12球団の選手マスタを球団・区分・ポジション別に確認',
                 batting: '打率、本塁打、打点など打撃各部門のシーズン統計',
                 pitching: '防御率、奪三振、勝利数など投手各部門のシーズン統計',
