@@ -9,6 +9,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#0f172a" />
   <title>NPB打順・成績分析ラボ | 今年度 規定到達者</title>
+  <meta name="description" content="今年度の規定打席到達者と規定投球回到達者を確認できるページ。球団ごとの試合数差も反映して判定しています。" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/current-pages.css" />
   <style>
@@ -54,7 +55,7 @@
   <section class="hero">
     <div class="hero-in">
       <h1>今年度 <em>規定到達者</em></h1>
-      <p>今年度の成績データと順位表をもとに、規定打席・規定投球回の到達者を自動で判定して表示します。成績を更新すると、このページの表示もあわせて切り替わります。</p>
+      <p>今年度の成績と順位表をもとに、規定打席・規定投球回の到達者を確認できるページです。球団ごとの試合数差もそのまま反映します。</p>
       <div class="page-tabs">
         <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
         <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
@@ -66,6 +67,10 @@
   </section>
 
   <main class="main grid">
+    <section class="card">
+      <h2>このページで分かること</h2>
+      <p>規定到達者だけを切り出して確認できます。打率や防御率を見る前に、どの選手が規定ラインに乗っているかを一覧で追いたいときに使いやすいページです。</p>
+    </section>
     <section id="player-detail-panel-host"></section>
 
     <section class="card">
