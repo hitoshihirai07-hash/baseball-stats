@@ -63,39 +63,48 @@
         }
 
         .logo {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: .75rem;
             font-size: 1.3rem;
             font-weight: 900;
+            color: var(--tx);
+            text-decoration: none;
         }
 
         .logo span {
             color: var(--ac);
         }
 
-        nav {
+        .site-nav {
             display: flex;
-            gap: .2rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: .55rem;
         }
 
-        nav button {
-            background: none;
-            border: none;
-            color: var(--tx2);
-            padding: .5rem .9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
+        .site-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: .55rem .9rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.06);
+            color: var(--tx);
+            text-decoration: none;
             font-size: .85rem;
-            font-weight: 600;
+            font-weight: 700;
             transition: all .2s;
+            white-space: nowrap;
         }
 
-        nav button:hover,
-        nav button.active {
-            background: rgba(245, 158, 11, .15);
-            color: var(--ac);
+        .site-nav a:hover,
+        .site-nav a.current {
+            background: rgba(245, 158, 11, .16);
+            border-color: rgba(245, 158, 11, .4);
+            color: #fff;
         }
 
         .hero {
@@ -1335,18 +1344,16 @@
 <body>
     <header>
         <div class="hi">
-            <div class="logo">⚾ NPB<span>分析ラボ</span></div>
-            <nav>
-                <button data-section="home" onclick="goSection('home')">ホーム</button>
-                <button data-section="current" onclick="window.location.href='/current/'">今年度</button>
-                <button data-section="batting" onclick="goSection('batting')">打撃成績</button>
-                <button data-section="pitching" onclick="goSection('pitching')">投手成績</button>
-                <button data-section="simulator" onclick="goSection('simulator')">シミュレーター</button>
-                <button data-section="order" onclick="window.location.href='/order.html'">オーダー</button>
-                <button data-section="myorder" onclick="window.location.href='/myorder.html'">俺のオーダー</button>
-                <button data-section="pro-report" onclick="goSection('pro-report')">分析レポート</button>
-                <button data-section="team" class="active" onclick="goSection('team')">チーム成績</button>
-                <button data-section="records" onclick="goSection('records')">成績記録</button>
+            <a class="logo" href="index.html" aria-label="NPB分析ラボ ホームへ">⚾ NPB<span>分析ラボ</span></a>
+            <nav class="site-nav" aria-label="主要ページ">
+                <a href="index.html">ホーム</a>
+                <a href="current/">今年度</a>
+                <a href="batting.html">打撃成績</a>
+                <a href="pitching.html">投手成績</a>
+                <a href="order.html">打順分析</a>
+                <a href="myorder.html">俺のオーダー</a>
+                <a href="pro-report.html">分析レポート</a>
+                <a href="about.html">このサイトについて</a>
             </nav>
         </div>
     </header>
