@@ -8,8 +8,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#0f172a" />
-  <title>NPB打順・成績分析ラボ | 今年度 選手マスタ</title>
-  <meta name="description" content="今年度の所属選手を球団・区分・ポジションで確認できるページ。ここで球団を選んだまま成績や打順ページへ移動できます。" />
+  <title>今年度選手マスタ | NPB打順・成績分析ラボ</title>
+    <meta name="description" content="今年度の選手マスタを球団・区分・ポジション別に確認できるページです。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/current-master/">
+    <meta name="robots" content="index,follow,max-image-preview:large">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
   <style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;--ac:#f59e0b;--ac2:#3b82f6;--tx:#f9fafb;--tx2:#9ca3af;--bd:#374151;--ok:#10b981}
@@ -46,6 +48,8 @@ select,input[type=text]{background:var(--bg3);border:1px solid var(--bd);color:v
 select:hover,input[type=text]:hover{border-color:var(--ac2)}
 select:focus,input[type=text]:focus{border-color:var(--ac)}
 .summary-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.page-lead-card{grid-column:1/-1}
+.page-lead-card p{color:var(--tx2);line-height:1.8}
 .summary-chip{display:inline-flex;align-items:center;gap:.45rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);padding:.42rem .72rem;border-radius:999px;color:#fbbf24;font-weight:700;font-size:.82rem}
 .link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
 .link-card{background:linear-gradient(180deg,rgba(245,158,11,.08),rgba(17,24,39,.75));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:1rem;text-decoration:none;color:var(--tx)}
@@ -106,7 +110,7 @@ td{font-size:.9rem}
   <section class="hero">
     <div class="hero-in">
       <h1>今年度 <em>選手マスタ</em></h1>
-      <p>今年の所属選手を確認するページです。球団を選んだ状態のまま、成績や打順ページへ移動できます。</p>
+      <p>今年の所属一覧を確認するページです。球団を選んだ状態で、成績や打順へそのまま移動できます。</p>
       <div class="page-tabs">
         <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
         <a class="page-tab active" href="/current-master/">選手マスタ</a>
@@ -118,10 +122,11 @@ td{font-size:.9rem}
   </section>
 
   <main class="main grid">
-    <section class="card">
-      <h2>このページで分かること</h2>
-      <p>今年度の所属一覧を球団・区分・ポジションで整理して確認できます。成績や打順を見る前に、まず在籍選手を確認したいときの土台ページです。</p>
+    <section class="card page-lead-card">
+      <h2>今年度選手マスタ</h2>
+      <p>今年度の選手マスタを球団・区分・ポジション別に確認できます。まず所属情報を見たい時の入口です。</p>
     </section>
+
     <section id="player-detail-panel-host"></section>
 
     <section class="card">

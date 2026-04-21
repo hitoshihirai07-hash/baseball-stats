@@ -9,8 +9,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <meta name="theme-color" content="#0f172a" />
-    <title>NPB打順・成績分析ラボ | 分析レポート</title>
-    <meta name="description" content="NPB12球団の勝率や防御率などをグラフで確認できる分析レポート。表だけでは見えにくい傾向をまとめています。" />
+    <title>分析レポート | NPB打順・成績分析ラボ</title>
+    <meta name="description" content="順位表だけでは見えにくい傾向を、勝率トレンドや相関グラフで確認できる分析ページです。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/pro-report.html">
+    <meta name="robots" content="index,follow,max-image-preview:large">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1336,12 +1338,12 @@
             <div class="logo">⚾ NPB<span>分析ラボ</span></div>
             <nav>
                 <button data-section="home" onclick="goSection('home')">ホーム</button>
-                <button data-section="current" onclick="goSection('current')">今年度</button>
+                <button data-section="current" onclick="window.location.href='/current/'">今年度</button>
                 <button data-section="batting" onclick="goSection('batting')">打撃成績</button>
                 <button data-section="pitching" onclick="goSection('pitching')">投手成績</button>
                 <button data-section="simulator" onclick="goSection('simulator')">シミュレーター</button>
-                <button data-section="order" onclick="goSection('order')">オーダー</button>
-                <button data-section="myorder" onclick="goSection('myorder')">俺のオーダー</button>
+                <button data-section="order" onclick="window.location.href='/order.html'">オーダー</button>
+                <button data-section="myorder" onclick="window.location.href='/myorder.html'">俺のオーダー</button>
                 <button data-section="pro-report" class="active" onclick="goSection('pro-report')">分析レポート</button>
                 <button data-section="team" onclick="goSection('team')">チーム成績</button>
                 <button data-section="records" onclick="goSection('records')">成績記録</button>
@@ -1350,10 +1352,10 @@
     </header>
     <div class="hero">
         <h1 id="hero-title">📊 NPB <em>分析レポート</em></h1>
-        <p id="hero-sub">勝率や防御率などをグラフで見て、傾向をつかむページ</p>
+        <p id="hero-sub">勝率トレンドや相関グラフから傾向を見られる分析ページ</p>
         <div class="hero-actions">
-            <a class="hero-cta" href="#" onclick="goSection('pro-report'); return false;">分析レポートを見る</a>
-            <a class="hero-subcta" href="#" onclick="goSection('team'); return false;">チーム成績へ</a>
+            <a class="hero-cta" href="#section-pro-report">分析を見る</a>
+            <a class="hero-subcta" href="/team.html">チーム成績を見る</a>
         </div>
     </div>
     <div class="strip">
@@ -1375,564 +1377,617 @@
     </div>
 
     <div class="main">
-
-        <!-- 今年度 -->
-        <div class="section" id="section-current">
-            <div class="sh">
-                <h2 class="stitle">今年度 選手マスタ</h2>
-            </div>
-            <p class="section-note">まずは12球団の選手マスタを収録しました。打順や個人成績などの追加要素は、このページを土台に順次足していく想定です。</p>
-            <div class="filters">
-                <div class="fg"><label>球団</label><select id="cy-team" onchange="renderCurrentMaster()">
-                        <option value="">全球団</option>
-                    </select></div>
-                <div class="fg"><label>区分</label><select id="cy-division" onchange="renderCurrentMaster()">
-                        <option value="">全区分</option>
-                        <option value="支配下">支配下</option>
-                        <option value="育成">育成</option>
-                    </select></div>
-                <div class="fg"><label>ポジション</label><select id="cy-position" onchange="renderCurrentMaster()">
-                        <option value="">全ポジション</option>
-                    </select></div>
-                <div class="fg"><label>表示数</label><select id="cy-limit" onchange="renderCurrentMaster(true)">
-                        <option value="50">50件</option>
-                        <option value="100">100件</option>
-                        <option value="200">200件</option>
-                        <option value="9999">全件</option>
-                    </select></div>
-                <div class="sb"><input type="text" id="cy-search" placeholder="選手名で検索" oninput="renderCurrentMaster(true)" /></div>
-            </div>
-            <div class="mode-note" id="current-master-note"></div>
-            <div class="tw">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>球団</th>
-                            <th>区分</th>
-                            <th>選手名</th>
-                            <th>ポジション</th>
-                            <th>生年月日</th>
-                            <th>身長</th>
-                            <th>体重</th>
-                            <th>投</th>
-                            <th>打</th>
-                            <th>更新日</th>
-                        </tr>
-                    </thead>
-                    <tbody id="current-master-body"></tbody>
-                </table>
-            </div>
-            <div class="pg" id="current-master-pagination"></div>
-        </div>
-
-        <!-- シミュレーター -->
-        <div class="section" id="section-simulator">
-            <div class="sh">
-                <h2 class="stitle">対戦想定シミュレーター</h2>
-            </div>
-            <div class="sim-grid">
-                <!-- 打者選択 -->
-                <div class="sim-panel pcard">
-                    <div class="badge">打者</div>
-                    <h4 style="margin-bottom:1rem">打者を選択</h4>
-                    <div style="margin-bottom:1rem">
-                        <select id="sb-y" style="width:100%;margin-bottom:.5rem" onchange="upSimB()"></select>
-                        <select id="sb-t" style="width:100%;margin-bottom:.5rem" onchange="upSimB()">
-                            <option value="">全チーム</option>
-                        </select>
-                        <input type="text" id="sb-s" placeholder="打者名で検索" style="width:100%" oninput="upSimB()" />
-                    </div>
-                    <div class="sim-list" id="sb-l"></div>
-                    <div id="sb-sel" class="sim-selected">-</div>
-                </div>
-
-                <!-- 中央: 結果表示 -->
-                <div class="sim-main pcard">
-                    <div class="badge" style="background:var(--ac)">Analysis</div>
-                    <h2 id="sim-vs-names" style="margin-bottom:1rem; font-size: 1.2rem;">MATCHUP</h2>
-                    <h3 id="sim-vs" style="font-size: 2.5rem; opacity: 0.2;">VS</h3>
-                    <div class="filters" style="justify-content:center; gap:1rem; margin:1rem 0 1.25rem;">
-                        <div class="fg" style="min-width:180px;">
-                            <label>打者の打席左右</label>
-                            <div id="sim-bat-side-auto" class="mode-note">選手データから自動判定</div>
-                        </div>
-                        <div class="fg" style="min-width:180px;">
-                            <label>投手の投球左右</label>
-                            <div id="sim-pit-hand-auto" class="mode-note">選手データから自動判定</div>
-                        </div>
-                    </div>
-                    <div id="sim-split-note" class="mode-note" style="margin-bottom:1rem;"></div>
-
-                    <button id="sim-run-btn" class="pbtn" style="margin:1rem 0 2rem; padding: 1rem 2rem; font-size: 1rem;"
-                        onclick="runSim()" disabled>分析を実行</button>
-
-                    <div id="sim-res" style="width: 100%; max-width: 460px; display: none;">
-                        <div class="sim-res-row"><span>安打確率</span>
-                            <div class="bar-track">
-                                <div id="br-h" class="bar-fill" style="background:var(--gr)"></div>
-                            </div> <b id="bv-h">0%</b>
-                        </div>
-                        <div class="sim-res-row"><span>本塁打確率</span>
-                            <div class="bar-track">
-                                <div id="br-hr" class="bar-fill" style="background:var(--re)"></div>
-                            </div> <b id="bv-hr">0%</b>
-                        </div>
-                        <div class="sim-res-row"><span>三振確率</span>
-                            <div class="bar-track">
-                                <div id="br-k" class="bar-fill" style="background:var(--ac2)"></div>
-                            </div> <b id="bv-k">0%</b>
-                        </div>
-                        <div id="sim-win"
-                            style="margin-top:1.5rem;text-align:center;font-weight:900;font-size:1.4rem;color:var(--ac); border-top: 1px solid var(--bd); padding-top: 1rem;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 投手選択 -->
-                <div class="sim-panel pcard">
-                    <div class="badge">投手</div>
-                    <h4 style="margin-bottom:1rem">投手を選択</h4>
-                    <div style="margin-bottom:1rem">
-                        <select id="sp-y" style="width:100%;margin-bottom:.5rem" onchange="upSimP()"></select>
-                        <select id="sp-t" style="width:100%;margin-bottom:.5rem" onchange="upSimP()">
-                            <option value="">全チーム</option>
-                        </select>
-                        <input type="text" id="sp-s" placeholder="投手名で検索" style="width:100%" oninput="upSimP()" />
-                    </div>
-                    <div class="sim-list" id="sp-l"></div>
-                    <div id="sp-sel" class="sim-selected">-</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 打撃 -->
-        <div class="section" id="section-batting">
-            <div class="sh">
-                <h2 class="stitle">シーズン打撃成績</h2>
-            </div>
-            <p class="section-note">通常成績と対左・対右の分割成績を切り替えて確認できます。打率も画面上で表示します。</p>
-            <div class="filters">
-                <div class="fg"><label>年度</label><select id="by" onchange="fb()">
-                        <option value="">全期間</option>
-                    </select></div>
-                <div class="fg"><label>リーグ</label><select id="bl" onchange="fb()">
-                        <option value="">全リーグ</option>
-                        <option value="セ">セ・リーグ</option>
-                        <option value="パ">パ・リーグ</option>
-                    </select></div>
-                <div class="fg"><label>チーム</label><select id="bt" onchange="fb()">
-                        <option value="">全チーム</option>
-                    </select></div>
-                <div class="fg"><label>表示</label><select id="bm" class="mode-toggle" onchange="updateBattingMode()">
-                        <option value="normal">通常成績</option>
-                        <option value="split">対左右別成績</option>
-                    </select></div>
-                <div class="fg"><label>データ範囲</label><select id="bq" onchange="fb()">
-                        <option value="0">全選手表示</option>
-                        <option value="1">規定打席到達者(目安)</option>
-                    </select></div>
-                <div class="fg"><label>表示数</label><select id="br" onchange="fb()">
-                        <option value="30">30件</option>
-                        <option value="50">50件</option>
-                        <option value="100">100件</option>
-                        <option value="9999">全件</option>
-                    </select></div>
-                <div class="sb"><input type="text" id="bs" placeholder="選手名で検索" oninput="fb()" /></div>
-            </div>
-            <div class="mode-note" id="batting-mode-note"></div>
-            <div class="normal-wrap active" id="bat-normal-wrap">
-                <div class="tw">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th onclick="srt('b',0)">選手名</th>
-                                <th onclick="srt('b',1)">年度</th>
-                                <th onclick="srt('b',2)">チーム</th>
-                                <th onclick="srt('b',3)">試合</th>
-                                <th onclick="srt('b',4)">打率</th>
-                                <th onclick="srt('b',5)">HR</th>
-                                <th onclick="srt('b',6)">打点</th>
-                                <th onclick="srt('b',7)">安打</th>
-                                <th onclick="srt('b',8)">盗塁</th>
-                                <th onclick="srt('b',10)">出塁率</th>
-                                <th onclick="srt('b',11)">長打率</th>
-                                <th onclick="srt('b',9)">OPS</th>
-                                <th onclick="srt('b',12)">打席</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bb"></tbody>
-                    </table>
-                </div>
-                <div class="pg" id="bpg"></div>
-            </div>
-            <div class="split-wrap" id="bat-split-wrap">
-                <div class="tw">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th onclick="srtSplit('b','name')">選手名</th>
-                                <th onclick="srtSplit('b','year')">年度</th>
-                                <th onclick="srtSplit('b','team')">チーム</th>
-                                <th onclick="srtSplit('b','position')">守備</th>
-                                <th onclick="srtSplit('b','leftPaAb')">対左PA/打数</th>
-                                <th onclick="srtSplit('b','leftHits')">対左安打</th>
-                                <th onclick="srtSplit('b','leftAb')">対左打数</th>
-                                <th onclick="srtSplit('b','leftAvg')">対左打率</th>
-                                <th onclick="srtSplit('b','rightPaAb')">対右PA/打数</th>
-                                <th onclick="srtSplit('b','rightHits')">対右安打</th>
-                                <th onclick="srtSplit('b','rightAb')">対右打数</th>
-                                <th onclick="srtSplit('b','rightAvg')">対右打率</th>
-                                <th onclick="srtSplit('b','diffAvg')">左右差</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bbs"></tbody>
-                    </table>
-                </div>
-                <div class="pg" id="bspg"></div>
-            </div>
-        </div>
-
-        <!-- 投手 -->
-        <div class="section" id="section-pitching">
-            <div class="sh">
-                <h2 class="stitle">シーズン投手成績</h2>
-            </div>
-            <p class="section-note">通常成績と左右打者別の被打成績を切り替えて確認できます。被打率も画面上で表示します。</p>
-            <div class="filters">
-                <div class="fg"><label>年度</label><select id="py" onchange="fp()">
-                        <option value="">全期間</option>
-                    </select></div>
-                <div class="fg"><label>リーグ</label><select id="pl" onchange="fp()">
-                        <option value="">全リーグ</option>
-                        <option value="セ">セ・リーグ</option>
-                        <option value="パ">パ・リーグ</option>
-                    </select></div>
-                <div class="fg"><label>チーム</label><select id="pt" onchange="fp()">
-                        <option value="">全チーム</option>
-                    </select></div>
-                <div class="fg"><label>表示</label><select id="pm" class="mode-toggle" onchange="updatePitchingMode()">
-                        <option value="normal">通常成績</option>
-                        <option value="split">対左右別被打</option>
-                    </select></div>
-                <div class="fg"><label>データ範囲</label><select id="pq" onchange="fp()">
-                        <option value="0">全選手表示</option>
-                        <option value="1">規定投球回以上</option>
-                    </select></div>
-                <div class="fg"><label>表示数</label><select id="pr" onchange="fp()">
-                        <option value="30">30件</option>
-                        <option value="50">50件</option>
-                        <option value="100">100件</option>
-                        <option value="9999">全件</option>
-                    </select></div>
-                <div class="sb"><input type="text" id="ps" placeholder="選手名で検索" oninput="fp()" /></div>
-            </div>
-            <div class="mode-note" id="pitching-mode-note"></div>
-            <div class="normal-wrap active" id="pit-normal-wrap">
-                <div class="tw">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th onclick="srt('p',0)">選手名</th>
-                                <th onclick="srt('p',1)">年度</th>
-                                <th onclick="srt('p',2)">チーム</th>
-                                <th onclick="srt('p',3)">登板</th>
-                                <th onclick="srt('p',4)">勝</th>
-                                <th onclick="srt('p',5)">敗</th>
-                                <th onclick="srt('p',6)">S</th>
-                                <th onclick="srt('p',12)">HP</th>
-                                <th onclick="srt('p',7)">防御率</th>
-                                <th onclick="srt('p',8)">奪三振</th>
-                                <th onclick="srt('p',9)">勝率</th>
-                                <th onclick="srt('p',10)">投球回</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pb"></tbody>
-                    </table>
-                </div>
-                <div class="pg" id="ppg"></div>
-            </div>
-            <div class="split-wrap" id="pit-split-wrap">
-                <div class="tw">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th onclick="srtSplit('p','name')">選手名</th>
-                                <th onclick="srtSplit('p','year')">年度</th>
-                                <th onclick="srtSplit('p','team')">チーム</th>
-                                <th onclick="srtSplit('p','position')">区分</th>
-                                <th onclick="srtSplit('p','leftAb')">対左被打数</th>
-                                <th onclick="srtSplit('p','leftHits')">対左被安打</th>
-                                <th onclick="srtSplit('p','leftAvg')">対左被打率</th>
-                                <th onclick="srtSplit('p','rightAb')">対右被打数</th>
-                                <th onclick="srtSplit('p','rightHits')">対右被安打</th>
-                                <th onclick="srtSplit('p','rightAvg')">対右被打率</th>
-                                <th onclick="srtSplit('p','diffAvg')">左右差</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pbs"></tbody>
-                    </table>
-                </div>
-                <div class="pg" id="pspg"></div>
-            </div>
-        </div>
-
-        <!-- チーム -->
-        <div class="section" id="section-team">
-            <div class="sh">
-                <h2 class="stitle">チーム年度別成績</h2>
-            </div>
-            <div class="filters">
-                <div class="fg"><label>年度</label><select id="ty" onchange="ft()">
-                        <option value="">全期間</option>
-                    </select></div>
-                <div class="fg"><label>リーグ</label><select id="tl" onchange="ft()">
-                        <option value="">全リーグ</option>
-                        <option value="セ">セ・リーグ</option>
-                        <option value="パ">パ・リーグ</option>
-                    </select></div>
-                <div class="fg"><label>チーム</label><select id="tt" onchange="ft()">
-                        <option value="">全チーム</option>
-                    </select></div>
-            </div>
-            <div class="tw">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th onclick="srt('t',0)">チーム</th>
-                            <th onclick="srt('t',1)">年度</th>
-                            <th onclick="srt('t',2)">リーグ</th>
-                            <th onclick="srt('t',3)">勝</th>
-                            <th onclick="srt('t',4)">敗</th>
-                            <th onclick="srt('t',5)">分</th>
-                            <th onclick="srt('t',6)">勝率</th>
-                            <th onclick="srt('t',7)">順位</th>
-                            <th onclick="srt('t',8)">日本S</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb"></tbody>
-                </table>
-            </div>
-            <div class="pg" id="tpg"></div>
-        </div>
-
-        <!-- オーダー -->
-        <div class="section" id="section-order">
-            <div class="sh">
-                <h2 class="stitle">チームオーダー分析</h2>
-            </div>
-            <div class="filters">
-                <div class="fg"><label>年度</label><select id="oy" onchange="fo()">
-                        <option value="">年度を選択</option>
-                    </select></div>
-                <div class="fg"><label>チーム</label><select id="ot" onchange="fo()">
-                        <option value="">チームを選択</option>
-                    </select></div>
-            </div>
-
-            <div id="order-analysis" style="margin-bottom:2rem">
-                <h3 style="font-size:1rem;color:var(--ac);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem">
-                    <span>📊</span> 打順別起用頻度 TOP3
-                </h3>
-                <div id="order-top3" class="order-grid"></div>
-            </div>
-
-            <div class="sh" style="margin-top:2rem">
-                <h3 style="font-size:1rem;color:var(--tx2);margin-bottom:.5rem">📅 シーズンオーダー履歴</h3>
-            </div>
-            <div class="tw">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>日付</th>
-                            <th>チーム</th>
-                            <th>1番</th>
-                            <th>2番</th>
-                            <th>3番</th>
-                            <th>4番</th>
-                            <th>5番</th>
-                            <th>6番</th>
-                            <th>7番</th>
-                            <th>8番</th>
-                            <th>9番</th>
-                            <th>先発</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ob"></tbody>
-                </table>
-            </div>
-            <div class="pg" id="opg"></div>
-        </div>
-
-        <!-- 俺のオーダー (Builder) -->
-        <div class="section" id="section-myorder">
-            <div class="sh" style="margin-bottom: 2rem;">
-                <h2 class="stitle">俺のオーダー構築 & 得点シミュレーター</h2>
-                <div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
-                    好きなチームからスターティングラインナップを作成し、相手エース投手から平均何点取れるかシミュレーションします。
-                </div>
-            </div>
-
-            <div class="filters" style="justify-content: flex-start; gap: 2rem;">
-                <div class="fg">
-                    <label>年度</label>
-                    <select id="mo-year" onchange="initOrderBuilder()">
-                        <option value="2025">2025年</option>
-                        <option value="2024">2024年</option>
-                        <option value="2023">2023年</option>
-                        <option value="2022">2022年</option>
-                        <option value="2021">2021年</option>
-                        <option value="2020">2020年</option>
-                    </select>
-                </div>
-                <div class="fg">
-                    <label>自分のチーム</label>
-                    <select id="mo-team" onchange="initOrderBuilder()"></select>
-                </div>
-            </div>
-
-            <div class="builder-grid">
-                <!-- 左側: 打順 1-9 -->
-                <div>
-                    <h3 style="margin-bottom: 1rem; border-left: 4px solid var(--ac); padding-left: .5rem;">スターティングオーダー
-                    </h3>
-                    <div id="mo-batters-container">
-                        <!-- JSで1~9番を生成 -->
-                    </div>
-                </div>
-
-                <!-- 右側: サマリー＆相手投手 -->
-                <div>
-                    <div class="summary-panel">
-                        <h3 style="margin-bottom: 1rem; color: var(--ac); font-size: 1.1rem;">🔥 打線合計スタッツ</h3>
-                        <div class="summary-item">
-                            <span>チーム打率</span>
-                            <span class="summary-val" id="mo-sum-avg">.000</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>合計本塁打</span>
-                            <span class="summary-val" id="mo-sum-hr">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>チームOPS</span>
-                            <span class="summary-val" id="mo-sum-ops">.000</span>
-                        </div>
-
-                        <div class="vs-pitcher-card">
-                            <h4
-                                style="color: #ef4444; margin-bottom: 1rem; display:flex; align-items:center; gap:.5rem;">
-                                <span>⚔️</span> 対戦相手投手
-                            </h4>
-                            <div class="fg" style="margin-bottom: 1rem;">
-                                <label style="font-size: .8rem;">チームを選択</label>
-                                <select id="mo-vs-team" onchange="updateOpponentPitchers()"></select>
-                            </div>
-                            <div class="fg">
-                                <label style="font-size: .8rem;">先発投手</label>
-                                <select id="mo-vs-pitcher" onchange="handleOrderHandChange()"></select>
-                            </div>
-                            <div class="fg" style="margin-top: 1rem;">
-                                <label style="font-size: .8rem;">投球左右</label>
-                                <div id="mo-vs-hand-auto" class="mode-note">先発投手から自動判定</div>
-                            </div>
-                            <div id="mo-split-note" class="mode-note" style="margin-top:.75rem;"></div>
-                        </div>
-
-                        <button id="mo-run-btn" class="sim-run-btn" onclick="runAdvancedSim()"
-                            disabled>シミュレーション実行</button>
-
-                        <div id="mo-result" class="sim-result-large">
-                            <div style="color:var(--tx2); font-size:.9rem; font-weight:700;">1試合（9イニング）の得点期待値</div>
-                            <div class="expected-runs" id="mo-expected-runs">0.00</div>
-                            <div
-                                style="margin-top: 1rem; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
-                                <div style="font-size: .8rem; color: var(--tx2); margin-bottom:.5rem;">勝敗予測</div>
-                                <div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
-                            </div>
-                            <div
-                                style="margin-top: 1rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                                <span style="color: var(--ac2); font-weight: 700;">ℹ️ シミュレーションの仕組み:</span><br>
-                                有名無実の評価ではなく、<b>Log5法</b>という学術的な統計手法を用いています。打者の出塁率・長打率と、投手の防御率から算出された抑止力をリーグ平均と比較して掛け合わせ、1打席ごとの結果を確率的に計算しています。
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- プロフェッショナル・レポート -->
-        <div class="section" id="section-pro-report">
-            <div class="sh" style="margin-bottom: 2rem;">
-                <h2 class="stitle">分析レポート</h2>
-                <div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
+<div class="section active" id="section-pro-report">
+<div class="sh" style="margin-bottom: 2rem;">
+<h2 class="stitle">分析レポート</h2>
+<div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
                     順位表だけでは見えにくい傾向を、複数のデータを並べながら確認できます。
                 </div>
-            </div>
-
-            <!-- インサイトパネル -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div class="pcard"
-                    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3);">
-                    <h3
-                        style="color: var(--ac2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span>🔬</span> データ分析サマリー
+</div><div class="page-lead">順位表だけでは見えにくい傾向を、複数のデータを並べながら確認できます。数字をそのまま並べるだけでなく、流れや相関を見たい時のページです。</div>
+<!-- インサイトパネル -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+<div class="pcard" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3);">
+<h3 style="color: var(--ac2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+<span>🔬</span> データ分析サマリー
                     </h3>
-                    <p style="font-size: 0.95rem; line-height: 1.8; color: var(--tx);">
-                        過去6年間のNPBデータを並べて見ると、<b>防御率の安定性</b>は勝率とあわせて見たい指標のひとつです。<br>
-                        右下の散布図では、左上（低防御率・高勝率）に勝率が高いチームが集まりやすく、2021年以降のオリックスなど継続してこの付近に入る年度も見られます。<br>
+<p style="font-size: 0.95rem; line-height: 1.8; color: var(--tx);">
+                        過去6年間のNPBデータを並べて見ると、<b>防御率の安定性</b>は勝率とあわせて見たい指標のひとつです。<br/>
+                        右下の散布図では、左上（低防御率・高勝率）に勝率が高いチームが集まりやすく、2021年以降のオリックスなど継続してこの付近に入る年度も見られます。<br/>
                         打撃成績が高水準でも、防御率が4.00を超える年度は勝率が伸びにくい傾向があります。
                     </p>
-                </div>
-                <div class="pcard"
-                    style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.3);">
-                    <h3 style="color: var(--ac); margin-bottom: 0.75rem; font-size: 1rem;">📢 レポートの見かた</h3>
-                    <ul style="font-size: 0.8rem; color: var(--tx2); list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.5rem;">✅ <b>勝率トレンド</b>: 凡例の球団名をクリックで表示/非表示を切り替え可能。</li>
-                        <li style="margin-bottom: 0.5rem;">✅ <b>防御率相関</b>: 点にマウスを乗せると年度と球団の詳細が表示されます。</li>
-                        <li style="margin-bottom: 0.5rem;">✅ <b>リーグ比較</b>: 現在のセ・パ両リーグの相対的な実力差を示します。</li>
-                    </ul>
-                </div>
-            </div>
+</div>
+<div class="pcard" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.3);">
+<h3 style="color: var(--ac); margin-bottom: 0.75rem; font-size: 1rem;">📢 レポートの見かた</h3>
+<ul style="font-size: 0.8rem; color: var(--tx2); list-style: none; padding: 0;">
+<li style="margin-bottom: 0.5rem;">✅ <b>勝率トレンド</b>: 凡例の球団名をクリックで表示/非表示を切り替え可能。</li>
+<li style="margin-bottom: 0.5rem;">✅ <b>防御率相関</b>: 点にマウスを乗せると年度と球団の詳細が表示されます。</li>
+<li style="margin-bottom: 0.5rem;">✅ <b>リーグ比較</b>: 現在のセ・パ両リーグの相対的な実力差を示します。</li>
+</ul>
+</div>
+</div>
+<div class="card-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+<div class="pcard" style="height: 450px;">
+<h3>📈 チーム勝率トレンド (2020-2025)</h3>
+<div style="flex:1; position:relative; min-height:0;">
+<canvas id="chart-win-trend"></canvas>
+</div>
+</div>
+<div class="pcard" style="height: 450px;">
+<h3>🎯 防御率 vs 勝率 相関分析</h3>
+<div style="flex:1; position:relative; min-height:0;">
+<canvas id="chart-era-win"></canvas>
+</div>
+</div>
+</div>
+<div class="card-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
+<div class="pcard" style="height: 400px;">
+<h3>⚖️ リーグ間戦績比較</h3>
+<div style="flex:1; position:relative; min-height:0;">
+<canvas id="chart-league-stats"></canvas>
+</div>
+</div>
+</div>
+</div>
 
-            <div class="card-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div class="pcard" style="height: 450px;">
-                    <h3>📈 チーム勝率トレンド (2020-2025)</h3>
-                    <div style="flex:1; position:relative; min-height:0;">
-                        <canvas id="chart-win-trend"></canvas>
-                    </div>
-                </div>
-                <div class="pcard" style="height: 450px;">
-                    <h3>🎯 防御率 vs 勝率 相関分析</h3>
-                    <div style="flex:1; position:relative; min-height:0;">
-                        <canvas id="chart-era-win"></canvas>
-                    </div>
-                </div>
-            </div>
+<div class="section" id="section-home">
+<div class="sh">
+<h2 class="stitle">このサイトの使いどころ</h2>
+</div>
+<div class="home-note">まずは「今年度」の選手一覧から入り、必要に応じて打順分析や成績表へ進める形に整理しています。</div>
+<div class="home-grid">
+<div class="home-panel">
+<h3>今年度の選手マスタを起点に見られる構成へ</h3>
+<p>まずは<b>12球団の選手マスタ</b>を確認できるようにし、その後に<b>打順</b>や<b>個人成績</b>などを順次足していける形に整理しました。土台を先に固める、わりと堅実なやり方です。</p>
+<div class="hero-actions" style="justify-content:flex-start; margin-top:1rem;">
+<a class="hero-cta" href="/current/">今年度を見る</a>
+<a class="hero-subcta" href="/order.html">打順分析へ</a>
+</div>
+</div>
+<div class="mini-stack">
+<div class="mini-panel">
+<h3>収録状況</h3>
+<div class="mini-list">
+<div class="mini-item"><span>登録選手</span><b id="home-master-count">-</b></div>
+<div class="mini-item"><span>支配下</span><b id="home-registered-count">-</b></div>
+<div class="mini-item"><span>育成</span><b id="home-development-count">-</b></div>
+</div>
+</div>
+<div class="mini-panel">
+<h3>サイト情報</h3>
+<p>このサイトについて・お問い合わせ・プライバシーポリシーをまとめています。初めて見る方や掲載内容を確認したい方はこちらからどうぞ。</p>
+<a class="mini-link" href="contact.html">お問い合わせを見る →</a>
+</div>
+</div>
+</div>
+<div class="card-grid">
+<div class="pcard feature-card">
+<span class="badge">Core 01</span>
+<h3>🗂 今年度</h3>
+<p>12球団の選手マスタを球団・区分・ポジション別に確認できます。まず名簿を固めて、その上に打順や個人成績を重ねていくための土台ページです。</p>
+<button class="pbtn" onclick="window.location.href='/current/'">今年度を見る</button>
+</div>
+<div class="pcard feature-card">
+<span class="badge">Core 02</span>
+<h3>📋 打順分析</h3>
+<p>年度と球団を選ぶだけで、打順別の起用頻度TOP3とシーズン中のオーダー履歴をまとめて確認できます。試合ごとの起用傾向を追いたい人向けの入口です。</p>
+<button class="pbtn" onclick="window.location.href='/order.html'">打順分析を見る</button>
+</div>
+<div class="pcard feature-card">
+<span class="badge">Core 03</span>
+<h3>🔥 俺のオーダー</h3>
+<p>好きな年度・球団の打者でスタメンを組み、相手先発に対する得点期待値を確認できます。並びの仮説を試したい時に使える機能です。</p>
+<button class="pbtn" onclick="window.location.href='/myorder.html'">オーダーを作る</button>
+</div>
+</div>
+<div class="sh" style="margin-top:2rem">
+<h2 class="stitle">サイト情報</h2>
+</div>
+<div class="footer-grid">
+<div class="footer-card">
+<h3>このサイトについて</h3>
+<p>このサイトで見られる内容と、使い方の入口をまとめています。</p>
+<div class="footer-links"><a class="footer-link" href="about.html">このサイトについてを見る</a></div>
+</div>
+<div class="footer-card">
+<h3>プライバシーポリシー</h3>
+<p>本サイトの運用方針と、更新時の扱いをまとめています。</p>
+<div class="footer-links"><a class="footer-link" href="privacy.html">プライバシーポリシーを見る</a></div>
+</div>
+<div class="footer-card">
+<h3>お問い合わせ</h3>
+<p>誤記や表示崩れ、追加してほしい見方などの連絡先をまとめています。</p>
+<div class="footer-links"><a class="footer-link" href="contact.html">お問い合わせを見る</a></div>
+</div>
+<div class="footer-card">
+<h3>データの見かた</h3>
+<p>成績ページの見かたや、掲載データの更新タイミング・注意点をまとめています。</p>
+<div class="footer-links"><a class="footer-link" href="support.html">データの見かたを見る</a></div>
+</div>
+</div>
+</div>
 
-            <div class="card-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
-                <div class="pcard" style="height: 400px;">
-                    <h3>⚖️ リーグ間戦績比較</h3>
-                    <div style="flex:1; position:relative; min-height:0;">
-                        <canvas id="chart-league-stats"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="section" id="section-current">
+<div class="sh">
+<h2 class="stitle">今年度 選手マスタ</h2>
+</div>
+<p class="section-note">まずは12球団の選手マスタを収録しました。打順や個人成績などの追加要素は、このページを土台に順次足していく想定です。</p>
+<div class="filters">
+<div class="fg"><label>球団</label><select id="cy-team" onchange="renderCurrentMaster()">
+<option value="">全球団</option>
+</select></div>
+<div class="fg"><label>区分</label><select id="cy-division" onchange="renderCurrentMaster()">
+<option value="">全区分</option>
+<option value="支配下">支配下</option>
+<option value="育成">育成</option>
+</select></div>
+<div class="fg"><label>ポジション</label><select id="cy-position" onchange="renderCurrentMaster()">
+<option value="">全ポジション</option>
+</select></div>
+<div class="fg"><label>表示数</label><select id="cy-limit" onchange="renderCurrentMaster(true)">
+<option value="50">50件</option>
+<option value="100">100件</option>
+<option value="200">200件</option>
+<option value="9999">全件</option>
+</select></div>
+<div class="sb"><input id="cy-search" oninput="renderCurrentMaster(true)" placeholder="選手名で検索" type="text"/></div>
+</div>
+<div class="mode-note" id="current-master-note"></div>
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>球団</th>
+<th>区分</th>
+<th>選手名</th>
+<th>ポジション</th>
+<th>生年月日</th>
+<th>身長</th>
+<th>体重</th>
+<th>投</th>
+<th>打</th>
+<th>更新日</th>
+</tr>
+</thead>
+<tbody id="current-master-body"></tbody>
+</table>
+</div>
+<div class="pg" id="current-master-pagination"></div>
+</div>
 
-        <!-- 歴代記録 -->
-        <div class="section" id="section-records">
-            <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
-            <div class="cards" id="recs"></div>
-            <h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数（2020〜2025）</h2>
-            <div class="tw" style="padding:1.5rem">
-                <div id="chbars"></div>
-            </div>
-        </div>
+<div class="section" id="section-simulator">
+<div class="sh">
+<h2 class="stitle">対戦想定シミュレーター</h2>
+</div>
+<div class="sim-grid">
+<!-- 打者選択 -->
+<div class="sim-panel pcard">
+<div class="badge">打者</div>
+<h4 style="margin-bottom:1rem">打者を選択</h4>
+<div style="margin-bottom:1rem">
+<select id="sb-y" onchange="upSimB()" style="width:100%;margin-bottom:.5rem"></select>
+<select id="sb-t" onchange="upSimB()" style="width:100%;margin-bottom:.5rem">
+<option value="">全チーム</option>
+</select>
+<input id="sb-s" oninput="upSimB()" placeholder="打者名で検索" style="width:100%" type="text"/>
+</div>
+<div class="sim-list" id="sb-l"></div>
+<div class="sim-selected" id="sb-sel">-</div>
+</div>
+<!-- 中央: 結果表示 -->
+<div class="sim-main pcard">
+<div class="badge" style="background:var(--ac)">Analysis</div>
+<h2 id="sim-vs-names" style="margin-bottom:1rem; font-size: 1.2rem;">MATCHUP</h2>
+<h3 id="sim-vs" style="font-size: 2.5rem; opacity: 0.2;">VS</h3>
+<div class="filters" style="justify-content:center; gap:1rem; margin:1rem 0 1.25rem;">
+<div class="fg" style="min-width:180px;">
+<label>打者の打席左右</label>
+<div class="mode-note" id="sim-bat-side-auto">選手データから自動判定</div>
+</div>
+<div class="fg" style="min-width:180px;">
+<label>投手の投球左右</label>
+<div class="mode-note" id="sim-pit-hand-auto">選手データから自動判定</div>
+</div>
+</div>
+<div class="mode-note" id="sim-split-note" style="margin-bottom:1rem;"></div>
+<button class="pbtn" disabled="" id="sim-run-btn" onclick="runSim()" style="margin:1rem 0 2rem; padding: 1rem 2rem; font-size: 1rem;">分析を実行</button>
+<div id="sim-res" style="width: 100%; max-width: 460px; display: none;">
+<div class="sim-res-row"><span>安打確率</span>
+<div class="bar-track">
+<div class="bar-fill" id="br-h" style="background:var(--gr)"></div>
+</div> <b id="bv-h">0%</b>
+</div>
+<div class="sim-res-row"><span>本塁打確率</span>
+<div class="bar-track">
+<div class="bar-fill" id="br-hr" style="background:var(--re)"></div>
+</div> <b id="bv-hr">0%</b>
+</div>
+<div class="sim-res-row"><span>三振確率</span>
+<div class="bar-track">
+<div class="bar-fill" id="br-k" style="background:var(--ac2)"></div>
+</div> <b id="bv-k">0%</b>
+</div>
+<div id="sim-win" style="margin-top:1.5rem;text-align:center;font-weight:900;font-size:1.4rem;color:var(--ac); border-top: 1px solid var(--bd); padding-top: 1rem;">
+</div>
+</div>
+</div>
+<!-- 投手選択 -->
+<div class="sim-panel pcard">
+<div class="badge">投手</div>
+<h4 style="margin-bottom:1rem">投手を選択</h4>
+<div style="margin-bottom:1rem">
+<select id="sp-y" onchange="upSimP()" style="width:100%;margin-bottom:.5rem"></select>
+<select id="sp-t" onchange="upSimP()" style="width:100%;margin-bottom:.5rem">
+<option value="">全チーム</option>
+</select>
+<input id="sp-s" oninput="upSimP()" placeholder="投手名で検索" style="width:100%" type="text"/>
+</div>
+<div class="sim-list" id="sp-l"></div>
+<div class="sim-selected" id="sp-sel">-</div>
+</div>
+</div>
+</div>
+
+<div class="section" id="section-batting">
+<div class="sh">
+<h2 class="stitle">シーズン打撃成績</h2>
+</div>
+<p class="section-note">通常成績と対左・対右の分割成績を切り替えて確認できます。打率も画面上で表示します。</p>
+<div class="filters">
+<div class="fg"><label>年度</label><select id="by" onchange="fb()">
+<option value="">全期間</option>
+</select></div>
+<div class="fg"><label>リーグ</label><select id="bl" onchange="fb()">
+<option value="">全リーグ</option>
+<option value="セ">セ・リーグ</option>
+<option value="パ">パ・リーグ</option>
+</select></div>
+<div class="fg"><label>チーム</label><select id="bt" onchange="fb()">
+<option value="">全チーム</option>
+</select></div>
+<div class="fg"><label>表示</label><select class="mode-toggle" id="bm" onchange="updateBattingMode()">
+<option value="normal">通常成績</option>
+<option value="split">対左右別成績</option>
+</select></div>
+<div class="fg"><label>データ範囲</label><select id="bq" onchange="fb()">
+<option value="0">全選手表示</option>
+<option value="1">規定打席到達者(目安)</option>
+</select></div>
+<div class="fg"><label>表示数</label><select id="br" onchange="fb()">
+<option value="30">30件</option>
+<option value="50">50件</option>
+<option value="100">100件</option>
+<option value="9999">全件</option>
+</select></div>
+<div class="sb"><input id="bs" oninput="fb()" placeholder="選手名で検索" type="text"/></div>
+</div>
+<div class="mode-note" id="batting-mode-note"></div>
+<div class="normal-wrap active" id="bat-normal-wrap">
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th onclick="srt('b',0)">選手名</th>
+<th onclick="srt('b',1)">年度</th>
+<th onclick="srt('b',2)">チーム</th>
+<th onclick="srt('b',3)">試合</th>
+<th onclick="srt('b',4)">打率</th>
+<th onclick="srt('b',5)">HR</th>
+<th onclick="srt('b',6)">打点</th>
+<th onclick="srt('b',7)">安打</th>
+<th onclick="srt('b',8)">盗塁</th>
+<th onclick="srt('b',10)">出塁率</th>
+<th onclick="srt('b',11)">長打率</th>
+<th onclick="srt('b',9)">OPS</th>
+<th onclick="srt('b',12)">打席</th>
+</tr>
+</thead>
+<tbody id="bb"></tbody>
+</table>
+</div>
+<div class="pg" id="bpg"></div>
+</div>
+<div class="split-wrap" id="bat-split-wrap">
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th onclick="srtSplit('b','name')">選手名</th>
+<th onclick="srtSplit('b','year')">年度</th>
+<th onclick="srtSplit('b','team')">チーム</th>
+<th onclick="srtSplit('b','position')">守備</th>
+<th onclick="srtSplit('b','leftPaAb')">対左PA/打数</th>
+<th onclick="srtSplit('b','leftHits')">対左安打</th>
+<th onclick="srtSplit('b','leftAb')">対左打数</th>
+<th onclick="srtSplit('b','leftAvg')">対左打率</th>
+<th onclick="srtSplit('b','rightPaAb')">対右PA/打数</th>
+<th onclick="srtSplit('b','rightHits')">対右安打</th>
+<th onclick="srtSplit('b','rightAb')">対右打数</th>
+<th onclick="srtSplit('b','rightAvg')">対右打率</th>
+<th onclick="srtSplit('b','diffAvg')">左右差</th>
+</tr>
+</thead>
+<tbody id="bbs"></tbody>
+</table>
+</div>
+<div class="pg" id="bspg"></div>
+</div>
+</div>
+
+<div class="section" id="section-pitching">
+<div class="sh">
+<h2 class="stitle">シーズン投手成績</h2>
+</div>
+<p class="section-note">通常成績と左右打者別の被打成績を切り替えて確認できます。被打率も画面上で表示します。</p>
+<div class="filters">
+<div class="fg"><label>年度</label><select id="py" onchange="fp()">
+<option value="">全期間</option>
+</select></div>
+<div class="fg"><label>リーグ</label><select id="pl" onchange="fp()">
+<option value="">全リーグ</option>
+<option value="セ">セ・リーグ</option>
+<option value="パ">パ・リーグ</option>
+</select></div>
+<div class="fg"><label>チーム</label><select id="pt" onchange="fp()">
+<option value="">全チーム</option>
+</select></div>
+<div class="fg"><label>表示</label><select class="mode-toggle" id="pm" onchange="updatePitchingMode()">
+<option value="normal">通常成績</option>
+<option value="split">対左右別被打</option>
+</select></div>
+<div class="fg"><label>データ範囲</label><select id="pq" onchange="fp()">
+<option value="0">全選手表示</option>
+<option value="1">規定投球回以上</option>
+</select></div>
+<div class="fg"><label>表示数</label><select id="pr" onchange="fp()">
+<option value="30">30件</option>
+<option value="50">50件</option>
+<option value="100">100件</option>
+<option value="9999">全件</option>
+</select></div>
+<div class="sb"><input id="ps" oninput="fp()" placeholder="選手名で検索" type="text"/></div>
+</div>
+<div class="mode-note" id="pitching-mode-note"></div>
+<div class="normal-wrap active" id="pit-normal-wrap">
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th onclick="srt('p',0)">選手名</th>
+<th onclick="srt('p',1)">年度</th>
+<th onclick="srt('p',2)">チーム</th>
+<th onclick="srt('p',3)">登板</th>
+<th onclick="srt('p',4)">勝</th>
+<th onclick="srt('p',5)">敗</th>
+<th onclick="srt('p',6)">S</th>
+<th onclick="srt('p',12)">HP</th>
+<th onclick="srt('p',7)">防御率</th>
+<th onclick="srt('p',8)">奪三振</th>
+<th onclick="srt('p',9)">勝率</th>
+<th onclick="srt('p',10)">投球回</th>
+</tr>
+</thead>
+<tbody id="pb"></tbody>
+</table>
+</div>
+<div class="pg" id="ppg"></div>
+</div>
+<div class="split-wrap" id="pit-split-wrap">
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th onclick="srtSplit('p','name')">選手名</th>
+<th onclick="srtSplit('p','year')">年度</th>
+<th onclick="srtSplit('p','team')">チーム</th>
+<th onclick="srtSplit('p','position')">区分</th>
+<th onclick="srtSplit('p','leftAb')">対左被打数</th>
+<th onclick="srtSplit('p','leftHits')">対左被安打</th>
+<th onclick="srtSplit('p','leftAvg')">対左被打率</th>
+<th onclick="srtSplit('p','rightAb')">対右被打数</th>
+<th onclick="srtSplit('p','rightHits')">対右被安打</th>
+<th onclick="srtSplit('p','rightAvg')">対右被打率</th>
+<th onclick="srtSplit('p','diffAvg')">左右差</th>
+</tr>
+</thead>
+<tbody id="pbs"></tbody>
+</table>
+</div>
+<div class="pg" id="pspg"></div>
+</div>
+</div>
+
+<div class="section" id="section-team">
+<div class="sh">
+<h2 class="stitle">チーム年度別成績</h2>
+</div>
+<div class="filters">
+<div class="fg"><label>年度</label><select id="ty" onchange="ft()">
+<option value="">全期間</option>
+</select></div>
+<div class="fg"><label>リーグ</label><select id="tl" onchange="ft()">
+<option value="">全リーグ</option>
+<option value="セ">セ・リーグ</option>
+<option value="パ">パ・リーグ</option>
+</select></div>
+<div class="fg"><label>チーム</label><select id="tt" onchange="ft()">
+<option value="">全チーム</option>
+</select></div>
+</div>
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th onclick="srt('t',0)">チーム</th>
+<th onclick="srt('t',1)">年度</th>
+<th onclick="srt('t',2)">リーグ</th>
+<th onclick="srt('t',3)">勝</th>
+<th onclick="srt('t',4)">敗</th>
+<th onclick="srt('t',5)">分</th>
+<th onclick="srt('t',6)">勝率</th>
+<th onclick="srt('t',7)">順位</th>
+<th onclick="srt('t',8)">日本S</th>
+</tr>
+</thead>
+<tbody id="tb"></tbody>
+</table>
+</div>
+<div class="pg" id="tpg"></div>
+</div>
+
+<div class="section" id="section-order">
+<div class="sh">
+<h2 class="stitle">チームオーダー分析</h2>
+</div>
+<div class="filters">
+<div class="fg"><label>年度</label><select id="oy" onchange="fo()">
+<option value="">年度を選択</option>
+</select></div>
+<div class="fg"><label>チーム</label><select id="ot" onchange="fo()">
+<option value="">チームを選択</option>
+</select></div>
+</div>
+<div id="order-analysis" style="margin-bottom:2rem">
+<h3 style="font-size:1rem;color:var(--ac);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem">
+<span>📊</span> 打順別起用頻度 TOP3
+                </h3>
+<div class="order-grid" id="order-top3"></div>
+</div>
+<div class="sh" style="margin-top:2rem">
+<h3 style="font-size:1rem;color:var(--tx2);margin-bottom:.5rem">📅 シーズンオーダー履歴</h3>
+</div>
+<div class="tw">
+<table>
+<thead>
+<tr>
+<th>日付</th>
+<th>チーム</th>
+<th>1番</th>
+<th>2番</th>
+<th>3番</th>
+<th>4番</th>
+<th>5番</th>
+<th>6番</th>
+<th>7番</th>
+<th>8番</th>
+<th>9番</th>
+<th>先発</th>
+</tr>
+</thead>
+<tbody id="ob"></tbody>
+</table>
+</div>
+<div class="pg" id="opg"></div>
+</div>
+
+<div class="section" id="section-myorder">
+<div class="sh" style="margin-bottom: 2rem;">
+<h2 class="stitle">俺のオーダー構築 &amp; 得点シミュレーター</h2>
+<div style="color:var(--tx2); margin-top:.5rem; font-size:.9rem;">
+                    好きなチームからスターティングラインナップを作成し、相手エース投手から平均何点取れるかシミュレーションします。
+                </div>
+</div>
+<div class="filters" style="justify-content: flex-start; gap: 2rem;">
+<div class="fg">
+<label>年度</label>
+<select id="mo-year" onchange="initOrderBuilder()">
+<option value="2025">2025年</option>
+<option value="2024">2024年</option>
+<option value="2023">2023年</option>
+<option value="2022">2022年</option>
+<option value="2021">2021年</option>
+<option value="2020">2020年</option>
+</select>
+</div>
+<div class="fg">
+<label>自分のチーム</label>
+<select id="mo-team" onchange="initOrderBuilder()"></select>
+</div>
+</div>
+<div class="builder-grid">
+<!-- 左側: 打順 1-9 -->
+<div>
+<h3 style="margin-bottom: 1rem; border-left: 4px solid var(--ac); padding-left: .5rem;">スターティングオーダー
+                    </h3>
+<div id="mo-batters-container">
+<!-- JSで1~9番を生成 -->
+</div>
+</div>
+<!-- 右側: サマリー＆相手投手 -->
+<div>
+<div class="summary-panel">
+<h3 style="margin-bottom: 1rem; color: var(--ac); font-size: 1.1rem;">🔥 打線合計スタッツ</h3>
+<div class="summary-item">
+<span>チーム打率</span>
+<span class="summary-val" id="mo-sum-avg">.000</span>
+</div>
+<div class="summary-item">
+<span>合計本塁打</span>
+<span class="summary-val" id="mo-sum-hr">0</span>
+</div>
+<div class="summary-item">
+<span>チームOPS</span>
+<span class="summary-val" id="mo-sum-ops">.000</span>
+</div>
+<div class="vs-pitcher-card">
+<h4 style="color: #ef4444; margin-bottom: 1rem; display:flex; align-items:center; gap:.5rem;">
+<span>⚔️</span> 対戦相手投手
+                            </h4>
+<div class="fg" style="margin-bottom: 1rem;">
+<label style="font-size: .8rem;">チームを選択</label>
+<select id="mo-vs-team" onchange="updateOpponentPitchers()"></select>
+</div>
+<div class="fg">
+<label style="font-size: .8rem;">先発投手</label>
+<select id="mo-vs-pitcher" onchange="handleOrderHandChange()"></select>
+</div>
+<div class="fg" style="margin-top: 1rem;">
+<label style="font-size: .8rem;">投球左右</label>
+<div class="mode-note" id="mo-vs-hand-auto">先発投手から自動判定</div>
+</div>
+<div class="mode-note" id="mo-split-note" style="margin-top:.75rem;"></div>
+</div>
+<button class="sim-run-btn" disabled="" id="mo-run-btn" onclick="runAdvancedSim()">シミュレーション実行</button>
+<div class="sim-result-large" id="mo-result">
+<div style="color:var(--tx2); font-size:.9rem; font-weight:700;">1試合（9イニング）の得点期待値</div>
+<div class="expected-runs" id="mo-expected-runs">0.00</div>
+<div style="margin-top: 1rem; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+<div style="font-size: .8rem; color: var(--tx2); margin-bottom:.5rem;">勝敗予測</div>
+<div id="mo-win-prob" style="font-size: 1.2rem; font-weight: 700;">-</div>
+</div>
+<div style="margin-top: 1rem; font-size: 0.75rem; color: var(--tx2); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
+<span style="color: var(--ac2); font-weight: 700;">ℹ️ シミュレーションの仕組み:</span><br/>
+                                有名無実の評価ではなく、<b>Log5法</b>という学術的な統計手法を用いています。打者の出塁率・長打率と、投手の防御率から算出された抑止力をリーグ平均と比較して掛け合わせ、1打席ごとの結果を確率的に計算しています。
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="section" id="section-records">
+<h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
+<div class="cards" id="recs"></div>
+<h2 class="stitle" style="margin:2rem 0 1rem">球団別 日本一回数（2020〜2025）</h2>
+<div class="tw" style="padding:1.5rem">
+<div id="chbars"></div>
+</div>
+</div>
+ ホーム 
+ 今年度 
+ シミュレーター 
+ 打撃 
+ 投手 
+ チーム 
+ オーダー 
+ 俺のオーダー (Builder) 
+ プロフェッショナル・レポート 
+ 歴代記録 
 
     </div><!-- /main -->
 
