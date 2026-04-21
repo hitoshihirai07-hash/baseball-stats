@@ -105,3 +105,13 @@ a { color: var(--ac2); }
 @media (max-width: 768px) {
   .grid { grid-template-columns: 1fr; }
 }
+
+
+.header{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header .hi{
+  max-width: 1400px;
+}

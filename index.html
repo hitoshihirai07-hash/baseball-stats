@@ -1489,24 +1489,75 @@
 
     </style>
     <script>window.PAGE_SECTION = 'home';</script>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
 </head>
 
 <body>
     <header>
-        <div class="hi">
-            <a class="logo" href="index.html" aria-label="NPB分析ラボ ホームへ">⚾ NPB<span>分析ラボ</span></a>
-            <nav class="site-nav" aria-label="主要ページ">
-                <a href="index.html" class="current">ホーム</a>
-                <a href="current/">今年度</a>
-                <a href="batting.html">打撃成績</a>
-                <a href="pitching.html">投手成績</a>
-                <a href="order.html">打順分析</a>
-                <a href="myorder.html">俺のオーダー</a>
-                <a href="pro-report.html">分析レポート</a>
-                <a href="about.html">このサイトについて</a>
-            </nav>
-        </div>
-    </header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html" class="current">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
 
     <section class="hero">
         <div class="hero-wrap">
@@ -1519,8 +1570,7 @@
                     「どのページで何が分かるか」が初見でも伝わるように入口を分けています。
                 </p>
                 <p>
-                    今年度の確認は「今年度」、過去を含めた比較は「打撃成績」「投手成績」「打順分析」、
-                    独自の読み解きは「分析レポート」から入る構成にしています。
+                    今年度の確認は「今年度」、比較は「打撃成績」「投手成績」「チーム成績」、試しながら見る場合は「シミュレーター」「俺のオーダー」、読み解きは「分析レポート」から入る構成にしています。
                 </p>
                 <div class="hero-actions">
                     <a class="hero-cta" href="current/">今年度を見る</a>
@@ -1531,9 +1581,9 @@
                 <h2>このサイトでできること</h2>
                 <ul>
                     <li><b>今年度の確認</b><br>支配下枠、選手マスタ、規定到達者、今年度成績を球団別に確認できます。</li>
-                    <li><b>過去比較</b><br>2020年以降の打撃・投手・チーム成績を並べて見比べられます。</li>
+                    <li><b>比較と試行</b><br>打撃・投手・チーム成績の比較に加えて、シミュレーターや俺のオーダーで試しながら確認できます。</li>
                     <li><b>打順の傾向整理</b><br>打順履歴から起用傾向や並びの変化を追えます。</li>
-                    <li><b>独自の読み解き</b><br>数字だけでは拾いにくい傾向を分析レポートでまとめています。</li>
+                    <li><b>履歴と整理</b><br>成績記録や分析レポートで、更新の履歴や数字の流れを追えます。</li>
                 </ul>
             </aside>
         </div>
@@ -1545,38 +1595,55 @@
             <p>最初に必要なページへ入りやすいように、役割ごとに入口を分けています。</p>
         </section>
 
+        
         <section class="landing-grid">
             <article class="landing-card">
                 <h3>今年度</h3>
                 <p>今季の支配下枠、選手一覧、規定到達者、今年度成績をまとめて確認できます。まず現状を見たいときの入口です。</p>
-                <a href="current/">今年度ページへ</a>
+                <a href="/current/">今年度ページへ</a>
             </article>
             <article class="landing-card">
                 <h3>打撃成績</h3>
                 <p>球団別・年度別に打撃成績を見比べたいときのページです。過去の変化や全体傾向の把握に向いています。</p>
-                <a href="batting.html">打撃成績を見る</a>
+                <a href="/batting.html">打撃成績を見る</a>
             </article>
             <article class="landing-card">
                 <h3>投手成績</h3>
                 <p>防御率、投球回、勝敗などの推移を確認したいときのページです。打撃成績と並べてチームの形も見やすくしています。</p>
-                <a href="pitching.html">投手成績を見る</a>
+                <a href="/pitching.html">投手成績を見る</a>
+            </article>
+            <article class="landing-card">
+                <h3>シミュレーター</h3>
+                <p>条件を変えながら並びや成績の見え方を試したいときのページです。比較しながら確認したい時の入口にしています。</p>
+                <a href="/simulator.html">シミュレーターへ</a>
             </article>
             <article class="landing-card">
                 <h3>打順分析</h3>
                 <p>どの選手が何番で起用されやすいか、並びがどのくらい固定されているかを追いやすいように整理しています。</p>
-                <a href="order.html">打順分析へ</a>
+                <a href="/order.html">打順分析へ</a>
             </article>
             <article class="landing-card">
                 <h3>俺のオーダー</h3>
                 <p>自分で並びを組みながら確認するためのページです。候補を触りながら比較したいときに使えます。</p>
-                <a href="myorder.html">俺のオーダーへ</a>
+                <a href="/myorder.html">俺のオーダーへ</a>
             </article>
             <article class="landing-card">
                 <h3>分析レポート</h3>
                 <p>表だけでは見えにくい傾向を、文章と図で整理したページです。更新の読み物として使える内容を増やしていく入口です。</p>
-                <a href="pro-report.html">分析レポートへ</a>
+                <a href="/pro-report.html">分析レポートへ</a>
+            </article>
+            <article class="landing-card">
+                <h3>チーム成績</h3>
+                <p>球団ごとの年度別成績や順位の流れを確認したいときのページです。チーム単位での比較をまとめて見られます。</p>
+                <a href="/team.html">チーム成績を見る</a>
+            </article>
+            <article class="landing-card">
+                <h3>成績記録</h3>
+                <p>成績の記録や履歴を一覧で追いたいときのページです。更新内容をまとめて確認しやすい入口として用意しています。</p>
+                <a href="/records.html">成績記録を見る</a>
             </article>
         </section>
+
 
         <section class="section-intro" style="margin-top:2.5rem;">
             <h2>このサイトの扱い方</h2>

@@ -63,39 +63,48 @@
         }
 
         .logo {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: .75rem;
             font-size: 1.3rem;
             font-weight: 900;
+            color: var(--tx);
+            text-decoration: none;
         }
 
         .logo span {
             color: var(--ac);
         }
 
-        nav {
+        .site-nav {
             display: flex;
-            gap: .2rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: .55rem;
         }
 
-        nav button {
-            background: none;
-            border: none;
-            color: var(--tx2);
-            padding: .5rem .9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
+        .site-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: .55rem .9rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.06);
+            color: var(--tx);
+            text-decoration: none;
             font-size: .85rem;
-            font-weight: 600;
+            font-weight: 700;
             transition: all .2s;
+            white-space: nowrap;
         }
 
-        nav button:hover,
-        nav button.active {
-            background: rgba(245, 158, 11, .15);
-            color: var(--ac);
+        .site-nav a:hover,
+        .site-nav a.current {
+            background: rgba(245, 158, 11, .16);
+            border-color: rgba(245, 158, 11, .4);
+            color: #fff;
         }
 
         .hero {
@@ -1330,26 +1339,75 @@
 
     </style>
     <script>window.PAGE_SECTION = 'pro-report';</script>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
 </head>
 
 <body>
     <header>
-        <div class="hi">
-            <div class="logo">⚾ NPB<span>分析ラボ</span></div>
-            <nav>
-                <button data-section="home" onclick="goSection('home')">ホーム</button>
-                <button data-section="current" onclick="window.location.href='/current/'">今年度</button>
-                <button data-section="batting" onclick="goSection('batting')">打撃成績</button>
-                <button data-section="pitching" onclick="goSection('pitching')">投手成績</button>
-                <button data-section="simulator" onclick="goSection('simulator')">シミュレーター</button>
-                <button data-section="order" onclick="window.location.href='/order.html'">オーダー</button>
-                <button data-section="myorder" onclick="window.location.href='/myorder.html'">俺のオーダー</button>
-                <button data-section="pro-report" class="active" onclick="goSection('pro-report')">分析レポート</button>
-                <button data-section="team" onclick="goSection('team')">チーム成績</button>
-                <button data-section="records" onclick="goSection('records')">成績記録</button>
-            </nav>
-        </div>
-    </header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html" class="current">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
     <div class="hero">
         <h1 id="hero-title">📊 NPB <em>分析レポート</em></h1>
         <p id="hero-sub">勝率トレンドや相関グラフから傾向を見られる分析ページ</p>
