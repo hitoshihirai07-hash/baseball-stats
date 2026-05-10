@@ -6,6 +6,8 @@
     currentPitcher: '/2026stats_pitcher.csv',
     currentBatterLr: '/2026_batter_left_and_right_stats.csv',
     currentPitcherLr: '/pitcher_left_and_right.csv',
+    careerBatter: '/data/career_record_batter.csv',
+    careerPitcher: '/data/career_record_pitcher.csv',
     historicalBatting: '/public-data/batting/all.json',
     historicalPitching: '/public-data/pitching/all.json',
     historicalBattingLr: '/data/batting_vs_lr.csv',
@@ -18,6 +20,8 @@
     currentPitcher: null,
     currentBatterLr: null,
     currentPitcherLr: null,
+    careerBatter: null,
+    careerPitcher: null,
     historicalBatting: null,
     historicalPitching: null,
     historicalBattingLr: null,
@@ -39,9 +43,11 @@
 .player-role-chip{display:inline-flex;align-items:center;justify-content:center;padding:.28rem .6rem;border-radius:999px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#bfdbfe;font-size:.74rem;font-weight:800}
 .player-detail-sub{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.65rem}
 .player-detail-chip{display:inline-flex;align-items:center;gap:.42rem;padding:.45rem .7rem;border-radius:999px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);color:#fcd34d;font-size:.8rem;font-weight:700}
+.player-detail-chip.is-first-team{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.32);color:#a7f3d0}
 .player-detail-chip span{color:#9ca3af;font-weight:600}
 .player-detail-close{background:transparent;border:1px solid var(--bd);color:var(--tx);padding:.55rem .85rem;border-radius:10px;font-family:inherit;font-weight:700;cursor:pointer}
-.player-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.player-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.player-detail-grid.player-detail-grid--summary{align-items:start}
 .player-detail-card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(17,24,39,.9));border:1px solid var(--bd);border-radius:14px;padding:1rem;min-width:0;overflow:hidden}
 .player-detail-card h3,.player-detail-card h4{margin:0 0 .8rem;font-size:1rem;font-weight:800}
 .player-detail-card h3::before,.player-detail-card h4::before{display:none}
@@ -60,7 +66,8 @@
 .player-mini-table tr:last-child td,.player-mini-table tr:last-child th{border-bottom:none}
 .player-loading{color:var(--tx2);font-size:.9rem;padding:.6rem 0}
 .player-error{color:#fca5a5;font-size:.9rem;padding:.6rem 0}
-@media (max-width: 1080px){.player-detail-grid{grid-template-columns:1fr}}
+@media (max-width: 1280px){.player-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width: 900px){.player-detail-grid{grid-template-columns:1fr}}
 `;
     document.head.appendChild(style);
   }
@@ -193,6 +200,11 @@
     return text || fallback;
   }
 
+  function isTrueLike(value) {
+    const raw = String(value ?? '').trim().toLowerCase();
+    return raw === 'true' || raw === '1' || raw === 'yes' || raw === 'y';
+  }
+
   function roleLabel(role) {
     return role === 'pitcher' ? '投手' : '野手';
   }
@@ -206,8 +218,8 @@
     return once('currentMaster', async () => {
       const rows = parseCSV(await loadText(PATHS.currentMaster)).map(row => ({
         team: normalizeTeam(row['球団名']),
-        no: String(row['No.'] || row['背番号'] || '').trim(),
-        name: String(row['投手'] || row['選手名'] || '').trim(),
+        no: String(row['背番号'] || row['No.'] || '').trim(),
+        name: String(row['選手名'] || row['投手'] || '').trim(),
         birthDate: String(row['生年月日'] || '').trim(),
         height: String(row['身長'] || '').trim(),
         weight: String(row['体重'] || '').trim(),
@@ -216,7 +228,8 @@
         note: String(row['備考'] || '').trim(),
         position: String(row['ポジション'] || '').trim(),
         division: String(row['区分'] || '').trim(),
-        updatedAt: String(row['更新日'] || '').trim()
+        updatedAt: String(row['更新日'] || '').trim(),
+        firstTeam: isTrueLike(row['1軍'])
       })).filter(row => row.name && row.team);
       cache.currentMaster = rows;
       return rows;
@@ -248,6 +261,69 @@
       window.CURRENT_SEASON_PITCHER_STATS = cache.currentPitcher;
       window.CURRENT_SEASON_BATTER_LR_STATS = cache.currentBatterLr;
       window.CURRENT_SEASON_PITCHER_LR_STATS = cache.currentPitcherLr;
+    });
+  }
+
+  async function ensureCareer() {
+    if (cache.careerBatter && cache.careerPitcher) return;
+    return once('career', async () => {
+      const [batterText, pitcherText] = await Promise.all([
+        loadText(PATHS.careerBatter),
+        loadText(PATHS.careerPitcher)
+      ]);
+      cache.careerBatter = parseCSV(batterText).map(row => ({
+        team: normalizeTeam(row['所属正式名'] || row['球団'] || ''),
+        name: String(row['選手名'] || '').trim(),
+        position: String(row['主ポジション'] || '').trim(),
+        games: row['試合'] || '',
+        pa: row['打席'] || '',
+        ab: row['打数'] || '',
+        avg: row['打率'] || '',
+        runs: row['得点'] || '',
+        rbi: row['打点'] || '',
+        hits: row['安打'] || '',
+        doubles: row['二塁打'] || '',
+        triples: row['三塁打'] || '',
+        homeRuns: row['本塁打'] || '',
+        steals: row['盗塁'] || '',
+        walks: row['四球'] || '',
+        strikeouts: row['三振'] || '',
+        sacBunts: row['犠打'] || '',
+        sacFlies: row['犠飛'] || '',
+        obp: row['出塁率'] || '',
+        slg: row['長打率'] || '',
+        ops: row['OPS'] || ''
+      })).filter(row => row.name);
+      cache.careerPitcher = parseCSV(pitcherText).map(row => ({
+        team: normalizeTeam(row['所属正式名'] || row['球団'] || ''),
+        name: String(row['選手名'] || '').trim(),
+        position: String(row['主ポジション'] || '').trim(),
+        games: row['登板'] || '',
+        starts: row['先発'] || '',
+        completeGames: row['完投'] || '',
+        shutouts: row['完封勝'] || '',
+        wins: row['勝利'] || '',
+        losses: row['敗北'] || '',
+        saves: row['セーブ'] || '',
+        holds: row['ホールド'] || '',
+        hp: row['HP'] || '',
+        innings: row['投球回'] || '',
+        era: row['防御率'] || '',
+        whip: row['WHIP'] || '',
+        winPct: row['勝率'] || '',
+        battersFaced: row['打者'] || '',
+        hitsAllowed: row['安打'] || '',
+        avgAllowed: row['被打率'] || '',
+        runsAllowed: row['失点'] || '',
+        earnedRuns: row['自責点'] || '',
+        homeRunsAllowed: row['被本塁打'] || '',
+        strikeouts: row['奪三振'] || '',
+        walks: row['与四球'] || '',
+        intentionalWalks: row['故意四'] || '',
+        hitBatters: row['与死球'] || '',
+        wildPitches: row['暴投'] || '',
+        balks: row['ボーク'] || ''
+      })).filter(row => row.name);
     });
   }
 
@@ -359,7 +435,9 @@
       ['投', player.throwHand || '-'],
       ['打', player.batHand || '-']
     ];
-    return chips.map(([label, value]) => `<div class="player-detail-chip"><span>${escapeHtml(label)}</span>${escapeHtml(value)}</div>`).join('');
+    const base = chips.map(([label, value]) => `<div class="player-detail-chip"><span>${escapeHtml(label)}</span>${escapeHtml(value)}</div>`).join('');
+    const firstTeamChip = player.firstTeam ? '<div class="player-detail-chip is-first-team">1軍登録</div>' : '';
+    return firstTeamChip + base;
   }
 
   function renderEmpty(text = '成績表示なし') {
@@ -388,6 +466,16 @@
     const order = { '対右打者': 0, '対左打者': 1, '対右': 0, '対左': 1 };
     const sorted = rows.slice().sort((a, b) => (order[a['区分']] ?? 9) - (order[b['区分']] ?? 9));
     return `<div class="tw"><table class="player-mini-table"><thead><tr><th>区分</th><th>被打率</th><th>被打数</th><th>被安打</th><th>被本塁打</th><th>奪三振</th><th>与四球</th><th>与死球</th></tr></thead><tbody>${sorted.map(row => `<tr><td>${escapeHtml(safeValue(row['区分']))}</td><td>${escapeHtml(safeValue(row['被打率']))}</td><td>${escapeHtml(safeValue(row['被打数']))}</td><td>${escapeHtml(safeValue(row['被安打']))}</td><td>${escapeHtml(safeValue(row['被本塁打']))}</td><td>${escapeHtml(safeValue(row['奪三振']))}</td><td>${escapeHtml(safeValue(row['与四球']))}</td><td>${escapeHtml(safeValue(row['与死球']))}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+
+  function renderCareerBatterSummary(row) {
+    if (!row) return renderEmpty('通算成績なし');
+    return `<div class="tw"><table class="player-mini-table"><thead><tr><th>試合</th><th>打席</th><th>打数</th><th>打率</th><th>安打</th><th>本塁打</th><th>打点</th><th>盗塁</th><th>出塁率</th><th>長打率</th><th>OPS</th></tr></thead><tbody><tr><td>${escapeHtml(safeValue(row.games))}</td><td>${escapeHtml(safeValue(row.pa))}</td><td>${escapeHtml(safeValue(row.ab))}</td><td>${escapeHtml(safeValue(row.avg))}</td><td>${escapeHtml(safeValue(row.hits))}</td><td>${escapeHtml(safeValue(row.homeRuns))}</td><td>${escapeHtml(safeValue(row.rbi))}</td><td>${escapeHtml(safeValue(row.steals))}</td><td>${escapeHtml(safeValue(row.obp))}</td><td>${escapeHtml(safeValue(row.slg))}</td><td>${escapeHtml(safeValue(row.ops))}</td></tr></tbody></table></div>`;
+  }
+
+  function renderCareerPitcherSummary(row) {
+    if (!row) return renderEmpty('通算成績なし');
+    return `<div class="tw"><table class="player-mini-table"><thead><tr><th>登板</th><th>先発</th><th>勝利</th><th>敗北</th><th>セーブ</th><th>ホールド</th><th>HP</th><th>投球回</th><th>防御率</th><th>WHIP</th><th>奪三振</th></tr></thead><tbody><tr><td>${escapeHtml(safeValue(row.games))}</td><td>${escapeHtml(safeValue(row.starts))}</td><td>${escapeHtml(safeValue(row.wins))}</td><td>${escapeHtml(safeValue(row.losses))}</td><td>${escapeHtml(safeValue(row.saves))}</td><td>${escapeHtml(safeValue(row.holds))}</td><td>${escapeHtml(safeValue(row.hp))}</td><td>${escapeHtml(safeValue(row.innings))}</td><td>${escapeHtml(safeValue(row.era))}</td><td>${escapeHtml(safeValue(row.whip))}</td><td>${escapeHtml(safeValue(row.strikeouts))}</td></tr></tbody></table></div>`;
   }
 
   function renderHistoricalBatterOverall(rows) {
@@ -419,6 +507,7 @@
   function buildPanelHtml(detail) {
     const currentOverallHtml = detail.role === 'pitcher' ? renderCurrentPitcherOverall(detail.currentPitcherOverall) : renderCurrentBatterOverall(detail.currentBatterOverall);
     const currentLrHtml = detail.role === 'pitcher' ? renderCurrentPitcherLr(detail.currentPitcherLr) : renderCurrentBatterLr(detail.currentBatterLr);
+    const careerHtml = detail.role === 'pitcher' ? renderCareerPitcherSummary(detail.careerPitcher) : renderCareerBatterSummary(detail.careerBatter);
     return `
       <section class="card player-detail-wrap active" id="player-detail-card">
         <div class="player-detail-head">
@@ -428,10 +517,14 @@
           </div>
           <button type="button" class="player-detail-close" id="player-detail-close-btn">閉じる</button>
         </div>
-        <div class="player-detail-grid">
+        <div class="player-detail-grid player-detail-grid--summary">
           <section class="player-detail-card">
             <h3>2026年 全体成績</h3>
             ${currentOverallHtml}
+          </section>
+          <section class="player-detail-card">
+            <h3>通算成績</h3>
+            ${careerHtml}
           </section>
           <section class="player-detail-card">
             <h3>2026年 対左右成績</h3>
@@ -446,12 +539,14 @@
   }
 
   async function buildDetail(payload) {
-    await Promise.all([ensureCurrentMaster(), ensureCurrentSeason(), ensureHistorical()]);
+    await Promise.all([ensureCurrentMaster(), ensureCurrentSeason(), ensureCareer(), ensureHistorical()]);
     const currentMaster = cache.currentMaster || [];
     const currentBatter = cache.currentBatter || [];
     const currentPitcher = cache.currentPitcher || [];
     const currentBatterLr = cache.currentBatterLr || [];
     const currentPitcherLr = cache.currentPitcherLr || [];
+    const careerBatterRows = cache.careerBatter || [];
+    const careerPitcherRows = cache.careerPitcher || [];
     const historicalBatting = cache.historicalBatting || [];
     const historicalPitching = cache.historicalPitching || [];
     const historicalBattingLr = cache.historicalBattingLr || [];
@@ -462,6 +557,8 @@
     const masterRow = findBestTeamRow(currentMaster, inputName, inputTeam);
     const currentBatterOverall = findBestTeamRow(currentBatter.map(row => ({ ...row, name: row['選手名'] })), inputName, inputTeam);
     const currentPitcherOverall = findBestTeamRow(currentPitcher.map(row => ({ ...row, name: row['選手名'] })), inputName, inputTeam);
+    const careerBatter = findBestTeamRow(careerBatterRows, inputName, inputTeam);
+    const careerPitcher = findBestTeamRow(careerPitcherRows, inputName, inputTeam);
     const role = inferRole({ role: payload.role, position: payload.position, masterRow, batterOverall: currentBatterOverall, pitcherOverall: currentPitcherOverall });
     const team = inputTeam || masterRow?.team || currentBatterOverall?.team || currentPitcherOverall?.team || '';
 
@@ -476,7 +573,8 @@
       weight: payload.weight || masterRow?.weight || '',
       throwHand: payload.throwHand || masterRow?.throwHand || '',
       batHand: payload.batHand || masterRow?.batHand || '',
-      updatedAt: payload.updatedAt || masterRow?.updatedAt || ''
+      updatedAt: payload.updatedAt || masterRow?.updatedAt || '',
+      firstTeam: typeof payload.firstTeam === 'boolean' ? payload.firstTeam : !!masterRow?.firstTeam
     };
 
     const currentBatterLrRows = role === 'batter' ? findAllCurrentRows(currentBatterLr, inputName, team) : [];
@@ -499,6 +597,8 @@
       role,
       currentBatterOverall: role === 'batter' ? currentBatterOverall : null,
       currentPitcherOverall: role === 'pitcher' ? currentPitcherOverall : null,
+      careerBatter: role === 'batter' ? careerBatter : null,
+      careerPitcher: role === 'pitcher' ? careerPitcher : null,
       currentBatterLr: currentBatterLrRows,
       currentPitcherLr: currentPitcherLrRows,
       historyOverallByYear,
@@ -555,7 +655,8 @@
       weight: button.dataset.weight || '',
       throwHand: button.dataset.throwHand || '',
       batHand: button.dataset.batHand || '',
-      updatedAt: button.dataset.updatedAt || ''
+      updatedAt: button.dataset.updatedAt || '',
+      firstTeam: String(button.dataset.firstTeam || '').toLowerCase() === 'true'
     };
   }
 

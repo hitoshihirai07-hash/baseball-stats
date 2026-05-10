@@ -63,8 +63,19 @@ td{font-size:.9rem}
 .page-tab.active{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.4);color:#fbbf24}
 .team-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.7rem;padding:0 .45rem;border-radius:999px;background:rgba(59,130,246,.16);border:1px solid rgba(59,130,246,.35);font-size:.72rem;font-weight:800;margin-right:.5rem;color:#bfdbfe}
 .section-block + .section-block{margin-top:1rem}
+.first-team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.first-team-card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(17,24,39,.9));border:1px solid var(--bd);border-radius:14px;padding:1rem}
+.first-team-card.is-focus{border-color:rgba(245,158,11,.55);box-shadow:0 0 0 1px rgba(245,158,11,.18) inset}
+.first-team-card h3{display:flex;align-items:center;gap:.55rem;margin:0 0 .85rem;font-size:1rem;font-weight:800}
+.first-team-meta{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:.8rem}
+.first-team-meta .summary-chip{font-size:.78rem}
+.first-team-groups{display:grid;gap:.75rem}
+.first-team-group-title{font-size:.8rem;font-weight:800;color:#d1d5db;margin-bottom:.35rem}
+.first-team-list{display:flex;flex-wrap:wrap;gap:.4rem}
+.first-team-player{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .55rem;border-radius:999px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.24);font-size:.8rem;color:#e5e7eb}
+.first-team-player b{color:#fff}
 .small{font-size:.78rem;color:var(--tx2)}
-@media (max-width: 1080px){.btn-grid{grid-template-columns:1fr}}
+@media (max-width: 1080px){.btn-grid,.first-team-grid{grid-template-columns:1fr}}
 @media (max-width: 900px){header{padding:0 .8rem}.hi{height:auto;align-items:flex-start;padding:.7rem 0;flex-direction:column}nav{width:100%;overflow:auto;flex-wrap:nowrap}.hero,.main{padding:1rem .9rem}.fg{width:100%}.fg label{min-width:4rem}select,input[type=text]{flex:1;min-width:0}.page-tab{width:100%}table{min-width:760px}}
 
 .site-footer{border-top:1px solid var(--bd);margin-top:2rem;background:rgba(17,24,39,.85)}
@@ -180,6 +191,13 @@ header .logo span,.header .logo span{color:#f59e0b}
       <div class="summary-row"><div class="summary-chip" id="standings-summary">読込中</div></div>
       <div id="standings-sections"></div>
     </section>
+
+    <section class="card page-lead-card">
+      <h2>球団別1軍一覧</h2>
+      <p class="note">選手マスタの「1軍=TRUE」を使って、現時点の1軍登録選手を球団ごとにまとめています。球団選択中はその球団を先頭表示します。</p>
+      <div class="summary-row"><div class="summary-chip" id="first-team-summary">読込中</div></div>
+      <div id="first-team-team-list" class="first-team-grid"></div>
+    </section>
   </main>
 
   <script>
@@ -275,6 +293,50 @@ window.CurrentPagesCommon = (function () {
   const C = window.CurrentPagesCommon;
   const teamSelect = document.getElementById('current-team-jump');
   let sections = [];
+  let currentMasterRows = [];
+
+  function isTrueLike(value) {
+    const raw = String(value || '').trim().toLowerCase();
+    return raw === 'true' || raw === '1' || raw === 'yes' || raw === 'y';
+  }
+
+  function normalizePosition(position) {
+    const raw = String(position || '').trim();
+    if (raw.includes('投')) return '投手';
+    if (raw.includes('捕')) return '捕手';
+    if (raw.includes('外')) return '外野手';
+    if (raw.includes('内')) return '内野手';
+    return raw || 'その他';
+  }
+
+  function renderFirstTeamCards() {
+    const target = document.getElementById('first-team-team-list');
+    const team = teamSelect.value || '';
+    const rows = currentMasterRows.filter(row => row.firstTeam);
+    const teams = [...new Set(rows.map(row => row.team))].sort((a, b) => {
+      const focus = team ? (C.normalizeLoose(a) === C.normalizeLoose(team) ? -1 : C.normalizeLoose(b) === C.normalizeLoose(team) ? 1 : 0) : 0;
+      if (focus !== 0) return focus;
+      return C.teamOrder(a) - C.teamOrder(b) || String(a).localeCompare(String(b), 'ja');
+    });
+    const positionOrder = ['投手', '捕手', '内野手', '外野手', 'その他'];
+    target.innerHTML = teams.length ? teams.map(teamName => {
+      const teamRows = rows.filter(row => C.normalizeLoose(row.team) === C.normalizeLoose(teamName)).sort((a, b) => {
+        const posDiff = positionOrder.indexOf(normalizePosition(a.position)) - positionOrder.indexOf(normalizePosition(b.position));
+        if (posDiff !== 0) return posDiff;
+        const noA = Number(String(a.no || '').replace(/[^0-9]/g, '')) || 999;
+        const noB = Number(String(b.no || '').replace(/[^0-9]/g, '')) || 999;
+        if (noA !== noB) return noA - noB;
+        return String(a.name).localeCompare(String(b.name), 'ja');
+      });
+      const counts = positionOrder.reduce((acc, key) => (acc[key] = teamRows.filter(row => normalizePosition(row.position) === key).length, acc), {});
+      const groups = positionOrder.filter(key => counts[key]).map(key => {
+        const players = teamRows.filter(row => normalizePosition(row.position) === key).map(row => `<span class="first-team-player">#${row.no || '-'} <b>${row.name}</b></span>`).join('');
+        return `<div><div class="first-team-group-title">${key} ${counts[key]}人</div><div class="first-team-list">${players}</div></div>`;
+      }).join('');
+      return `<section class="first-team-card${team && C.normalizeLoose(teamName) === C.normalizeLoose(team) ? ' is-focus' : ''}"><h3>${C.teamBadge(teamName)}${teamName}</h3><div class="first-team-meta"><span class="summary-chip">1軍 ${teamRows.length}人</span><span class="summary-chip">投手 ${counts['投手'] || 0}</span><span class="summary-chip">捕手 ${counts['捕手'] || 0}</span><span class="summary-chip">内野手 ${counts['内野手'] || 0}</span><span class="summary-chip">外野手 ${counts['外野手'] || 0}</span></div><div class="first-team-groups">${groups}</div></section>`;
+    }).join('') : '<div class="empty">1軍データがありません。</div>';
+    document.getElementById('first-team-summary').textContent = rows.length ? `1軍登録 ${rows.length}人` + (team ? ` / ${team} を先頭表示中` : '') : '1軍データなし';
+  }
 
   function isStandingsContinuationRow_(cols, hasPrevious) {
     if (!hasPrevious) return false;
@@ -380,18 +442,35 @@ window.CurrentPagesCommon = (function () {
     document.getElementById('standings-summary').textContent = team ? `${team} を強調表示中` : `${count}球団を表示中`;
     C.updateTeamQuery(team);
     C.syncPageLinks(team);
+    renderFirstTeamCards();
   }
 
   (async function init() {
     try {
-      sections = await loadStandingsSections();
-      const teams = sections.flatMap(section => section.rows.map(row => C.normalizeTeam(row['チーム'] || ''))).filter(Boolean);
-      C.fillTeamSelect(teamSelect, [...new Set(teams)], '全球団', C.getTeamFromQuery());
+      const [loadedSections, masterRows] = await Promise.all([
+        loadStandingsSections(),
+        C.loadCSV('/data/current_player_master.csv')
+      ]);
+      sections = loadedSections;
+      currentMasterRows = masterRows.map(row => ({
+        team: C.normalizeTeam(row['球団名'] || ''),
+        no: String(row['背番号'] || row['No.'] || '').trim(),
+        name: String(row['選手名'] || row['投手'] || '').trim(),
+        position: String(row['ポジション'] || '').trim(),
+        firstTeam: isTrueLike(row['1軍'])
+      })).filter(row => row.team && row.name);
+      const teams = [...new Set([
+        ...sections.flatMap(section => section.rows.map(row => C.normalizeTeam(row['チーム'] || ''))),
+        ...currentMasterRows.map(row => row.team)
+      ].filter(Boolean))];
+      C.fillTeamSelect(teamSelect, teams, '全球団', C.getTeamFromQuery());
       renderStandings();
       teamSelect.addEventListener('change', renderStandings);
     } catch (error) {
       document.getElementById('standings-sections').innerHTML = `<div class="tw"><table><tbody><tr><td class="empty">${error.message}</td></tr></tbody></table></div>`;
       document.getElementById('standings-summary').textContent = '読込失敗';
+      document.getElementById('first-team-team-list').innerHTML = `<div class="empty">${error.message}</div>`;
+      document.getElementById('first-team-summary').textContent = '読込失敗';
     }
   })();
 })();

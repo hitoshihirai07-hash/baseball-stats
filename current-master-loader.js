@@ -47,10 +47,11 @@
             const cols = parseCSVLine(line);
             const row = {};
             header.forEach((key, idx) => row[key] = cols[idx] ?? '');
+            const firstTeamRaw = String(row['1軍'] || '').trim().toLowerCase();
             return {
                 team: normalizeTeam(row['球団名']),
-                no: String(row['No.'] || '').trim(),
-                name: String(row['投手'] || row['選手名'] || '').trim(),
+                no: String(row['背番号'] || row['No.'] || '').trim(),
+                name: String(row['選手名'] || row['投手'] || '').trim(),
                 birthDate: String(row['生年月日'] || '').trim(),
                 height: String(row['身長'] || '').trim(),
                 weight: String(row['体重'] || '').trim(),
@@ -59,7 +60,8 @@
                 note: String(row['備考'] || '').trim(),
                 position: String(row['ポジション'] || '').trim(),
                 division: String(row['区分'] || '').trim(),
-                updatedAt: String(row['更新日'] || '').trim()
+                updatedAt: String(row['更新日'] || '').trim(),
+                firstTeam: firstTeamRaw === 'true' || firstTeamRaw === '1' || firstTeamRaw === 'yes' || firstTeamRaw === 'y'
             };
         }).filter(row => row.name && row.team);
     }
