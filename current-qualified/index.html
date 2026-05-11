@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<link href="/favicon.ico" rel="icon" sizes="any"/>
-<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
-<link href="/apple-touch-icon.png" rel="apple-touch-icon"/>
-<meta content="#0f172a" name="theme-color"/>
-<title>今年度規定到達者 | NPB打順・成績分析ラボ</title>
-<meta content="今年度の規定打席・規定投球回の到達者を確認できるページです。" name="description"/>
-<link href="https://baseball-stats.pages.dev/current-qualified/" rel="canonical"/>
-<meta content="index,follow,max-image-preview:large" name="robots"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
-<link href="/current-pages.css" rel="stylesheet">
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>今年度規定到達者 | NPB打順・成績分析ラボ</title>
+    <meta name="description" content="今年度の規定打席・規定投球回の到達者を確認できるページです。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/current-qualified/">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/current-pages.css" />
+  <style>
     .league-card + .league-card{margin-top:1rem}
     .league-title{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem}
     .league-title h3{margin:0;font-size:1.02rem;font-weight:900}
@@ -35,72 +34,127 @@
     .site-footer-nav a{color:var(--tx2);text-decoration:none;font-weight:700}
     .site-footer-nav a:hover{color:var(--ac)}
   </style>
-</link></link><style id="shared-site-nav">
-:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
-body{margin-top:0}
-header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
-.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
-.site-header .logo span{color:var(--site-nav-accent)}
-.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
-.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
-.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
-.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
-@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
-</style></head>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
+</head>
 <body>
-<header class="site-header">
-<div class="hi">
-<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
-<nav aria-label="主要ページ" class="site-nav"><a href="/index.html">ホーム</a> <a class="current" href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
-</div>
+  <header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html">ホーム</a> <a href="/current/" class="current">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">Guide</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
 </header>
-<section class="hero">
-<div class="hero-in">
-<h1>今年度 <em>規定到達者</em></h1>
-<p>今年度の成績データと順位表をもとに、規定打席・規定投球回の到達者を自動で判定して表示します。成績を更新すると、このページの表示もあわせて切り替わります。</p>
-<div class="page-tabs">
-<a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
-<a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
-<a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
-<a class="page-tab active" href="/current-qualified/">規定到達者</a>
-<a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
-</div>
-</div>
-</section>
-<main class="main grid">
-<section class="card page-lead-card">
-<h2>今年度規定到達者</h2>
-<p>今年度の規定打席到達者と規定投球回到達者を確認できます。シーズン中の到達状況を見たい時のページです。</p>
-</section>
-<section id="player-detail-panel-host"></section>
-<section class="card">
-<h2>絞り込み</h2>
-<div class="filters">
-<div class="fg"><label>球団</label><select id="cq-team"></select></div>
-<div class="fg"><label>検索</label><input id="cq-search" placeholder="選手名で検索" type="text"/></div>
-</div>
-<div class="summary-row" id="qualified-summary-row">
-<div class="summary-chip">読込中</div>
-</div>
-<p class="note">規定打席は各球団の試合数 × 3.1 を切り上げ、規定投球回は各球団の試合数以上で判定します。球団ごとの試合数差もそのまま反映します。</p>
-</section>
-<section id="qualified-sections"></section>
-</main>
-<footer class="site-footer">
-<div class="site-footer-inner">
-<div>NPB Stats</div>
-<nav class="site-footer-nav">
-<a href="/about.html">このサイトについて</a>
-<a href="/support.html">データについて</a>
-<a href="/contact.html">お問い合わせ</a>
-<a href="/privacy.html">プライバシーポリシー</a>
-</nav>
-</div>
-</footer>
-<script src="/current-pages-common.js"></script>
-<script src="/current-season-stats-loader.js"></script>
-<script src="/player-detail-panel.js"></script>
-<script src="/current-qualified-loader.js"></script>
+
+  <section class="hero">
+    <div class="hero-in">
+      <h1>今年度 <em>規定到達者</em></h1>
+      <p>今年度の成績データと順位表をもとに、規定打席・規定投球回の到達者を自動で判定して表示します。成績を更新すると、このページの表示もあわせて切り替わります。</p>
+      <div class="page-tabs">
+        <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
+        <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
+        <a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
+        <a class="page-tab active" href="/current-qualified/">規定到達者</a>
+        <a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="main grid">
+    <section class="card page-lead-card">
+      <h2>今年度規定到達者</h2>
+      <p>今年度の規定打席到達者と規定投球回到達者を確認できます。シーズン中の到達状況を見たい時のページです。</p>
+    </section>
+
+    <section id="player-detail-panel-host"></section>
+
+    <section class="card">
+      <h2>絞り込み</h2>
+      <div class="filters">
+        <div class="fg"><label>球団</label><select id="cq-team"></select></div>
+        <div class="fg"><label>検索</label><input type="text" id="cq-search" placeholder="選手名で検索" /></div>
+      </div>
+      <div class="summary-row" id="qualified-summary-row">
+        <div class="summary-chip">読込中</div>
+      </div>
+      <p class="note">規定打席は各球団の試合数 × 3.1 を切り上げ、規定投球回は各球団の試合数以上で判定します。球団ごとの試合数差もそのまま反映します。</p>
+    </section>
+
+    <section id="qualified-sections"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div>NPB Stats</div>
+      <nav class="site-footer-nav">
+        <a href="/about.html">このサイトについて</a>
+        <a href="/support.html">データについて</a>
+        <a href="/contact.html">お問い合わせ</a>
+        <a href="/privacy.html">プライバシーポリシー</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/current-pages-common.js"></script>
+  <script src="/current-season-stats-loader.js"></script>
+  <script src="/player-detail-panel.js"></script>
+  <script src="/current-qualified-loader.js"></script>
 </body>
 </html>

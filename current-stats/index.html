@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<link href="/favicon.ico" rel="icon" sizes="any"/>
-<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
-<link href="/apple-touch-icon.png" rel="apple-touch-icon"/>
-<meta content="#0f172a" name="theme-color"/>
-<title>今年度成績 | NPB打順・成績分析ラボ</title>
-<meta content="今年度の打撃成績と投手成績を球団ごとに確認できるページです。" name="description"/>
-<link href="https://baseball-stats.pages.dev/current-stats/" rel="canonical"/>
-<meta content="index,follow,max-image-preview:large" name="robots"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>今年度成績 | NPB打順・成績分析ラボ</title>
+    <meta name="description" content="今年度の打撃成績と投手成績を球団ごとに確認できるページです。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/current-stats/">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;--ac:#f59e0b;--ac2:#3b82f6;--tx:#f9fafb;--tx2:#9ca3af;--bd:#374151;--ok:#10b981}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
@@ -88,121 +87,180 @@ td{font-size:.9rem}
 .site-footer-nav a:hover{color:var(--ac)}
 
 </style>
-</link><style id="shared-site-nav">
-:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
-body{margin-top:0}
-header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
-.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
-.site-header .logo span{color:var(--site-nav-accent)}
-.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
-.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
-.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
-.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
-@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
-</style></head>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
+</head>
 <body>
-<header class="site-header">
-<div class="hi">
-<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
-<nav aria-label="主要ページ" class="site-nav"><a href="/index.html">ホーム</a> <a class="current" href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
-</div>
+  <header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html">ホーム</a> <a href="/current/" class="current">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">Guide</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
 </header>
-<section class="hero">
-<div class="hero-in">
-<h1>今年度 <em>成績</em></h1>
-<p>打撃と投手を1ページにまとめています。球団を選ぶと、上も下も同じ球団で見られます。</p>
-<div class="page-tabs">
-<a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
-<a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
-<a class="page-tab active" href="/current-stats/">成績</a>
-<a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
-<a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
-</div>
-</div>
-</section>
-<main class="main grid">
-<section class="card page-lead-card">
-<h2>今年度成績</h2>
-<p>今年度の打撃成績と投手成績を球団ごとに確認できます。シーズン中の現状を追いかけたい時のページです。</p>
-</section>
-<section id="player-detail-panel-host"></section>
-<section class="card">
-<h2>絞り込み</h2>
-<div class="filters">
-<div class="fg"><label>球団</label><select id="cs-team"></select></div>
-</div>
-<p class="note">選手名をクリックすると、基本情報と2026年・2020〜2025年の成績詳細を表示します。</p>
-<div class="mini-links">
-<a class="btn sub" data-team-link="/current-master/" href="/current-master/">この球団の選手マスタへ</a>
-<a class="btn sub" data-team-link="/current-order/" href="/current-order/">この球団の打順へ</a>
-</div>
-</section>
-<section class="card">
-<h2>今年度 打撃成績</h2>
-<p class="note">更新用データを差し替えると、この表も変わります。</p>
-<div class="filters">
-<div class="fg"><label>検索</label><input id="csb-search" placeholder="選手名で検索" type="text"/></div>
-<div class="fg"><label>表示数</label><select id="csb-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
-</div>
-<div class="summary-row"><div class="summary-chip" id="current-batter-note">読込中</div></div>
-<div class="tw">
-<table>
-<thead><tr><th>#</th><th>球団</th><th>選手名</th><th>試合</th><th>打率</th><th>本塁打</th><th>打点</th><th>安打</th><th>盗塁</th><th>出塁率</th><th>長打率</th><th>OPS</th><th>打席</th></tr></thead>
-<tbody id="current-batter-body"><tr><td class="empty" colspan="13">読込中...</td></tr></tbody>
-</table>
-</div>
-<div class="pg" id="current-batter-pagination"></div>
-</section>
-<section class="card">
-<h2>今年度 打者左右別成績</h2>
-<p class="note">右投手・左投手ごとの打数や安打、本塁打などをまとめています。</p>
-<div class="filters">
-<div class="fg"><label>検索</label><input id="cslr-search" placeholder="選手名で検索" type="text"/></div>
-<div class="fg"><label>表示数</label><select id="cslr-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
-</div>
-<div class="summary-row"><div class="summary-chip" id="current-batter-lr-note">読込中</div></div>
-<div class="tw">
-<table>
-<thead><tr><th>#</th><th>球団</th><th>選手名</th><th>区分</th><th>打率</th><th>打数</th><th>安打</th><th>本塁打</th><th>打点</th><th>更新日</th></tr></thead>
-<tbody id="current-batter-lr-body"><tr><td class="empty" colspan="10">読込中...</td></tr></tbody>
-</table>
-</div>
-<div class="pg" id="current-batter-lr-pagination"></div>
-</section>
-<section class="card">
-<h2>今年度 投手成績</h2>
-<p class="note">打撃と同じ球団条件で表示します。</p>
-<div class="filters">
-<div class="fg"><label>検索</label><input id="csp-search" placeholder="投手名で検索" type="text"/></div>
-<div class="fg"><label>表示数</label><select id="csp-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
-</div>
-<div class="summary-row"><div class="summary-chip" id="current-pitcher-note">読込中</div></div>
-<div class="tw">
-<table>
-<thead><tr><th>#</th><th>球団</th><th>選手名</th><th>登板</th><th>勝利</th><th>敗戦</th><th>セーブ</th><th>ＨＰ</th><th>防御率</th><th>奪三振</th><th>勝率</th><th>投球回</th></tr></thead>
-<tbody id="current-pitcher-body"><tr><td class="empty" colspan="12">読込中...</td></tr></tbody>
-</table>
-</div>
-<div class="pg" id="current-pitcher-pagination"></div>
-<section class="card">
-<h2>今年度 投手左右別被打成績</h2>
-<p class="note">対右打者・対左打者ごとの被打率や被安打などをまとめています。</p>
-<div class="filters">
-<div class="fg"><label>検索</label><input id="csplr-search" placeholder="投手名で検索" type="text"/></div>
-<div class="fg"><label>表示数</label><select id="csplr-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
-</div>
-<div class="summary-row"><div class="summary-chip" id="current-pitcher-lr-note">読込中</div></div>
-<div class="tw">
-<table>
-<thead><tr><th>#</th><th>球団</th><th>選手名</th><th>区分</th><th>被打率</th><th>被打数</th><th>被安打</th><th>被本塁打</th><th>奪三振</th><th>与四球</th><th>与死球</th></tr></thead>
-<tbody id="current-pitcher-lr-body"><tr><td class="empty" colspan="11">読込中...</td></tr></tbody>
-</table>
-</div>
-<div class="pg" id="current-pitcher-lr-pagination"></div>
-</section>
-</section></main>
-<script>
+
+  <section class="hero">
+    <div class="hero-in">
+      <h1>今年度 <em>成績</em></h1>
+      <p>打撃と投手を1ページにまとめています。球団を選ぶと、上も下も同じ球団で見られます。</p>
+      <div class="page-tabs">
+        <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
+        <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
+        <a class="page-tab active" href="/current-stats/">成績</a>
+        <a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
+        <a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="main grid">
+    <section class="card page-lead-card">
+      <h2>今年度成績</h2>
+      <p>今年度の打撃成績と投手成績を球団ごとに確認できます。シーズン中の現状を追いかけたい時のページです。</p>
+    </section>
+
+    <section id="player-detail-panel-host"></section>
+
+    <section class="card">
+      <h2>絞り込み</h2>
+      <div class="filters">
+        <div class="fg"><label>球団</label><select id="cs-team"></select></div>
+      </div>
+      <p class="note">選手名をクリックすると、基本情報と2026年・2020〜2025年の成績詳細を表示します。</p>
+      <div class="mini-links">
+        <a class="btn sub" data-team-link="/current-master/" href="/current-master/">この球団の選手マスタへ</a>
+        <a class="btn sub" data-team-link="/current-order/" href="/current-order/">この球団の打順へ</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>今年度 打撃成績</h2>
+      <p class="note">更新用データを差し替えると、この表も変わります。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="csb-search" placeholder="選手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="csb-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-batter-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>試合</th><th>打率</th><th>本塁打</th><th>打点</th><th>安打</th><th>盗塁</th><th>出塁率</th><th>長打率</th><th>OPS</th><th>打席</th></tr></thead>
+          <tbody id="current-batter-body"><tr><td colspan="13" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-batter-pagination"></div>
+    </section>
+
+    <section class="card">
+      <h2>今年度 打者左右別成績</h2>
+      <p class="note">右投手・左投手ごとの打数や安打、本塁打などをまとめています。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="cslr-search" placeholder="選手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="cslr-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-batter-lr-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>区分</th><th>打率</th><th>打数</th><th>安打</th><th>本塁打</th><th>打点</th><th>更新日</th></tr></thead>
+          <tbody id="current-batter-lr-body"><tr><td colspan="10" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-batter-lr-pagination"></div>
+    </section>
+
+    <section class="card">
+      <h2>今年度 投手成績</h2>
+      <p class="note">打撃と同じ球団条件で表示します。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="csp-search" placeholder="投手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="csp-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-pitcher-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>登板</th><th>勝利</th><th>敗戦</th><th>セーブ</th><th>ＨＰ</th><th>防御率</th><th>奪三振</th><th>勝率</th><th>投球回</th></tr></thead>
+          <tbody id="current-pitcher-body"><tr><td colspan="12" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-pitcher-pagination"></div>
+
+    <section class="card">
+      <h2>今年度 投手左右別被打成績</h2>
+      <p class="note">対右打者・対左打者ごとの被打率や被安打などをまとめています。</p>
+      <div class="filters">
+        <div class="fg"><label>検索</label><input type="text" id="csplr-search" placeholder="投手名で検索" /></div>
+        <div class="fg"><label>表示数</label><select id="csplr-limit"><option value="30">30件</option><option value="50">50件</option><option value="100">100件</option><option value="9999">全件</option></select></div>
+      </div>
+      <div class="summary-row"><div class="summary-chip" id="current-pitcher-lr-note">読込中</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>#</th><th>球団</th><th>選手名</th><th>区分</th><th>被打率</th><th>被打数</th><th>被安打</th><th>被本塁打</th><th>奪三振</th><th>与四球</th><th>与死球</th></tr></thead>
+          <tbody id="current-pitcher-lr-body"><tr><td colspan="11" class="empty">読込中...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pg" id="current-pitcher-lr-pagination"></div>
+    </section>
+  </main>
+
+  
+  
+  <script>
 window.CurrentPagesCommon = (function () {
   const TEAM_ORDER = [
     '読売ジャイアンツ','阪神タイガース','横浜DeNAベイスターズ','広島東洋カープ','中日ドラゴンズ','東京ヤクルトスワローズ',
@@ -655,16 +713,18 @@ window.CurrentPagesCommon = (function () {
       }
     })();
   </script>
-<footer class="site-footer">
-<div class="site-footer-inner">
-<p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
-<div class="site-footer-nav">
-<a href="/about.html">このサイトについて</a>
-<a href="/privacy.html">プライバシーポリシー</a>
-<a href="/support.html">データの見かた</a>
-<a href="/contact.html">お問い合わせ</a>
-</div>
-</div>
-</footer>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
+      <div class="site-footer-nav">
+        <a href="/about.html">このサイトについて</a>
+        <a href="/privacy.html">プライバシーポリシー</a>
+        <a href="/support.html">データの見かた</a>
+        <a href="/contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

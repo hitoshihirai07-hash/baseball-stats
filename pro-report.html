@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-
 <html lang="ja">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<link href="favicon.ico" rel="icon" sizes="any"/>
-<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
-<link href="apple-touch-icon.png" rel="apple-touch-icon"/>
-<meta content="#0f172a" name="theme-color"/>
-<title>分析レポート | NPB打順・成績分析ラボ</title>
-<meta content="順位表だけでは見えにくい傾向を、勝率トレンドや相関グラフで確認できる分析ページです。" name="description"/>
-<link href="https://baseball-stats.pages.dev/pro-report.html" rel="canonical"/>
-<meta content="index,follow,max-image-preview:large" name="robots"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#0f172a" />
+    <title>分析レポート | NPB打順・成績分析ラボ</title>
+    <meta name="description" content="順位表だけでは見えにくい傾向を、勝率トレンドや相関グラフで確認できる分析ページです。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/pro-report.html">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
         :root {
             --bg: #0a0e1a;
             --bg2: #111827;
@@ -1337,52 +1338,103 @@
         }
 
     </style>
-<script>window.PAGE_SECTION = 'pro-report';</script>
-</link><style id="shared-site-nav">
-:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
-body{margin-top:0}
-header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
-.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
-.site-header .logo span{color:var(--site-nav-accent)}
-.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
-.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
-.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
-.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
-@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
-</style></head>
+    <script>window.PAGE_SECTION = 'pro-report';</script>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
+</head>
+
 <body>
-<header class="site-header">
-<div class="hi">
-<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
-<nav aria-label="主要ページ" class="site-nav"><a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a class="current" href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
-</div>
+    <header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html" class="current">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">Guide</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
 </header>
-<div class="hero">
-<h1 id="hero-title">📊 NPB <em>分析レポート</em></h1>
-<p id="hero-sub">勝率トレンドや相関グラフから傾向を見られる分析ページ</p>
-<div class="hero-actions">
-<a class="hero-cta" href="#section-pro-report">分析を見る</a>
-<a class="hero-subcta" href="/team.html">チーム成績を見る</a>
-</div>
-</div>
-<div class="strip">
-<div class="st">
-<div class="pill">
-<div class="n" id="hero-count">-</div>
-<div class="l" id="hero-count-label">登録選手数</div>
-</div>
-<div class="pill">
-<div class="n">12</div>
-<div class="l">球団</div>
-</div>
-<div class="pill">
-<div class="n">今年度</div>
-<div class="l">選手マスタ</div>
-</div>
-</div>
-</div>
-<div class="main">
+    <div class="hero">
+        <h1 id="hero-title">📊 NPB <em>分析レポート</em></h1>
+        <p id="hero-sub">勝率トレンドや相関グラフから傾向を見られる分析ページ</p>
+        <div class="hero-actions">
+            <a class="hero-cta" href="#section-pro-report">分析を見る</a>
+            <a class="hero-subcta" href="/team.html">チーム成績を見る</a>
+        </div>
+    </div>
+    <div class="strip">
+        <div class="st">
+            <div class="pill">
+                <div class="n" id="hero-count">-</div>
+                <div class="l" id="hero-count-label">登録選手数</div>
+            </div>
+            <div class="pill">
+                <div class="n">12</div>
+                <div class="l">球団</div>
+            </div>
+            <div class="pill">
+                <div class="n">今年度</div>
+                <div class="l">選手マスタ</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="main">
 <div class="section active" id="section-pro-report">
 <div class="sh" style="margin-bottom: 2rem;">
 <h2 class="stitle">分析レポート</h2>
@@ -1434,6 +1486,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 </div>
 </div>
+
 <div class="section" id="section-home">
 <div class="sh">
 <h2 class="stitle">このサイトの使いどころ</h2>
@@ -1510,6 +1563,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 </div>
 </div>
+
 <div class="section" id="section-current">
 <div class="sh">
 <h2 class="stitle">今年度 選手マスタ</h2>
@@ -1558,6 +1612,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 <div class="pg" id="current-master-pagination"></div>
 </div>
+
 <div class="section" id="section-simulator">
 <div class="sh">
 <h2 class="stitle">対戦想定シミュレーター</h2>
@@ -1630,6 +1685,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 </div>
 </div>
+
 <div class="section" id="section-batting">
 <div class="sh">
 <h2 class="stitle">シーズン打撃成績</h2>
@@ -1717,6 +1773,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 <div class="pg" id="bspg"></div>
 </div>
 </div>
+
 <div class="section" id="section-pitching">
 <div class="sh">
 <h2 class="stitle">シーズン投手成績</h2>
@@ -1801,6 +1858,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 <div class="pg" id="pspg"></div>
 </div>
 </div>
+
 <div class="section" id="section-team">
 <div class="sh">
 <h2 class="stitle">チーム年度別成績</h2>
@@ -1839,6 +1897,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 <div class="pg" id="tpg"></div>
 </div>
+
 <div class="section" id="section-order">
 <div class="sh">
 <h2 class="stitle">チームオーダー分析</h2>
@@ -1883,6 +1942,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 <div class="pg" id="opg"></div>
 </div>
+
 <div class="section" id="section-myorder">
 <div class="sh" style="margin-bottom: 2rem;">
 <h2 class="stitle">俺のオーダー構築 &amp; 得点シミュレーター</h2>
@@ -1967,6 +2027,7 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
 </div>
 </div>
 </div>
+
 <div class="section" id="section-records">
 <h2 class="stitle" style="margin-bottom:1rem">歴代最高記録（2020年以降）</h2>
 <div class="cards" id="recs"></div>
@@ -1987,21 +2048,23 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
  歴代記録 
 
     </div><!-- /main -->
-<footer class="site-footer">
-<div class="site-footer-inner">
-<p>NPB打順・成績分析ラボ / 選手マスタ・打順・成績・分析を1つにまとめた野球データサイト</p>
-<div class="site-footer-nav">
-<a href="about.html">このサイトについて</a>
-<a href="privacy.html">プライバシーポリシー</a>
-<a href="support.html">データの見かた</a>
-<a href="contact.html">お問い合わせ</a>
-</div>
-</div>
-</footer>
-<script src="data-loader.js"></script>
-<script src="split-loader.js"></script>
-<script src="current-master-loader.js"></script>
-<script>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <p>NPB打順・成績分析ラボ / 選手マスタ・打順・成績・分析を1つにまとめた野球データサイト</p>
+            <div class="site-footer-nav">
+                <a href="about.html">このサイトについて</a>
+                <a href="privacy.html">プライバシーポリシー</a>
+                <a href="support.html">データの見かた</a>
+                <a href="contact.html">お問い合わせ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="data-loader.js"></script>
+    <script src="split-loader.js"></script>
+    <script src="current-master-loader.js"></script>
+    <script>
         // ============================================================
         // TEAM META
         // ============================================================
@@ -3693,24 +3756,26 @@ header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient
             }));
         }
     </script>
-<!-- PLAYER DETAIL MODAL -->
-<div class="modal-ov" id="modal-ov" onclick="if(event.target===this)closeP()">
-<div class="modal-cnt" onclick="event.stopPropagation()">
-<span class="modal-close" onclick="closeP()">×</span>
-<div class="modal-hi">
-<div class="modal-pname" id="modal-name">選手名</div>
-<div class="modal-pteam" id="modal-team">チーム</div>
-</div>
-<div class="modal-body">
-<div class="stat-summary" id="modal-stats"></div>
-<div class="chart-box" style="height: 350px;">
-<canvas id="playerChart"></canvas>
-</div>
-<div style="margin-top:1.5rem; text-align:center; color:var(--tx2); font-size:.8rem">
+
+    <!-- PLAYER DETAIL MODAL -->
+    <div id="modal-ov" class="modal-ov" onclick="if(event.target===this)closeP()">
+        <div class="modal-cnt" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeP()">&times;</span>
+            <div class="modal-hi">
+                <div id="modal-name" class="modal-pname">選手名</div>
+                <div id="modal-team" class="modal-pteam">チーム</div>
+            </div>
+            <div class="modal-body">
+                <div class="stat-summary" id="modal-stats"></div>
+                <div class="chart-box" style="height: 350px;">
+                    <canvas id="playerChart"></canvas>
+                </div>
+                <div style="margin-top:1.5rem; text-align:center; color:var(--tx2); font-size:.8rem">
                     ※ グラフの点は年度ごとの成績を表しています。
                 </div>
-</div>
-</div>
-</div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

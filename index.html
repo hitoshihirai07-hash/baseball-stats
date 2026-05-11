@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-
 <html lang="ja">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<link href="favicon.ico" rel="icon" sizes="any"/>
-<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
-<link href="apple-touch-icon.png" rel="apple-touch-icon"/>
-<meta content="#0f172a" name="theme-color"/>
-<title>NPB打順・成績分析ラボ | ホーム</title>
-<meta content="NPB12球団の選手情報、打撃成績、投手成績、打順分析、俺のオーダー、分析レポートを横断して見られる野球データサイト。" name="description"/>
-<link href="https://baseball-stats.pages.dev/" rel="canonical"/>
-<meta content="index,follow,max-image-preview:large" name="robots"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#0f172a" />
+    <title>NPB打順・成績分析ラボ | ホーム</title>
+    <meta name="description" content="NPB12球団の選手情報、打撃成績、投手成績、打順分析、俺のオーダー、分析レポートを横断して見られる野球データサイト。">
+    <link rel="canonical" href="https://baseball-stats.pages.dev/">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
         :root {
             --bg: #0a0e1a;
             --bg2: #111827;
@@ -1487,129 +1488,184 @@
         }
 
     </style>
-<script>window.PAGE_SECTION = 'home';</script>
-</link><style id="shared-site-nav">
-:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
-body{margin-top:0}
-header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
-.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
-.site-header .logo span{color:var(--site-nav-accent)}
-.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
-.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
-.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
-.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
-@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
-</style></head>
+    <script>window.PAGE_SECTION = 'home';</script>
+<style id="shared-site-nav">
+header .hi,.header .hi{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-height:64px;
+}
+header .logo,.header .logo{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:1.25rem;
+  font-weight:900;
+  color:#f8fafc;
+  text-decoration:none;
+  white-space:nowrap;
+}
+header .logo span,.header .logo span{color:#f59e0b}
+.site-nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.site-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:.55rem .9rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#f8fafc;
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.site-nav a:hover{background:rgba(255,255,255,.12)}
+.site-nav a.current,.site-nav a.active{
+  background:rgba(245,158,11,.16);
+  border-color:rgba(245,158,11,.45);
+  color:#fff;
+}
+@media (max-width:1100px){
+  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
+  .site-nav{justify-content:flex-start}
+}
+@media (max-width:760px){
+  header .logo,.header .logo{font-size:1.08rem}
+  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
+}
+</style>
+</head>
+
 <body>
-<header class="site-header">
-<div class="hi">
-<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
-<nav aria-label="主要ページ" class="site-nav"><a class="current" href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
-</div>
+    <header>
+  <div class="hi">
+    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+    <nav class="site-nav" aria-label="主要ページ">
+      <a href="/index.html" class="current">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">Guide</a> <a href="/about.html">このサイトについて</a>
+    </nav>
+  </div>
 </header>
-<section class="hero">
-<div class="hero-wrap">
-<div class="hero-copy">
-<h1>NPB打順・成績分析ラボ</h1>
-<div class="hero-note">2020年以降の成績・打順・今年度データを見比べやすく整理</div>
-<p>
+
+    <section class="hero">
+        <div class="hero-wrap">
+            <div class="hero-copy">
+                <h1>NPB打順・成績分析ラボ</h1>
+                <div class="hero-note">2020年以降の成績・打順・今年度データを見比べやすく整理</div>
+                <p>
                     このサイトは、NPB12球団の打撃成績、投手成績、チーム成績、打順履歴、今年度データを
                     ひとつずつ見やすく整理した野球データサイトです。表を並べるだけではなく、
                     「どのページで何が分かるか」が初見でも伝わるように入口を分けています。
                 </p>
-<p>
+                <p>
                     今年度の確認は「今年度」、比較は「打撃成績」「投手成績」「チーム成績」、試しながら見る場合は「シミュレーター」「俺のオーダー」、読み解きは「分析レポート」から入る構成にしています。
                 </p>
-<div class="hero-actions">
-<a class="hero-cta" href="current/">今年度を見る</a>
-<a class="hero-cta secondary" href="pro-report.html">分析レポートを見る</a>
-</div>
-</div>
-<aside aria-label="このサイトでできること" class="hero-panel">
-<h2>このサイトでできること</h2>
-<ul>
-<li><b>今年度の確認</b><br/>支配下枠、選手マスタ、規定到達者、今年度成績を球団別に確認できます。</li>
-<li><b>比較と試行</b><br/>打撃・投手・チーム成績の比較に加えて、シミュレーターや俺のオーダーで試しながら確認できます。</li>
-<li><b>打順の傾向整理</b><br/>打順履歴から起用傾向や並びの変化を追えます。</li>
-<li><b>履歴と整理</b><br/>成績記録や分析レポートで、更新の履歴や数字の流れを追えます。</li>
-</ul>
-</aside>
-</div>
-</section>
-<main class="landing">
-<section class="section-intro">
-<h2>目的別の入口</h2>
-<p>最初に必要なページへ入りやすいように、役割ごとに入口を分けています。</p>
-</section>
-<section class="landing-grid">
-<article class="landing-card">
-<h3>今年度</h3>
-<p>今季の支配下枠、選手一覧、規定到達者、今年度成績をまとめて確認できます。まず現状を見たいときの入口です。</p>
-<a href="/current/">今年度ページへ</a>
-</article>
-<article class="landing-card">
-<h3>打撃成績</h3>
-<p>球団別・年度別に打撃成績を見比べたいときのページです。過去の変化や全体傾向の把握に向いています。</p>
-<a href="/batting.html">打撃成績を見る</a>
-</article>
-<article class="landing-card">
-<h3>投手成績</h3>
-<p>防御率、投球回、勝敗などの推移を確認したいときのページです。打撃成績と並べてチームの形も見やすくしています。</p>
-<a href="/pitching.html">投手成績を見る</a>
-</article>
-<article class="landing-card">
-<h3>シミュレーター</h3>
-<p>条件を変えながら並びや成績の見え方を試したいときのページです。比較しながら確認したい時の入口にしています。</p>
-<a href="/simulator.html">シミュレーターへ</a>
-</article>
-<article class="landing-card">
-<h3>打順分析</h3>
-<p>どの選手が何番で起用されやすいか、並びがどのくらい固定されているかを追いやすいように整理しています。</p>
-<a href="/order.html">打順分析へ</a>
-</article>
-<article class="landing-card">
-<h3>俺のオーダー</h3>
-<p>自分で並びを組みながら確認するためのページです。候補を触りながら比較したいときに使えます。</p>
-<a href="/myorder.html">俺のオーダーへ</a>
-</article>
-<article class="landing-card">
-<h3>分析レポート</h3>
-<p>表だけでは見えにくい傾向を、文章と図で整理したページです。更新の読み物として使える内容を増やしていく入口です。</p>
-<a href="/pro-report.html">分析レポートへ</a>
-</article>
-<article class="landing-card">
-<h3>チーム成績</h3>
-<p>球団ごとの年度別成績や順位の流れを確認したいときのページです。チーム単位での比較をまとめて見られます。</p>
-<a href="/team.html">チーム成績を見る</a>
-</article>
-<article class="landing-card">
-<h3>成績記録</h3>
-<p>成績の記録や履歴を一覧で追いたいときのページです。更新内容をまとめて確認しやすい入口として用意しています。</p>
-<a href="/records.html">成績記録を見る</a>
-</article>
-</section>
-<section class="section-intro" style="margin-top:2.5rem;">
-<h2>このサイトの扱い方</h2>
-<p>公開データを見やすく整理し直したうえで、比較しやすい導線と独自のまとめを加えています。数字を確認したい人にも、傾向を読みたい人にも使いやすい構成を目指しています。</p>
-</section>
-<div class="trust-grid">
-<div class="trust-box">
-<b>更新について</b><br/>
+                <div class="hero-actions">
+                    <a class="hero-cta" href="current/">今年度を見る</a>
+                    <a class="hero-cta secondary" href="pro-report.html">分析レポートを見る</a>
+                </div>
+            </div>
+            <aside class="hero-panel" aria-label="このサイトでできること">
+                <h2>このサイトでできること</h2>
+                <ul>
+                    <li><b>今年度の確認</b><br>支配下枠、選手マスタ、規定到達者、今年度成績を球団別に確認できます。</li>
+                    <li><b>比較と試行</b><br>打撃・投手・チーム成績の比較に加えて、シミュレーターや俺のオーダーで試しながら確認できます。</li>
+                    <li><b>打順の傾向整理</b><br>打順履歴から起用傾向や並びの変化を追えます。</li>
+                    <li><b>履歴と整理</b><br>成績記録や分析レポートで、更新の履歴や数字の流れを追えます。</li>
+                </ul>
+            </aside>
+        </div>
+    </section>
+
+    <main class="landing">
+        <section class="section-intro">
+            <h2>目的別の入口</h2>
+            <p>最初に必要なページへ入りやすいように、役割ごとに入口を分けています。</p>
+        </section>
+
+        
+        <section class="landing-grid">
+            <article class="landing-card">
+                <h3>今年度</h3>
+                <p>今季の支配下枠、選手一覧、規定到達者、今年度成績をまとめて確認できます。まず現状を見たいときの入口です。</p>
+                <a href="/current/">今年度ページへ</a>
+            </article>
+            <article class="landing-card">
+                <h3>打撃成績</h3>
+                <p>球団別・年度別に打撃成績を見比べたいときのページです。過去の変化や全体傾向の把握に向いています。</p>
+                <a href="/batting.html">打撃成績を見る</a>
+            </article>
+            <article class="landing-card">
+                <h3>投手成績</h3>
+                <p>防御率、投球回、勝敗などの推移を確認したいときのページです。打撃成績と並べてチームの形も見やすくしています。</p>
+                <a href="/pitching.html">投手成績を見る</a>
+            </article>
+            <article class="landing-card">
+                <h3>シミュレーター</h3>
+                <p>条件を変えながら並びや成績の見え方を試したいときのページです。比較しながら確認したい時の入口にしています。</p>
+                <a href="/simulator.html">シミュレーターへ</a>
+            </article>
+            <article class="landing-card">
+                <h3>打順分析</h3>
+                <p>どの選手が何番で起用されやすいか、並びがどのくらい固定されているかを追いやすいように整理しています。</p>
+                <a href="/order.html">打順分析へ</a>
+            </article>
+            <article class="landing-card">
+                <h3>俺のオーダー</h3>
+                <p>自分で並びを組みながら確認するためのページです。候補を触りながら比較したいときに使えます。</p>
+                <a href="/myorder.html">俺のオーダーへ</a>
+            </article>
+            <article class="landing-card">
+                <h3>分析レポート</h3>
+                <p>表だけでは見えにくい傾向を、文章と図で整理したページです。更新の読み物として使える内容を増やしていく入口です。</p>
+                <a href="/pro-report.html">分析レポートへ</a>
+            </article>
+            <article class="landing-card">
+                <h3>チーム成績</h3>
+                <p>球団ごとの年度別成績や順位の流れを確認したいときのページです。チーム単位での比較をまとめて見られます。</p>
+                <a href="/team.html">チーム成績を見る</a>
+            </article>
+            <article class="landing-card">
+                <h3>成績記録</h3>
+                <p>成績の記録や履歴を一覧で追いたいときのページです。更新内容をまとめて確認しやすい入口として用意しています。</p>
+                <a href="/records.html">成績記録を見る</a>
+            </article>
+        </section>
+
+
+        <section class="section-intro" style="margin-top:2.5rem;">
+            <h2>このサイトの扱い方</h2>
+            <p>公開データを見やすく整理し直したうえで、比較しやすい導線と独自のまとめを加えています。数字を確認したい人にも、傾向を読みたい人にも使いやすい構成を目指しています。</p>
+        </section>
+
+        <div class="trust-grid">
+            <div class="trust-box">
+                <b>更新について</b><br>
                 今年度ページは、今季の確認に必要な情報を中心に更新します。過去データ系のページは、比較しやすさを優先して年度横断で整理しています。
             </div>
-<div class="trust-box">
-<b>運営情報</b><br/>
+            <div class="trust-box">
+                <b>運営情報</b><br>
                 このサイトの概要、連絡先、プライバシーポリシーは情報ページにまとめています。誤記や見づらさの連絡先もそこから確認できます。
                 <div class="mini-links">
-<a href="about.html">このサイトについて</a>
-<a href="contact.html">連絡先</a>
-<a href="privacy.html">プライバシーポリシー</a>
-<a href="support.html">サポート</a>
-
-</div>
-</div>
-</div>
-</main>
+                    <a href="about.html">このサイトについて</a>
+                    <a href="contact.html">連絡先</a>
+                    <a href="privacy.html">プライバシーポリシー</a>
+                    <a href="support.html">サポート</a>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
