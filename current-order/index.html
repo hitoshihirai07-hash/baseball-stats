@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <meta name="theme-color" content="#0f172a" />
-  <title>今年度打順 | NPB打順・成績分析ラボ</title>
-    <meta name="description" content="今年度の打順履歴を球団ごとに確認できるページです。">
-    <link rel="canonical" href="https://baseball-stats.pages.dev/current-order/">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<link href="/favicon.ico" rel="icon" sizes="any"/>
+<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon"/>
+<meta content="#0f172a" name="theme-color"/>
+<title>今年度打順 | NPB打順・成績分析ラボ</title>
+<meta content="今年度の打順履歴を球団ごとに確認できるページです。" name="description"/>
+<link href="https://baseball-stats.pages.dev/current-order/" rel="canonical"/>
+<meta content="index,follow,max-image-preview:large" name="robots"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
+<style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;--ac:#f59e0b;--ac2:#3b82f6;--tx:#f9fafb;--tx2:#9ca3af;--bd:#374151;--ok:#10b981}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
@@ -77,150 +78,64 @@ td{font-size:.9rem}
 .site-footer-nav a:hover{color:var(--ac)}
 
 </style>
-<style id="shared-site-nav">
-header .hi,.header .hi{
-  max-width:1400px;
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-  min-height:64px;
-}
-header .logo,.header .logo{
-  display:inline-flex;
-  align-items:center;
-  gap:.6rem;
-  font-size:1.25rem;
-  font-weight:900;
-  color:#f8fafc;
-  text-decoration:none;
-  white-space:nowrap;
-}
-header .logo span,.header .logo span{color:#f59e0b}
-.site-nav{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  gap:.55rem;
-}
-.site-nav a{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:38px;
-  padding:.55rem .9rem;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);
-  color:#f8fafc;
-  text-decoration:none;
-  font-size:.85rem;
-  font-weight:700;
-  white-space:nowrap;
-  transition:all .2s ease;
-}
-.site-nav a:hover{background:rgba(255,255,255,.12)}
-.site-nav a.current,.site-nav a.active{
-  background:rgba(245,158,11,.16);
-  border-color:rgba(245,158,11,.45);
-  color:#fff;
-}
-@media (max-width:1100px){
-  header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}
-  .site-nav{justify-content:flex-start}
-}
-@media (max-width:760px){
-  header .logo,.header .logo{font-size:1.08rem}
-  .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
-}
-</style>
-<style id="guide-entry-style">
-.guide-entry-wrap{padding:0 1.5rem;margin:1rem 0 0}
-.guide-entry{max-width:1400px;margin:0 auto;padding:1rem 1.1rem;border-radius:16px;border:1px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.10),rgba(17,24,39,.92));box-shadow:0 16px 36px rgba(0,0,0,.18)}
-.guide-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.guide-entry-copy{display:grid;gap:.35rem;min-width:min(100%,430px)}
-.guide-entry-kicker{display:inline-flex;align-items:center;gap:.45rem;font-size:.74rem;font-weight:800;letter-spacing:.08em;color:#fbbf24}
-.guide-entry-title{font-size:1.08rem;font-weight:900;color:#f8fafc}
-.guide-entry-text{font-size:.92rem;line-height:1.7;color:#d1d5db}
-.guide-entry-links{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.9rem}
-.guide-entry-links a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.58rem .92rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;color:#f8fafc;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);transition:all .2s ease}
-.guide-entry-links a:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
-.guide-entry-links a.is-main{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.38);color:#fff7ed}
-.guide-entry-links a.current{background:rgba(59,130,246,.16);border-color:rgba(96,165,250,.42);color:#dbeafe}
-.guide-entry-note{font-size:.78rem;line-height:1.6;color:#9ca3af;max-width:420px}
-@media (max-width:760px){.guide-entry-wrap{padding:0 .9rem}.guide-entry{padding:.95rem}.guide-entry-title{font-size:1rem}.guide-entry-text{font-size:.87rem}.guide-entry-links a{width:100%;justify-content:flex-start}}
-</style>
-</head>
+</link><style id="shared-site-nav">
+:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
+body{margin-top:0}
+header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
+.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
+.site-header .logo span{color:var(--site-nav-accent)}
+.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
+.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
+.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
+@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
+</style></head>
 <body>
-  <header>
-  <div class="hi">
-    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
-    <nav class="site-nav" aria-label="主要ページ">
-      <a href="/index.html">ホーム</a> <a href="/current/" class="current">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/about.html">このサイトについて</a>
-    </nav>
-  </div>
+<header class="site-header">
+<div class="hi">
+<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
+<nav aria-label="主要ページ" class="site-nav"><a href="/index.html">ホーム</a> <a class="current" href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
+</div>
 </header>
-<section class="guide-entry-wrap" aria-label="観戦・記録ガイドへの導線">
-  <div class="guide-entry">
-    <div class="guide-entry-top">
-      <div class="guide-entry-copy">
-        <span class="guide-entry-kicker">⚾ GUIDE</span>
-        <div class="guide-entry-title">観戦・記録ガイド</div>
-        <p class="guide-entry-text">成績・打順・分析を見る流れのまま、球場観戦や試合記録に役立つ持ち物・双眼鏡・スコアブック系のガイドへ進めます。</p>
-      </div>
-      <div class="guide-entry-note">本体のデータ閲覧ページはそのままにして、必要な人だけが補助ガイドへ進める別導線にしています。</div>
-    </div>
-    <div class="guide-entry-links">
-      <a href="/guide/" class="is-main">ガイドトップ</a>
-      <a href="/guide/kansen-mochimono.html" class="">観戦の持ち物</a>
-      <a href="/guide/binoculars.html" class="">双眼鏡の選び方</a>
-      <a href="/guide/scorebook.html" class="">スコアブック・野球ノート</a>
-    </div>
-  </div>
+<section class="hero">
+<div class="hero-in">
+<h1>今年度 <em>打順</em></h1>
+<div class="page-tabs">
+<a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
+<a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
+<a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
+<a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
+<a class="page-tab active" href="/current-order/">打順</a>
+</div>
+</div>
 </section>
-
-  <section class="hero">
-    <div class="hero-in">
-      <h1>今年度 <em>打順</em></h1>
-      <div class="page-tabs">
-        <a class="page-tab" data-team-link="/current/" href="/current/">今年度トップ</a>
-        <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
-        <a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
-        <a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
-        <a class="page-tab active" href="/current-order/">打順</a>
-      </div>
-    </div>
-  </section>
-
-  <main class="main grid">
-    <section class="card page-lead-card">
-      <h2>今年度打順</h2>
-      <p>今年度の打順履歴を球団ごとに確認できます。最近の並びや先発傾向を見たい時のページです。</p>
-    </section>
-
-    <section class="card">
-      <h2>今年度打順一覧</h2>
-      <div class="filters">
-        <div class="fg"><label>球団</label><select id="co-team"></select></div>
-        <div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
-        <div class="fg"><label>表示数</label><select id="co-limit"><option value="10">10試合</option><option value="30">30試合</option><option value="50">50試合</option><option value="9999">全試合</option></select></div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-chip" id="co-summary">読込中</div>
-        <div class="summary-chip" id="co-last-updated">-</div>
-      </div>
-      <div class="tw">
-        <table>
-          <thead><tr><th>試合日</th><th>チーム</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>投手</th><th>対戦相手</th></tr></thead>
-          <tbody id="co-body"><tr><td colspan="13" class="empty">読込中...</td></tr></tbody>
-        </table>
-      </div>
-      <div class="small" id="co-foot" style="margin-top:.75rem"></div>
-    </section>
-  </main>
-
-  <script>
+<main class="main grid">
+<section class="card page-lead-card">
+<h2>今年度打順</h2>
+<p>今年度の打順履歴を球団ごとに確認できます。最近の並びや先発傾向を見たい時のページです。</p>
+</section>
+<section class="card">
+<h2>今年度打順一覧</h2>
+<div class="filters">
+<div class="fg"><label>球団</label><select id="co-team"></select></div>
+<div class="fg"><label>並び順</label><select id="co-sort"><option value="desc">新しい順</option><option value="asc">古い順</option></select></div>
+<div class="fg"><label>表示数</label><select id="co-limit"><option value="10">10試合</option><option value="30">30試合</option><option value="50">50試合</option><option value="9999">全試合</option></select></div>
+</div>
+<div class="summary-row">
+<div class="summary-chip" id="co-summary">読込中</div>
+<div class="summary-chip" id="co-last-updated">-</div>
+</div>
+<div class="tw">
+<table>
+<thead><tr><th>試合日</th><th>チーム</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>投手</th><th>対戦相手</th></tr></thead>
+<tbody id="co-body"><tr><td class="empty" colspan="13">読込中...</td></tr></tbody>
+</table>
+</div>
+<div class="small" id="co-foot" style="margin-top:.75rem"></div>
+</section>
+</main>
+<script>
 window.CurrentPagesCommon = (function () {
   const TEAM_ORDER = [
     '読売ジャイアンツ','阪神タイガース','横浜DeNAベイスターズ','広島東洋カープ','中日ドラゴンズ','東京ヤクルトスワローズ',
@@ -308,7 +223,7 @@ window.CurrentPagesCommon = (function () {
   return {TEAM_ORDER, normalizeTeam, normalizeLoose, teamOrder, teamBadge, parseCSVLine, loadCSV, fillTeamSelect, getTeamFromQuery, updateTeamQuery, buildPageHref, syncPageLinks};
 })();
 </script>
-  <script>
+<script>
 (function () {
   const C = window.CurrentPagesCommon;
   const state = { rows: [] };
@@ -452,18 +367,16 @@ window.CurrentPagesCommon = (function () {
   })();
 })();
 </script>
-
-  <footer class="site-footer">
-    <div class="site-footer-inner">
-      <p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
-      <div class="site-footer-nav">
-        <a href="/about.html">このサイトについて</a>
-        <a href="/privacy.html">プライバシーポリシー</a>
-        <a href="/support.html">データの見かた</a>
-        <a href="/contact.html">お問い合わせ</a>
-      </div>
-    </div>
-  </footer>
-
+<footer class="site-footer">
+<div class="site-footer-inner">
+<p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
+<div class="site-footer-nav">
+<a href="/about.html">このサイトについて</a>
+<a href="/privacy.html">プライバシーポリシー</a>
+<a href="/support.html">データの見かた</a>
+<a href="/contact.html">お問い合わせ</a>
+</div>
+</div>
+</footer>
 </body>
 </html>

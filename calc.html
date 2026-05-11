@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>ダメージ計算 | PokeEdge</title>
-<meta name="description" content="ポケモンのダメージ計算ツール。努力値・個体値・性格補正・STAB・タイプ相性を反映した正確な計算。乱数16段階表示。">
-<meta name="robots" content="index, follow">
+<meta content="ポケモンのダメージ計算ツール。努力値・個体値・性格補正・STAB・タイプ相性を反映した正確な計算。乱数16段階表示。" name="description"/>
+<meta content="index, follow" name="robots"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-sync.js"></script>
 <script>
@@ -24,9 +25,9 @@
   for(var k in vars)root.setProperty(k,vars[k]);
 })();
 </script>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="favicon.png" rel="apple-touch-icon"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Noto+Sans+JP:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
 <style>
 
 :root{
@@ -367,621 +368,537 @@ footer{position:relative;z-index:1;footer{position:relative;z-index:1;border-top
 
 /* ===== ライトモード ===== */
 </style>
-<style id="guide-entry-style">
-.guide-entry-wrap{padding:0 1.5rem;margin:1rem 0 0}
-.guide-entry{max-width:1400px;margin:0 auto;padding:1rem 1.1rem;border-radius:16px;border:1px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.10),rgba(17,24,39,.92));box-shadow:0 16px 36px rgba(0,0,0,.18)}
-.guide-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.guide-entry-copy{display:grid;gap:.35rem;min-width:min(100%,430px)}
-.guide-entry-kicker{display:inline-flex;align-items:center;gap:.45rem;font-size:.74rem;font-weight:800;letter-spacing:.08em;color:#fbbf24}
-.guide-entry-title{font-size:1.08rem;font-weight:900;color:#f8fafc}
-.guide-entry-text{font-size:.92rem;line-height:1.7;color:#d1d5db}
-.guide-entry-links{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.9rem}
-.guide-entry-links a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.58rem .92rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;color:#f8fafc;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);transition:all .2s ease}
-.guide-entry-links a:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
-.guide-entry-links a.is-main{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.38);color:#fff7ed}
-.guide-entry-links a.current{background:rgba(59,130,246,.16);border-color:rgba(96,165,250,.42);color:#dbeafe}
-.guide-entry-note{font-size:.78rem;line-height:1.6;color:#9ca3af;max-width:420px}
-@media (max-width:760px){.guide-entry-wrap{padding:0 .9rem}.guide-entry{padding:.95rem}.guide-entry-title{font-size:1rem}.guide-entry-text{font-size:.87rem}.guide-entry-links a{width:100%;justify-content:flex-start}}
-</style>
-</head>
+<style id="shared-site-nav">
+:root{--site-nav-bg:#0b1220;--site-nav-bg2:#111827;--site-nav-accent:#f59e0b;--site-nav-border:rgba(148,163,184,.18);--site-nav-text:#e5e7eb;--site-nav-muted:#cbd5e1}
+body{margin-top:0}
+header.site-header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--site-nav-bg),#1e1b4b,var(--site-nav-bg2));border-bottom:2px solid var(--site-nav-accent);box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.site-header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.9rem 1.3rem}
+.site-header .logo{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:.02em;white-space:nowrap}
+.site-header .logo span{color:var(--site-nav-accent)}
+.site-nav{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
+.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .82rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;line-height:1.1;color:var(--site-nav-text);border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);transition:all .2s ease;white-space:nowrap}
+.site-nav a:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.44);color:#fff7ed;box-shadow:0 0 0 1px rgba(245,158,11,.14) inset}
+@media (max-width:900px){.site-header .hi{align-items:flex-start;flex-direction:column;padding:.85rem .9rem}.site-nav{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:.15rem}.site-nav a{font-size:.8rem;padding:.46rem .78rem;min-height:34px}.site-header .logo{font-size:1.08rem}}
+</style></head>
 <body>
-<header>
-  <div class="logo" onclick="location.href='index.html'">Poke<em>Edge</em></div>
-  <div class="header-sep"></div>
-  <div class="header-sub">ダメージ計算</div>
-  <div class="header-nav" id="main-nav">
-    <a class="nav-btn" href="index.html">TOP</a>
-    <a class="nav-btn active" href="calc.html">ダメージ計算</a>
-    <a class="nav-btn" href="move.html">技選択判定</a>
-    <a class="nav-btn" href="party.html">パーティ管理</a>
-    <a class="nav-btn" href="pokemon.html">ポケモン登録</a>
-    <a class="nav-btn" href="stats.html">選出率</a>
-    <a class="nav-btn" href="scope.html">アナライザー</a>
-    <a class="nav-btn" href="season.html">使用可能</a>
-    <a class="nav-btn" href="policy.html">サイト情報</a>
-  </div>
-
-  <button id="theme-btn" onclick="toggleTheme()" style="background:transparent;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-size:16px;cursor:pointer;transition:all 0.18s;flex-shrink:0;line-height:1;" title="ライト/ダークモード切替">🌙</button>
-  <div id="auth-ui" style="margin-left:8px;display:flex;align-items:center;gap:6px;flex-shrink:0;"></div>
-  <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="メニュー">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-overlay" id="nav-overlay" onclick="closeNav()"></div>
+<header class="site-header">
+<div class="hi">
+<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
+<nav aria-label="主要ページ" class="site-nav"><a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/team.html">チーム成績</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/simulator.html">シミュレーター</a> <a href="/pro-report.html">分析レポート</a> <a href="/records.html">成績記録</a> <a href="/support.html">データの見かた</a> <a href="/about.html">このサイトについて</a> <a href="/contact.html">お問い合わせ</a> <a href="/privacy.html">プライバシー</a></nav>
+</div>
 </header>
-<section class="guide-entry-wrap" aria-label="観戦・記録ガイドへの導線">
-  <div class="guide-entry">
-    <div class="guide-entry-top">
-      <div class="guide-entry-copy">
-        <span class="guide-entry-kicker">⚾ GUIDE</span>
-        <div class="guide-entry-title">観戦・記録ガイド</div>
-        <p class="guide-entry-text">成績・打順・分析を見る流れのまま、球場観戦や試合記録に役立つ持ち物・双眼鏡・スコアブック系のガイドへ進めます。</p>
-      </div>
-      <div class="guide-entry-note">本体のデータ閲覧ページはそのままにして、必要な人だけが補助ガイドへ進める別導線にしています。</div>
-    </div>
-    <div class="guide-entry-links">
-      <a href="/guide/" class="is-main">ガイドトップ</a>
-      <a href="/guide/kansen-mochimono.html" class="">観戦の持ち物</a>
-      <a href="/guide/binoculars.html" class="">双眼鏡の選び方</a>
-      <a href="/guide/scorebook.html" class="">スコアブック・野球ノート</a>
-    </div>
-  </div>
-</section>
-
 <div class="layout">
 <div class="main-content">
-  <!-- DAMAGE -->
-  <div class="panel active" id="tab-damage">
-    <div class="calc-grid">
-
-      <!-- 攻撃側 -->
-      <div class="card">
-        <div class="card-title">攻撃側</div>
-        <label>ポケモン検索</label>
-        <div id="season-filter-wrap" style="display:none;margin-bottom:6px;">
-  <select id="global-season-filter" onchange="onSeasonFilterChange()" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-size:10px;font-family:'Noto Sans JP',sans-serif;outline:none;">
-    <option value="">すべてのポケモン表示</option>
-  </select>
+<!-- DAMAGE -->
+<div class="panel active" id="tab-damage">
+<div class="calc-grid">
+<!-- 攻撃側 -->
+<div class="card">
+<div class="card-title">攻撃側</div>
+<label>ポケモン検索</label>
+<div id="season-filter-wrap" style="display:none;margin-bottom:6px;">
+<select id="global-season-filter" onchange="onSeasonFilterChange()" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-size:10px;font-family:'Noto Sans JP',sans-serif;outline:none;">
+<option value="">すべてのポケモン表示</option>
+</select>
 </div>
 <div class="search-wrap">
-          <input class="search-input" id="atk-search" type="text" placeholder="名前を入力..." autocomplete="off">
-          <div class="dropdown" id="atk-drop"></div>
-        </div>
-        <div class="poke-card" id="atk-card">
-          <div class="poke-no" id="atk-no"></div>
-          <div class="poke-name" id="atk-name"></div>
-          <div class="poke-types" id="atk-types"></div>
-          <div id="atk-basestats"></div>
-        </div>
-
-        <label>レベル</label>
-        <input type="number" id="atk-lv" value="50" min="1" max="100">
-
-        <label>性格</label>
-        <select id="atk-nature">
-            <option value="がんばりや">がんばりや（補正なし）</option>
-            <option value="さみしがり">さみしがり（攻↑防↓）</option>
-            <option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
-            <option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
-            <option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
-            <option value="ずぶとい">ずぶとい（防↑攻↓）</option>
-            <option value="わんぱく">わんぱく（防↑特攻↓）</option>
-            <option value="のうてんき">のうてんき（防↑特防↓）</option>
-            <option value="のんき">のんき（防↑素早↓）</option>
-            <option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
-            <option value="おっとり">おっとり（特攻↑防↓）</option>
-            <option value="うっかりや">うっかりや（特攻↑特防↓）</option>
-            <option value="れいせい">れいせい（特攻↑素早↓）</option>
-            <option value="おだやか">おだやか（特防↑攻↓）</option>
-            <option value="おとなしい">おとなしい（特防↑特攻↓）</option>
-            <option value="しんちょう">しんちょう（特防↑特攻↓）</option>
-            <option value="なまいき">なまいき（特防↑素早↓）</option>
-            <option value="おくびょう">おくびょう（素早↑特防↓）</option>
-            <option value="せっかち">せっかち（素早↑防↓）</option>
-            <option value="ようき">ようき（素早↑特攻↓）</option>
-            <option value="むじゃき">むじゃき（素早↑特防↓）</option>
-          </select>
-
-        <label>個体値（0〜31）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="atk-iv-disp">31</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="atk-iv-range" min="0" max="31" value="31">
-            <input type="number" id="atk-iv" min="0" max="31" value="31">
-          </div>
-        </div>
-
-        <!-- ゲームモード選択 -->
-        <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-          <span style="font-size:10px;color:var(--text2);letter-spacing:1px;">ゲームモード:</span>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-            <input type="radio" name="atk-game-mode" id="atk-mode-classic" value="classic" checked onchange="onAtkModeChange()">
-            <span style="font-size:11px;color:var(--text);">従来作（最大252）</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-            <input type="radio" name="atk-game-mode" id="atk-mode-champions" value="champions" onchange="onAtkModeChange()">
-            <span style="font-size:11px;color:var(--accent3);">Champions（最大32）</span>
-          </label>
-        </div>
-        <label>努力値（こうげき）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk-ev-atk-disp">0</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="atk-ev-atk-range" min="0" max="252" step="4" value="0">
-            <input type="number" id="atk-ev-atk" min="0" max="252" value="0">
-          </div>
-        </div>
-
-        <label>努力値（とくこう）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk-ev-spa-disp">0</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="atk-ev-spa-range" min="0" max="252" step="4" value="0">
-            <input type="number" id="atk-ev-spa" min="0" max="252" value="0">
-          </div>
-        </div>
-
-        <div class="real-stat-box">
-          <div class="real-stat-row">
-            <span class="real-stat-label">こうげき</span>
-            <span class="real-stat-val" id="atk-stat-atk">—</span>
-            <span class="real-stat-note">物理技で参照</span>
-          </div>
-          <div class="real-stat-row">
-            <span class="real-stat-label">とくこう</span>
-            <span class="real-stat-val" id="atk-stat-spa">—</span>
-            <span class="real-stat-note">特殊技で参照</span>
-          </div>
-        </div>
-
-        <div class="corr-section" style="margin-top:8px;">
-          <div class="corr-section-title">攻撃ランク補正</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:10px;color:var(--text2);flex-shrink:0;">ランク</span>
-            <input type="range" id="atk-rank" min="-6" max="6" value="0" step="1"
-              style="flex:1;accent-color:var(--accent);"
-              oninput="document.getElementById('atk-rank-disp').textContent=this.value<0?this.value:this.value>0?'+'+this.value:'±0'">
-            <span id="atk-rank-disp" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent3);width:28px;text-align:right;">±0</span>
-          </div>
-        </div>
-
-        <label style="margin-top:10px;">技検索</label>
-        <div class="search-wrap">
-          <input class="search-input" id="atk-move-search" type="text" placeholder="技名を入力..." autocomplete="off">
-          <div class="dropdown" id="atk-move-drop"></div>
-        </div>
-        <input type="hidden" id="atk-move-pow" value="">
-        <input type="hidden" id="atk-move-type" value="">
-        <input type="hidden" id="atk-move-cat" value="">
-        <input type="hidden" id="atk-move-hits" value="">
-        <input type="hidden" id="atk-move-notes" value="">
-        <input type="hidden" id="atk-move-crit" value="">
-        <div id="atk-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
-
-        <label>持ち物</label>
-        <select id="atk-item">
-          <option value="none">なし</option>
-          <option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
-          <option value="megane">こだわりメガネ ×1.5（特殊）</option>
-          <option value="inochi">いのちのたま ×1.3</option>
-          <option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
-          <option value="juel">ジュエル ×1.3</option>
-          <option value="pangro">パンプジン ×1.1</option>
-          <option value="hone">ふとい骨 ×2（ポケモン限定）</option>
-          <option value="none">なし</option>
-        </select>
-
-        <div class="corr-section">
-          <div class="corr-section-title">攻撃側 補正</div>
-          <div class="corr-grid">
-            <div>
-              <label class="corr-item">特性（攻撃側）</label>
-              <div style="position:relative;">
-                <input type="text" id="atk-ability-search" placeholder="特性名を検索..." autocomplete="off"
-                  style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;outline:none;"
-                  oninput="searchAbility('atk',this.value)">
-                <div id="atk-ability-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--panel);border:1px solid var(--border2);max-height:160px;overflow-y:auto;"></div>
-              </div>
-              <input type="hidden" id="atk-ability" value="">
-              <div id="atk-ability-info" style="font-size:10px;color:var(--accent3);margin-top:3px;min-height:14px;"></div>
-            </div>
-            <div>
-              <label class="corr-item">味方特性</label>
-              <select class="corr-select" id="atk-ally-ability">
-                <option value="1">なし ×1.0</option>
-                <option value="1.3_battery">バッテリー（特殊） ×1.3</option>
-                <option value="1.5_steel">はがねのせいしん（はがね） ×1.5</option>
-                <option value="0.75_waza">わざわいのつるぎ（ぼうぎょ÷0.75） ×0.75</option>
-              </select>
-            </div>
-            <div>
-              <label class="corr-item">手助け・その他</label>
-              <select class="corr-select" id="atk-other">
-                <option value="1">なし ×1.0</option>
-                <option value="1.5_help">てだすけ ×1.5</option>
-                <option value="1.33_inazuma">でんきフィールド（でんき） ×1.33</option>
-                <option value="1.3_grass">グラスフィールド（くさ） ×1.3</option>
-                <option value="1.3_psycho">サイコフィールド（エスパー） ×1.3</option>
-              </select>
-            </div>
-            <div>
-              <label class="corr-item">火傷</label>
-              <select class="corr-select" id="atk-burn">
-                <option value="1">なし ×1.0</option>
-                <option value="0.5">火傷あり ×0.5（物理技）</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="vs-mid">VS</div>
-
-      <!-- 防御側 -->
-      <div class="card">
-        <div class="card-title">防御側</div>
-        <label>ポケモン検索</label>
-        <div class="search-wrap">
-          <input class="search-input" id="def-search" type="text" placeholder="名前を入力..." autocomplete="off">
-          <div class="dropdown" id="def-drop"></div>
-        </div>
-        <div class="poke-card" id="def-card">
-          <div class="poke-no" id="def-no"></div>
-          <div class="poke-name" id="def-name"></div>
-          <div class="poke-types" id="def-types"></div>
-          <div id="def-basestats"></div>
-        </div>
-
-        <label>レベル</label>
-        <input type="number" id="def-lv" value="50" min="1" max="100">
-
-        <label>性格</label>
-        <select id="def-nature">
-            <option value="がんばりや">がんばりや（補正なし）</option>
-            <option value="さみしがり">さみしがり（攻↑防↓）</option>
-            <option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
-            <option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
-            <option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
-            <option value="ずぶとい">ずぶとい（防↑攻↓）</option>
-            <option value="わんぱく">わんぱく（防↑特攻↓）</option>
-            <option value="のうてんき">のうてんき（防↑特防↓）</option>
-            <option value="のんき">のんき（防↑素早↓）</option>
-            <option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
-            <option value="おっとり">おっとり（特攻↑防↓）</option>
-            <option value="うっかりや">うっかりや（特攻↑特防↓）</option>
-            <option value="れいせい">れいせい（特攻↑素早↓）</option>
-            <option value="おだやか">おだやか（特防↑攻↓）</option>
-            <option value="おとなしい">おとなしい（特防↑特攻↓）</option>
-            <option value="しんちょう">しんちょう（特防↑特攻↓）</option>
-            <option value="なまいき">なまいき（特防↑素早↓）</option>
-            <option value="おくびょう">おくびょう（素早↑特防↓）</option>
-            <option value="せっかち">せっかち（素早↑防↓）</option>
-            <option value="ようき">ようき（素早↑特攻↓）</option>
-            <option value="むじゃき">むじゃき（素早↑特防↓）</option>
-          </select>
-
-        <label>個体値（0〜31）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="def-iv-disp">31</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="def-iv-range" min="0" max="31" value="31">
-            <input type="number" id="def-iv" min="0" max="31" value="31">
-          </div>
-        </div>
-
-        <!-- ゲームモード選択 -->
-        <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-          <span style="font-size:10px;color:var(--text2);letter-spacing:1px;">ゲームモード:</span>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-            <input type="radio" name="def-game-mode" id="def-mode-classic" value="classic" checked onchange="onDefModeChange()">
-            <span style="font-size:11px;color:var(--text);">従来作（最大252）</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-            <input type="radio" name="def-game-mode" id="def-mode-champions" value="champions" onchange="onDefModeChange()">
-            <span style="font-size:11px;color:var(--accent3);">Champions（最大32）</span>
-          </label>
-        </div>
-        <label>努力値（HP）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-hp-disp">0</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="def-ev-hp-range" min="0" max="252" step="4" value="0">
-            <input type="number" id="def-ev-hp" min="0" max="252" value="0">
-          </div>
-        </div>
-
-        <label>努力値（ぼうぎょ）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-def-disp">0</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="def-ev-def-range" min="0" max="252" step="4" value="0">
-            <input type="number" id="def-ev-def" min="0" max="252" value="0">
-          </div>
-        </div>
-
-        <label>努力値（とくぼう）</label>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-spd-disp">0</span></div>
-          <div class="slider-inputs">
-            <input type="range" id="def-ev-spd-range" min="0" max="252" step="4" value="0">
-            <input type="number" id="def-ev-spd" min="0" max="252" value="0">
-          </div>
-        </div>
-
-        <div class="real-stat-box">
-          <div class="real-stat-row">
-            <span class="real-stat-label">HP</span>
-            <span class="real-stat-val" id="def-stat-hp">—</span>
-            <span class="real-stat-note"></span>
-          </div>
-          <div class="real-stat-row">
-            <span class="real-stat-label">ぼうぎょ</span>
-            <span class="real-stat-val" id="def-stat-def">—</span>
-            <span class="real-stat-note">物理技で参照</span>
-          </div>
-          <div class="real-stat-row">
-            <span class="real-stat-label">とくぼう</span>
-            <span class="real-stat-val" id="def-stat-spd">—</span>
-            <span class="real-stat-note">特殊技で参照</span>
-          </div>
-        </div>
-
-        <div class="corr-section" style="margin-top:8px;">
-          <div class="corr-section-title">防御ランク補正</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:10px;color:var(--text2);flex-shrink:0;">ランク</span>
-            <input type="range" id="def-rank" min="-6" max="6" value="0" step="1"
-              style="flex:1;accent-color:var(--accent2);"
-              oninput="document.getElementById('def-rank-disp').textContent=this.value<0?this.value:this.value>0?'+'+this.value:'±0'">
-            <span id="def-rank-disp" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent2);width:28px;text-align:right;">±0</span>
-          </div>
-        </div>
-
-        <div class="hp-wrap" style="margin-top:10px;">
-          <div class="hp-labels"><span>HP</span><span id="hp-disp">—</span></div>
-          <div class="hp-bg"><div class="hp-fg" id="hp-fg" style="width:100%"></div></div>
-        </div>
-
-        <div class="corr-section">
-          <div class="corr-section-title">防御側 補正</div>
-          <div class="corr-grid">
-            <div>
-              <label class="corr-item">特性（防御側）</label>
-              <div style="position:relative;">
-                <input type="text" id="def-ability-search" placeholder="特性名を検索..." autocomplete="off"
-                  style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;outline:none;"
-                  oninput="searchAbility('def',this.value)">
-                <div id="def-ability-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--panel);border:1px solid var(--border2);max-height:160px;overflow-y:auto;"></div>
-              </div>
-              <input type="hidden" id="def-ability" value="">
-              <div id="def-ability-info" style="font-size:10px;color:var(--accent2);margin-top:3px;min-height:14px;"></div>
-            </div>
-            <div>
-              <label class="corr-item">持ち物</label>
-              <select class="corr-select" id="def-item">
-                <option value="1">なし ×1.0</option>
-                <option value="def_1.5_kiseki">しんかのきせき ×1.5</option>
-                <option value="def_0.5_handi">半減きのみ ×0.5</option>
-                <option value="def_2_metaba">メタルパウダー ×2</option>
-              </select>
-            </div>
-            <div>
-              <label class="corr-item">壁</label>
-              <select class="corr-select" id="def-wall">
-                <option value="1">なし ×1.0</option>
-                <option value="wall_0.5_hikari">ひかりのかべ（特殊） ×0.5</option>
-                <option value="wall_0.5_reflect">リフレクター（物理） ×0.5</option>
-              </select>
-            </div>
-            <div>
-              <label class="corr-item">味方特性</label>
-              <select class="corr-select" id="def-ally-ability">
-                <option value="1">なし ×1.0</option>
-                <option value="def_0.75_fureka">フレンドガード ×0.75</option>
-                <option value="def_0.75_waza2">わざわいのうつわ ×0.75</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="main-btn" onclick="calcDamage()">CALCULATE DAMAGE</button>
-    <div style="display:flex;align-items:center;gap:10px;margin:-4px 0 8px;">
-      <button id="add-toggle-btn" onclick="toggleAddMode()" style="background:transparent;border:1px solid var(--border2);color:var(--text2);padding:6px 16px;cursor:pointer;font-size:11px;font-family:'Noto Sans JP',sans-serif;letter-spacing:1px;transition:all 0.18s;">＋ 加算計算を使う</button>
-      <span style="font-size:10px;color:var(--text2);">2体・2技の合計ダメージで倒せるか判定</span>
-    </div>
-
-    <div class="result-box" id="result-box">
-      <div class="sec">計算結果</div>
-      <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;">
-        <div>
-          <div class="dmg-num" id="dmg-num">—</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:4px;" id="dmg-range"></div>
-          <div id="ko-tag"></div>
-          <div style="font-size:11px;color:var(--text2);margin-top:4px;" id="dmg-desc"></div>
-        </div>
-        <div style="flex:1;min-width:140px;">
-          <div style="font-size:10px;color:var(--text2);margin-bottom:5px;">ダメージ割合</div>
-          <div class="dmg-bar-wrap"><div class="dmg-bar-fill" id="dmg-bar" style="width:0%"></div></div>
-          <div class="dmg-pct" id="dmg-pct">0%</div>
-        </div>
-      </div>
-      <div style="margin-top:12px;">
-        <div style="font-size:10px;color:var(--text2);margin-bottom:4px;letter-spacing:2px;">乱数16段階（最小〜最大）</div>
-        <div class="rolls-wrap" id="dmg-rolls"></div>
-      </div>
-    </div>
-
-    <!-- 加算計算セクション -->
-    <div class="add-section" id="add-section" style="display:none;">
-      <div class="add-section-title">加算ダメージ計算（2体 × 2技）</div>
-      <div class="add-grid">
-
-        <!-- 攻撃側2 -->
-        <div class="add-card">
-          <div class="add-card-label">攻撃側 2体目</div>
-          <label>ポケモン検索</label>
-          <div class="search-wrap">
-            <input class="search-input" id="atk2-search" type="text" placeholder="名前を入力..." autocomplete="off">
-            <div class="dropdown" id="atk2-drop"></div>
-          </div>
-          <div class="poke-card" id="atk2-card">
-            <div class="poke-no" id="atk2-no"></div>
-            <div class="poke-name" id="atk2-name"></div>
-            <div class="poke-types" id="atk2-types"></div>
-            <div id="atk2-basestats"></div>
-          </div>
-          <label>レベル</label>
-          <input type="number" id="atk2-lv" oninput="recalcAtk2()" value="50" min="1" max="100">
-          <label>性格</label>
-          <select id="atk2-nature" onchange="recalcAtk2()">
-            <option value="がんばりや">がんばりや（補正なし）</option>
-            <option value="さみしがり">さみしがり（攻↑防↓）</option>
-            <option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
-            <option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
-            <option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
-            <option value="ずぶとい">ずぶとい（防↑攻↓）</option>
-            <option value="わんぱく">わんぱく（防↑特攻↓）</option>
-            <option value="のうてんき">のうてんき（防↑特防↓）</option>
-            <option value="のんき">のんき（防↑素早↓）</option>
-            <option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
-            <option value="おっとり">おっとり（特攻↑防↓）</option>
-            <option value="うっかりや">うっかりや（特攻↑特防↓）</option>
-            <option value="れいせい">れいせい（特攻↑素早↓）</option>
-            <option value="おだやか">おだやか（特防↑攻↓）</option>
-            <option value="おとなしい">おとなしい（特防↑特攻↓）</option>
-            <option value="しんちょう">しんちょう（特防↑特攻↓）</option>
-            <option value="なまいき">なまいき（特防↑素早↓）</option>
-            <option value="おくびょう">おくびょう（素早↑特防↓）</option>
-            <option value="せっかち">せっかち（素早↑防↓）</option>
-            <option value="ようき">ようき（素早↑特攻↓）</option>
-            <option value="むじゃき">むじゃき（素早↑特防↓）</option>
-          </select>
-          <label>個体値（0〜31）</label>
-          <div class="slider-row">
-            <div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="atk2-iv-disp">31</span></div>
-            <div class="slider-inputs">
-              <input type="range" id="atk2-iv-range" oninput="recalcAtk2()" min="0" max="31" value="31">
-              <input type="number" id="atk2-iv" oninput="recalcAtk2()" min="0" max="31" value="31">
-            </div>
-          </div>
-          <!-- atk2 ゲームモード -->
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-            <span style="font-size:10px;color:var(--text2);">ゲーム:</span>
-            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;">
-              <input type="radio" name="atk2-mode" id="atk2-mode-classic" value="classic" checked onchange="onAtk2ModeChange()">
-              <span>従来作</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;">
-              <input type="radio" name="atk2-mode" id="atk2-mode-champ" value="champions" onchange="onAtk2ModeChange()">
-              <span style="color:var(--accent3);">Champions</span>
-            </label>
-          </div>
-          <label>努力値（こうげき）</label>
-          <div class="slider-row">
-            <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk2-ev-atk-disp">0</span></div>
-            <div class="slider-inputs">
-              <input type="range" id="atk2-ev-atk-range" min="0" max="252" step="4" value="0" oninput="syncSlider('atk2-ev-atk-range','atk2-ev-atk','atk2-ev-atk-disp');recalcAtk2()">
-              <input type="number" id="atk2-ev-atk" min="0" max="252" value="0" oninput="syncSlider('atk2-ev-atk-range','atk2-ev-atk','atk2-ev-atk-disp');recalcAtk2()">
-            </div>
-          </div>
-          <label>努力値（とくこう）</label>
-          <div class="slider-row">
-            <div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk2-ev-spa-disp">0</span></div>
-            <div class="slider-inputs">
-              <input type="range" id="atk2-ev-spa-range" min="0" max="252" step="4" value="0" oninput="syncSlider('atk2-ev-spa-range','atk2-ev-spa','atk2-ev-spa-disp');recalcAtk2()">
-              <input type="number" id="atk2-ev-spa" min="0" max="252" value="0" oninput="syncSlider('atk2-ev-spa-range','atk2-ev-spa','atk2-ev-spa-disp');recalcAtk2()">
-            </div>
-          </div>
-          <div class="real-stat-box">
-            <div class="real-stat-row">
-              <span class="real-stat-label">こうげき</span>
-              <span class="real-stat-val" id="atk2-stat-atk">—</span>
-              <span class="real-stat-note">物理技で参照</span>
-            </div>
-            <div class="real-stat-row">
-              <span class="real-stat-label">とくこう</span>
-              <span class="real-stat-val" id="atk2-stat-spa">—</span>
-              <span class="real-stat-note">特殊技で参照</span>
-            </div>
-          </div>
-          <label style="margin-top:10px;">技検索（2体目）</label>
-          <div class="search-wrap">
-            <input class="search-input" id="atk2-move-search" type="text" placeholder="技名を入力..." autocomplete="off">
-            <div class="dropdown" id="atk2-move-drop"></div>
-          </div>
-          <input type="hidden" id="atk2-move-pow" value="">
-          <input type="hidden" id="atk2-move-type" value="">
-          <input type="hidden" id="atk2-move-cat" value="">
-          <input type="hidden" id="atk2-move-hits" value="">
-          <div id="atk2-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
-          <label>持ち物</label>
-          <select id="atk2-item">
-            <option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
-            <option value="megane">こだわりメガネ ×1.5（特殊）</option>
-            <option value="inochi">いのちのたま ×1.3</option>
-            <option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
-            <option value="none" selected>なし</option>
-          </select>
-        </div>
-
-        <!-- 1体目の技2 -->
-        <div class="add-card">
-          <div class="add-card-label">攻撃側 1体目 / 技2</div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">1体目（上の攻撃側）が打つ2発目の技を選択</div>
-          <label>技検索（1体目・2発目）</label>
-          <div class="search-wrap">
-            <input class="search-input" id="atk1b-move-search" type="text" placeholder="技名を入力..." autocomplete="off">
-            <div class="dropdown" id="atk1b-move-drop"></div>
-          </div>
-          <input type="hidden" id="atk1b-move-pow" value="">
-          <input type="hidden" id="atk1b-move-type" value="">
-          <input type="hidden" id="atk1b-move-cat" value="">
-          <input type="hidden" id="atk1b-move-hits" value="">
-          <div id="atk1b-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
-          <label>持ち物（1体目・2発目用）</label>
-          <select id="atk1b-item">
-            <option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
-            <option value="megane">こだわりメガネ ×1.5（特殊）</option>
-            <option value="inochi">いのちのたま ×1.3</option>
-            <option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
-            <option value="none" selected>なし</option>
-          </select>
-          <div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.8;border-top:1px solid var(--border);padding-top:10px;">
-            ※ 1体目のポケモン・個体値・努力値・レベル・性格は<br>上の攻撃側の設定をそのまま使います。
-          </div>
-        </div>
-      </div>
-
-      <button class="main-btn" style="background:linear-gradient(135deg,var(--accent3),#997a00);margin-top:12px;" onclick="calcAddDamage()">⚡ 合計ダメージを計算</button>
-
-      <div class="add-total-box" id="add-result" style="display:none;">
-        <div class="add-result-title" style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px;">合計ダメージ結果</div>
-        <div class="add-total-num" id="add-total-num">—</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:4px;" id="add-total-range"></div>
-        <div class="add-bar-wrap" id="add-bar-wrap">
-          <div class="add-bar-1" id="add-bar-1" style="width:0%"></div>
-          <div class="add-bar-2" id="add-bar-2" style="width:0%"></div>
-        </div>
-        <div class="add-total-pct" id="add-total-pct">0%</div>
-        <div id="add-ko-tag"></div>
-        <div class="add-breakdown" id="add-breakdown"></div>
-      </div>
-    </div>
-  </div>
-
-
+<input autocomplete="off" class="search-input" id="atk-search" placeholder="名前を入力..." type="text"/>
+<div class="dropdown" id="atk-drop"></div>
 </div>
-
-
+<div class="poke-card" id="atk-card">
+<div class="poke-no" id="atk-no"></div>
+<div class="poke-name" id="atk-name"></div>
+<div class="poke-types" id="atk-types"></div>
+<div id="atk-basestats"></div>
 </div>
-
+<label>レベル</label>
+<input id="atk-lv" max="100" min="1" type="number" value="50"/>
+<label>性格</label>
+<select id="atk-nature">
+<option value="がんばりや">がんばりや（補正なし）</option>
+<option value="さみしがり">さみしがり（攻↑防↓）</option>
+<option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
+<option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
+<option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
+<option value="ずぶとい">ずぶとい（防↑攻↓）</option>
+<option value="わんぱく">わんぱく（防↑特攻↓）</option>
+<option value="のうてんき">のうてんき（防↑特防↓）</option>
+<option value="のんき">のんき（防↑素早↓）</option>
+<option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
+<option value="おっとり">おっとり（特攻↑防↓）</option>
+<option value="うっかりや">うっかりや（特攻↑特防↓）</option>
+<option value="れいせい">れいせい（特攻↑素早↓）</option>
+<option value="おだやか">おだやか（特防↑攻↓）</option>
+<option value="おとなしい">おとなしい（特防↑特攻↓）</option>
+<option value="しんちょう">しんちょう（特防↑特攻↓）</option>
+<option value="なまいき">なまいき（特防↑素早↓）</option>
+<option value="おくびょう">おくびょう（素早↑特防↓）</option>
+<option value="せっかち">せっかち（素早↑防↓）</option>
+<option value="ようき">ようき（素早↑特攻↓）</option>
+<option value="むじゃき">むじゃき（素早↑特防↓）</option>
+</select>
+<label>個体値（0〜31）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="atk-iv-disp">31</span></div>
+<div class="slider-inputs">
+<input id="atk-iv-range" max="31" min="0" type="range" value="31"/>
+<input id="atk-iv" max="31" min="0" type="number" value="31"/>
+</div>
+</div>
+<!-- ゲームモード選択 -->
+<div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+<span style="font-size:10px;color:var(--text2);letter-spacing:1px;">ゲームモード:</span>
+<label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+<input checked="" id="atk-mode-classic" name="atk-game-mode" onchange="onAtkModeChange()" type="radio" value="classic"/>
+<span style="font-size:11px;color:var(--text);">従来作（最大252）</span>
+</label>
+<label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+<input id="atk-mode-champions" name="atk-game-mode" onchange="onAtkModeChange()" type="radio" value="champions"/>
+<span style="font-size:11px;color:var(--accent3);">Champions（最大32）</span>
+</label>
+</div>
+<label>努力値（こうげき）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk-ev-atk-disp">0</span></div>
+<div class="slider-inputs">
+<input id="atk-ev-atk-range" max="252" min="0" step="4" type="range" value="0"/>
+<input id="atk-ev-atk" max="252" min="0" type="number" value="0"/>
+</div>
+</div>
+<label>努力値（とくこう）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk-ev-spa-disp">0</span></div>
+<div class="slider-inputs">
+<input id="atk-ev-spa-range" max="252" min="0" step="4" type="range" value="0"/>
+<input id="atk-ev-spa" max="252" min="0" type="number" value="0"/>
+</div>
+</div>
+<div class="real-stat-box">
+<div class="real-stat-row">
+<span class="real-stat-label">こうげき</span>
+<span class="real-stat-val" id="atk-stat-atk">—</span>
+<span class="real-stat-note">物理技で参照</span>
+</div>
+<div class="real-stat-row">
+<span class="real-stat-label">とくこう</span>
+<span class="real-stat-val" id="atk-stat-spa">—</span>
+<span class="real-stat-note">特殊技で参照</span>
+</div>
+</div>
+<div class="corr-section" style="margin-top:8px;">
+<div class="corr-section-title">攻撃ランク補正</div>
+<div style="display:flex;align-items:center;gap:8px;">
+<span style="font-size:10px;color:var(--text2);flex-shrink:0;">ランク</span>
+<input id="atk-rank" max="6" min="-6" oninput="document.getElementById('atk-rank-disp').textContent=this.value&lt;0?this.value:this.value&gt;0?'+'+this.value:'±0'" step="1" style="flex:1;accent-color:var(--accent);" type="range" value="0"/>
+<span id="atk-rank-disp" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent3);width:28px;text-align:right;">±0</span>
+</div>
+</div>
+<label style="margin-top:10px;">技検索</label>
+<div class="search-wrap">
+<input autocomplete="off" class="search-input" id="atk-move-search" placeholder="技名を入力..." type="text"/>
+<div class="dropdown" id="atk-move-drop"></div>
+</div>
+<input id="atk-move-pow" type="hidden" value=""/>
+<input id="atk-move-type" type="hidden" value=""/>
+<input id="atk-move-cat" type="hidden" value=""/>
+<input id="atk-move-hits" type="hidden" value=""/>
+<input id="atk-move-notes" type="hidden" value=""/>
+<input id="atk-move-crit" type="hidden" value=""/>
+<div id="atk-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
+<label>持ち物</label>
+<select id="atk-item">
+<option value="none">なし</option>
+<option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
+<option value="megane">こだわりメガネ ×1.5（特殊）</option>
+<option value="inochi">いのちのたま ×1.3</option>
+<option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
+<option value="juel">ジュエル ×1.3</option>
+<option value="pangro">パンプジン ×1.1</option>
+<option value="hone">ふとい骨 ×2（ポケモン限定）</option>
+<option value="none">なし</option>
+</select>
+<div class="corr-section">
+<div class="corr-section-title">攻撃側 補正</div>
+<div class="corr-grid">
+<div>
+<label class="corr-item">特性（攻撃側）</label>
+<div style="position:relative;">
+<input autocomplete="off" id="atk-ability-search" oninput="searchAbility('atk',this.value)" placeholder="特性名を検索..." style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;outline:none;" type="text"/>
+<div id="atk-ability-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--panel);border:1px solid var(--border2);max-height:160px;overflow-y:auto;"></div>
+</div>
+<input id="atk-ability" type="hidden" value=""/>
+<div id="atk-ability-info" style="font-size:10px;color:var(--accent3);margin-top:3px;min-height:14px;"></div>
+</div>
+<div>
+<label class="corr-item">味方特性</label>
+<select class="corr-select" id="atk-ally-ability">
+<option value="1">なし ×1.0</option>
+<option value="1.3_battery">バッテリー（特殊） ×1.3</option>
+<option value="1.5_steel">はがねのせいしん（はがね） ×1.5</option>
+<option value="0.75_waza">わざわいのつるぎ（ぼうぎょ÷0.75） ×0.75</option>
+</select>
+</div>
+<div>
+<label class="corr-item">手助け・その他</label>
+<select class="corr-select" id="atk-other">
+<option value="1">なし ×1.0</option>
+<option value="1.5_help">てだすけ ×1.5</option>
+<option value="1.33_inazuma">でんきフィールド（でんき） ×1.33</option>
+<option value="1.3_grass">グラスフィールド（くさ） ×1.3</option>
+<option value="1.3_psycho">サイコフィールド（エスパー） ×1.3</option>
+</select>
+</div>
+<div>
+<label class="corr-item">火傷</label>
+<select class="corr-select" id="atk-burn">
+<option value="1">なし ×1.0</option>
+<option value="0.5">火傷あり ×0.5（物理技）</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="vs-mid">VS</div>
+<!-- 防御側 -->
+<div class="card">
+<div class="card-title">防御側</div>
+<label>ポケモン検索</label>
+<div class="search-wrap">
+<input autocomplete="off" class="search-input" id="def-search" placeholder="名前を入力..." type="text"/>
+<div class="dropdown" id="def-drop"></div>
+</div>
+<div class="poke-card" id="def-card">
+<div class="poke-no" id="def-no"></div>
+<div class="poke-name" id="def-name"></div>
+<div class="poke-types" id="def-types"></div>
+<div id="def-basestats"></div>
+</div>
+<label>レベル</label>
+<input id="def-lv" max="100" min="1" type="number" value="50"/>
+<label>性格</label>
+<select id="def-nature">
+<option value="がんばりや">がんばりや（補正なし）</option>
+<option value="さみしがり">さみしがり（攻↑防↓）</option>
+<option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
+<option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
+<option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
+<option value="ずぶとい">ずぶとい（防↑攻↓）</option>
+<option value="わんぱく">わんぱく（防↑特攻↓）</option>
+<option value="のうてんき">のうてんき（防↑特防↓）</option>
+<option value="のんき">のんき（防↑素早↓）</option>
+<option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
+<option value="おっとり">おっとり（特攻↑防↓）</option>
+<option value="うっかりや">うっかりや（特攻↑特防↓）</option>
+<option value="れいせい">れいせい（特攻↑素早↓）</option>
+<option value="おだやか">おだやか（特防↑攻↓）</option>
+<option value="おとなしい">おとなしい（特防↑特攻↓）</option>
+<option value="しんちょう">しんちょう（特防↑特攻↓）</option>
+<option value="なまいき">なまいき（特防↑素早↓）</option>
+<option value="おくびょう">おくびょう（素早↑特防↓）</option>
+<option value="せっかち">せっかち（素早↑防↓）</option>
+<option value="ようき">ようき（素早↑特攻↓）</option>
+<option value="むじゃき">むじゃき（素早↑特防↓）</option>
+</select>
+<label>個体値（0〜31）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="def-iv-disp">31</span></div>
+<div class="slider-inputs">
+<input id="def-iv-range" max="31" min="0" type="range" value="31"/>
+<input id="def-iv" max="31" min="0" type="number" value="31"/>
+</div>
+</div>
+<!-- ゲームモード選択 -->
+<div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+<span style="font-size:10px;color:var(--text2);letter-spacing:1px;">ゲームモード:</span>
+<label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+<input checked="" id="def-mode-classic" name="def-game-mode" onchange="onDefModeChange()" type="radio" value="classic"/>
+<span style="font-size:11px;color:var(--text);">従来作（最大252）</span>
+</label>
+<label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+<input id="def-mode-champions" name="def-game-mode" onchange="onDefModeChange()" type="radio" value="champions"/>
+<span style="font-size:11px;color:var(--accent3);">Champions（最大32）</span>
+</label>
+</div>
+<label>努力値（HP）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-hp-disp">0</span></div>
+<div class="slider-inputs">
+<input id="def-ev-hp-range" max="252" min="0" step="4" type="range" value="0"/>
+<input id="def-ev-hp" max="252" min="0" type="number" value="0"/>
+</div>
+</div>
+<label>努力値（ぼうぎょ）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-def-disp">0</span></div>
+<div class="slider-inputs">
+<input id="def-ev-def-range" max="252" min="0" step="4" type="range" value="0"/>
+<input id="def-ev-def" max="252" min="0" type="number" value="0"/>
+</div>
+</div>
+<label>努力値（とくぼう）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="def-ev-spd-disp">0</span></div>
+<div class="slider-inputs">
+<input id="def-ev-spd-range" max="252" min="0" step="4" type="range" value="0"/>
+<input id="def-ev-spd" max="252" min="0" type="number" value="0"/>
+</div>
+</div>
+<div class="real-stat-box">
+<div class="real-stat-row">
+<span class="real-stat-label">HP</span>
+<span class="real-stat-val" id="def-stat-hp">—</span>
+<span class="real-stat-note"></span>
+</div>
+<div class="real-stat-row">
+<span class="real-stat-label">ぼうぎょ</span>
+<span class="real-stat-val" id="def-stat-def">—</span>
+<span class="real-stat-note">物理技で参照</span>
+</div>
+<div class="real-stat-row">
+<span class="real-stat-label">とくぼう</span>
+<span class="real-stat-val" id="def-stat-spd">—</span>
+<span class="real-stat-note">特殊技で参照</span>
+</div>
+</div>
+<div class="corr-section" style="margin-top:8px;">
+<div class="corr-section-title">防御ランク補正</div>
+<div style="display:flex;align-items:center;gap:8px;">
+<span style="font-size:10px;color:var(--text2);flex-shrink:0;">ランク</span>
+<input id="def-rank" max="6" min="-6" oninput="document.getElementById('def-rank-disp').textContent=this.value&lt;0?this.value:this.value&gt;0?'+'+this.value:'±0'" step="1" style="flex:1;accent-color:var(--accent2);" type="range" value="0"/>
+<span id="def-rank-disp" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent2);width:28px;text-align:right;">±0</span>
+</div>
+</div>
+<div class="hp-wrap" style="margin-top:10px;">
+<div class="hp-labels"><span>HP</span><span id="hp-disp">—</span></div>
+<div class="hp-bg"><div class="hp-fg" id="hp-fg" style="width:100%"></div></div>
+</div>
+<div class="corr-section">
+<div class="corr-section-title">防御側 補正</div>
+<div class="corr-grid">
+<div>
+<label class="corr-item">特性（防御側）</label>
+<div style="position:relative;">
+<input autocomplete="off" id="def-ability-search" oninput="searchAbility('def',this.value)" placeholder="特性名を検索..." style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-size:11px;font-family:'Noto Sans JP',sans-serif;outline:none;" type="text"/>
+<div id="def-ability-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--panel);border:1px solid var(--border2);max-height:160px;overflow-y:auto;"></div>
+</div>
+<input id="def-ability" type="hidden" value=""/>
+<div id="def-ability-info" style="font-size:10px;color:var(--accent2);margin-top:3px;min-height:14px;"></div>
+</div>
+<div>
+<label class="corr-item">持ち物</label>
+<select class="corr-select" id="def-item">
+<option value="1">なし ×1.0</option>
+<option value="def_1.5_kiseki">しんかのきせき ×1.5</option>
+<option value="def_0.5_handi">半減きのみ ×0.5</option>
+<option value="def_2_metaba">メタルパウダー ×2</option>
+</select>
+</div>
+<div>
+<label class="corr-item">壁</label>
+<select class="corr-select" id="def-wall">
+<option value="1">なし ×1.0</option>
+<option value="wall_0.5_hikari">ひかりのかべ（特殊） ×0.5</option>
+<option value="wall_0.5_reflect">リフレクター（物理） ×0.5</option>
+</select>
+</div>
+<div>
+<label class="corr-item">味方特性</label>
+<select class="corr-select" id="def-ally-ability">
+<option value="1">なし ×1.0</option>
+<option value="def_0.75_fureka">フレンドガード ×0.75</option>
+<option value="def_0.75_waza2">わざわいのうつわ ×0.75</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="main-btn" onclick="calcDamage()">CALCULATE DAMAGE</button>
+<div style="display:flex;align-items:center;gap:10px;margin:-4px 0 8px;">
+<button id="add-toggle-btn" onclick="toggleAddMode()" style="background:transparent;border:1px solid var(--border2);color:var(--text2);padding:6px 16px;cursor:pointer;font-size:11px;font-family:'Noto Sans JP',sans-serif;letter-spacing:1px;transition:all 0.18s;">＋ 加算計算を使う</button>
+<span style="font-size:10px;color:var(--text2);">2体・2技の合計ダメージで倒せるか判定</span>
+</div>
+<div class="result-box" id="result-box">
+<div class="sec">計算結果</div>
+<div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;">
+<div>
+<div class="dmg-num" id="dmg-num">—</div>
+<div id="dmg-range" style="font-size:11px;color:var(--text2);margin-top:4px;"></div>
+<div id="ko-tag"></div>
+<div id="dmg-desc" style="font-size:11px;color:var(--text2);margin-top:4px;"></div>
+</div>
+<div style="flex:1;min-width:140px;">
+<div style="font-size:10px;color:var(--text2);margin-bottom:5px;">ダメージ割合</div>
+<div class="dmg-bar-wrap"><div class="dmg-bar-fill" id="dmg-bar" style="width:0%"></div></div>
+<div class="dmg-pct" id="dmg-pct">0%</div>
+</div>
+</div>
+<div style="margin-top:12px;">
+<div style="font-size:10px;color:var(--text2);margin-bottom:4px;letter-spacing:2px;">乱数16段階（最小〜最大）</div>
+<div class="rolls-wrap" id="dmg-rolls"></div>
+</div>
+</div>
+<!-- 加算計算セクション -->
+<div class="add-section" id="add-section" style="display:none;">
+<div class="add-section-title">加算ダメージ計算（2体 × 2技）</div>
+<div class="add-grid">
+<!-- 攻撃側2 -->
+<div class="add-card">
+<div class="add-card-label">攻撃側 2体目</div>
+<label>ポケモン検索</label>
+<div class="search-wrap">
+<input autocomplete="off" class="search-input" id="atk2-search" placeholder="名前を入力..." type="text"/>
+<div class="dropdown" id="atk2-drop"></div>
+</div>
+<div class="poke-card" id="atk2-card">
+<div class="poke-no" id="atk2-no"></div>
+<div class="poke-name" id="atk2-name"></div>
+<div class="poke-types" id="atk2-types"></div>
+<div id="atk2-basestats"></div>
+</div>
+<label>レベル</label>
+<input id="atk2-lv" max="100" min="1" oninput="recalcAtk2()" type="number" value="50"/>
+<label>性格</label>
+<select id="atk2-nature" onchange="recalcAtk2()">
+<option value="がんばりや">がんばりや（補正なし）</option>
+<option value="さみしがり">さみしがり（攻↑防↓）</option>
+<option value="いじっぱり">いじっぱり（攻↑特攻↓）</option>
+<option value="やんちゃ">やんちゃ（攻↑特防↓）</option>
+<option value="ゆうかん">ゆうかん（攻↑素早↓）</option>
+<option value="ずぶとい">ずぶとい（防↑攻↓）</option>
+<option value="わんぱく">わんぱく（防↑特攻↓）</option>
+<option value="のうてんき">のうてんき（防↑特防↓）</option>
+<option value="のんき">のんき（防↑素早↓）</option>
+<option value="ひかえめ">ひかえめ（特攻↑攻↓）</option>
+<option value="おっとり">おっとり（特攻↑防↓）</option>
+<option value="うっかりや">うっかりや（特攻↑特防↓）</option>
+<option value="れいせい">れいせい（特攻↑素早↓）</option>
+<option value="おだやか">おだやか（特防↑攻↓）</option>
+<option value="おとなしい">おとなしい（特防↑特攻↓）</option>
+<option value="しんちょう">しんちょう（特防↑特攻↓）</option>
+<option value="なまいき">なまいき（特防↑素早↓）</option>
+<option value="おくびょう">おくびょう（素早↑特防↓）</option>
+<option value="せっかち">せっかち（素早↑防↓）</option>
+<option value="ようき">ようき（素早↑特攻↓）</option>
+<option value="むじゃき">むじゃき（素早↑特防↓）</option>
+</select>
+<label>個体値（0〜31）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">個体値</span><span class="slider-val" id="atk2-iv-disp">31</span></div>
+<div class="slider-inputs">
+<input id="atk2-iv-range" max="31" min="0" oninput="recalcAtk2()" type="range" value="31"/>
+<input id="atk2-iv" max="31" min="0" oninput="recalcAtk2()" type="number" value="31"/>
+</div>
+</div>
+<!-- atk2 ゲームモード -->
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+<span style="font-size:10px;color:var(--text2);">ゲーム:</span>
+<label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;">
+<input checked="" id="atk2-mode-classic" name="atk2-mode" onchange="onAtk2ModeChange()" type="radio" value="classic"/>
+<span>従来作</span>
+</label>
+<label style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:11px;">
+<input id="atk2-mode-champ" name="atk2-mode" onchange="onAtk2ModeChange()" type="radio" value="champions"/>
+<span style="color:var(--accent3);">Champions</span>
+</label>
+</div>
+<label>努力値（こうげき）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk2-ev-atk-disp">0</span></div>
+<div class="slider-inputs">
+<input id="atk2-ev-atk-range" max="252" min="0" oninput="syncSlider('atk2-ev-atk-range','atk2-ev-atk','atk2-ev-atk-disp');recalcAtk2()" step="4" type="range" value="0"/>
+<input id="atk2-ev-atk" max="252" min="0" oninput="syncSlider('atk2-ev-atk-range','atk2-ev-atk','atk2-ev-atk-disp');recalcAtk2()" type="number" value="0"/>
+</div>
+</div>
+<label>努力値（とくこう）</label>
+<div class="slider-row">
+<div class="slider-header"><span class="slider-label">努力値</span><span class="slider-val" id="atk2-ev-spa-disp">0</span></div>
+<div class="slider-inputs">
+<input id="atk2-ev-spa-range" max="252" min="0" oninput="syncSlider('atk2-ev-spa-range','atk2-ev-spa','atk2-ev-spa-disp');recalcAtk2()" step="4" type="range" value="0"/>
+<input id="atk2-ev-spa" max="252" min="0" oninput="syncSlider('atk2-ev-spa-range','atk2-ev-spa','atk2-ev-spa-disp');recalcAtk2()" type="number" value="0"/>
+</div>
+</div>
+<div class="real-stat-box">
+<div class="real-stat-row">
+<span class="real-stat-label">こうげき</span>
+<span class="real-stat-val" id="atk2-stat-atk">—</span>
+<span class="real-stat-note">物理技で参照</span>
+</div>
+<div class="real-stat-row">
+<span class="real-stat-label">とくこう</span>
+<span class="real-stat-val" id="atk2-stat-spa">—</span>
+<span class="real-stat-note">特殊技で参照</span>
+</div>
+</div>
+<label style="margin-top:10px;">技検索（2体目）</label>
+<div class="search-wrap">
+<input autocomplete="off" class="search-input" id="atk2-move-search" placeholder="技名を入力..." type="text"/>
+<div class="dropdown" id="atk2-move-drop"></div>
+</div>
+<input id="atk2-move-pow" type="hidden" value=""/>
+<input id="atk2-move-type" type="hidden" value=""/>
+<input id="atk2-move-cat" type="hidden" value=""/>
+<input id="atk2-move-hits" type="hidden" value=""/>
+<div id="atk2-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
+<label>持ち物</label>
+<select id="atk2-item">
+<option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
+<option value="megane">こだわりメガネ ×1.5（特殊）</option>
+<option value="inochi">いのちのたま ×1.3</option>
+<option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
+<option selected="" value="none">なし</option>
+</select>
+</div>
+<!-- 1体目の技2 -->
+<div class="add-card">
+<div class="add-card-label">攻撃側 1体目 / 技2</div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:8px;">1体目（上の攻撃側）が打つ2発目の技を選択</div>
+<label>技検索（1体目・2発目）</label>
+<div class="search-wrap">
+<input autocomplete="off" class="search-input" id="atk1b-move-search" placeholder="技名を入力..." type="text"/>
+<div class="dropdown" id="atk1b-move-drop"></div>
+</div>
+<input id="atk1b-move-pow" type="hidden" value=""/>
+<input id="atk1b-move-type" type="hidden" value=""/>
+<input id="atk1b-move-cat" type="hidden" value=""/>
+<input id="atk1b-move-hits" type="hidden" value=""/>
+<div id="atk1b-move-info" style="display:none;background:var(--bg2);border:1px solid var(--border2);padding:8px 10px;margin-top:4px;font-size:11px;color:var(--text3);line-height:1.7;"></div>
+<label>持ち物（1体目・2発目用）</label>
+<select id="atk1b-item">
+<option value="hachimaki">こだわりハチマキ ×1.5（物理）</option>
+<option value="megane">こだわりメガネ ×1.5（特殊）</option>
+<option value="inochi">いのちのたま ×1.3</option>
+<option value="tatsujin">たつじんのおび ×1.2（抜群時）</option>
+<option selected="" value="none">なし</option>
+</select>
+<div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.8;border-top:1px solid var(--border);padding-top:10px;">
+            ※ 1体目のポケモン・個体値・努力値・レベル・性格は<br/>上の攻撃側の設定をそのまま使います。
+          </div>
+</div>
+</div>
+<button class="main-btn" onclick="calcAddDamage()" style="background:linear-gradient(135deg,var(--accent3),#997a00);margin-top:12px;">⚡ 合計ダメージを計算</button>
+<div class="add-total-box" id="add-result" style="display:none;">
+<div class="add-result-title" style="font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px;">合計ダメージ結果</div>
+<div class="add-total-num" id="add-total-num">—</div>
+<div id="add-total-range" style="font-size:11px;color:var(--text2);margin-top:4px;"></div>
+<div class="add-bar-wrap" id="add-bar-wrap">
+<div class="add-bar-1" id="add-bar-1" style="width:0%"></div>
+<div class="add-bar-2" id="add-bar-2" style="width:0%"></div>
+</div>
+<div class="add-total-pct" id="add-total-pct">0%</div>
+<div id="add-ko-tag"></div>
+<div class="add-breakdown" id="add-breakdown"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <footer>
-  <div class="footer-logo">PokeEdge</div>
-  <div class="footer-text">非公式ファンサイト / Unofficial Fan Tool<br>ポケモン1210種・技520種対応</div>
-  <div style="font-size:10px;"><a href="policy.html" style="color:var(--text2);text-decoration:none;">プライバシーポリシー / お問い合わせ</a></div>
+<div class="footer-logo">PokeEdge</div>
+<div class="footer-text">非公式ファンサイト / Unofficial Fan Tool<br/>ポケモン1210種・技520種対応</div>
+<div style="font-size:10px;"><a href="policy.html" style="color:var(--text2);text-decoration:none;">プライバシーポリシー / お問い合わせ</a></div>
 </footer>
-
 <script>
 
 // ===== 外部JSONデータ読み込み =====
