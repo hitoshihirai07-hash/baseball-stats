@@ -31,6 +31,22 @@ ul.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
 </style>
+<style id="guide-entry-style">
+.guide-entry-wrap{padding:0 1.5rem;margin:1rem 0 0}
+.guide-entry{max-width:1400px;margin:0 auto;padding:1rem 1.1rem;border-radius:16px;border:1px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.10),rgba(17,24,39,.92));box-shadow:0 16px 36px rgba(0,0,0,.18)}
+.guide-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.guide-entry-copy{display:grid;gap:.35rem;min-width:min(100%,430px)}
+.guide-entry-kicker{display:inline-flex;align-items:center;gap:.45rem;font-size:.74rem;font-weight:800;letter-spacing:.08em;color:#fbbf24}
+.guide-entry-title{font-size:1.08rem;font-weight:900;color:#f8fafc}
+.guide-entry-text{font-size:.92rem;line-height:1.7;color:#d1d5db}
+.guide-entry-links{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.9rem}
+.guide-entry-links a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.58rem .92rem;border-radius:999px;text-decoration:none;font-size:.84rem;font-weight:800;color:#f8fafc;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);transition:all .2s ease}
+.guide-entry-links a:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
+.guide-entry-links a.is-main{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.38);color:#fff7ed}
+.guide-entry-links a.current{background:rgba(59,130,246,.16);border-color:rgba(96,165,250,.42);color:#dbeafe}
+.guide-entry-note{font-size:.78rem;line-height:1.6;color:#9ca3af;max-width:420px}
+@media (max-width:760px){.guide-entry-wrap{padding:0 .9rem}.guide-entry{padding:.95rem}.guide-entry-title{font-size:1rem}.guide-entry-text{font-size:.87rem}.guide-entry-links a{width:100%;justify-content:flex-start}}
+</style>
 </head>
 <body>
   <header>
@@ -41,6 +57,24 @@ ul.check li{margin:.35rem 0;}
     </nav>
   </div>
 </header>
+<section class="guide-entry-wrap" aria-label="観戦・記録ガイドへの導線">
+  <div class="guide-entry">
+    <div class="guide-entry-top">
+      <div class="guide-entry-copy">
+        <span class="guide-entry-kicker">⚾ GUIDE</span>
+        <div class="guide-entry-title">観戦・記録ガイド</div>
+        <p class="guide-entry-text">成績・打順・分析を見る流れのまま、球場観戦や試合記録に役立つ持ち物・双眼鏡・スコアブック系のガイドへ進めます。</p>
+      </div>
+      <div class="guide-entry-note">本体のデータ閲覧ページはそのままにして、必要な人だけが補助ガイドへ進める別導線にしています。</div>
+    </div>
+    <div class="guide-entry-links">
+      <a href="/guide/" class="is-main current">ガイドトップ</a>
+      <a href="/guide/kansen-mochimono.html" class="">観戦の持ち物</a>
+      <a href="/guide/binoculars.html" class="">双眼鏡の選び方</a>
+      <a href="/guide/scorebook.html" class="">スコアブック・野球ノート</a>
+    </div>
+  </div>
+</section>
   <section class="hero"><div class="wrap"><span class="kicker">GUIDE</span><h1>観戦・記録ガイド</h1><p>球場観戦で使いやすい持ち物や、記録・分析に役立つ道具を、データサイトの延長線で見つけやすいように整理しています。</p></div></section>
   <main class="wrap">
     <div class="card">
