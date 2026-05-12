@@ -30,6 +30,14 @@ ul.check,ol.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li,ol.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -84,6 +92,26 @@ ul.check li,ol.check li{margin:.35rem 0;}
         <div><p><b>遠征観戦</b><br>現地に着くまでの時間も長いため、保冷と持ち歩きやすさの両立を考えたほうが疲れにくいです。</p></div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>暑さ対策の選び方早見表</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>デーゲーム中心</b><p>水分補給、日差し対策、首まわりの冷却を優先すると崩れにくいです。</p></div>
+        <div class="quick-card"><b>ナイター中心</b><p>昼より軽めでもよいですが、蒸し暑さ対策と汗対策は残しておくと使いやすいです。</p></div>
+        <div class="quick-card"><b>荷物を増やしたくない</b><p>飲み物まわりとタオル類を先に整え、冷却グッズは効きやすい物だけに絞るとバランスが取りやすいです。</p></div>
+        <div class="quick-card"><b>遠征や待機時間が長い</b><p>移動中の暑さも考えて、保冷しやすさと持ち歩きやすさを両立したほうが楽です。</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>比較ポイントまとめ</h2>
+      <div class="compare-points">
+        <div><b>まず体温を上げすぎない</b><p>水分補給だけでなく、直射日光と首まわりの対策を入れると体感がかなり変わります。</p></div>
+        <div><b>冷却グッズを増やしすぎない</b><p>便利でも荷物が増えすぎると移動で疲れやすいので、効きやすい物から絞るのが無難です。</p></div>
+        <div><b>座席条件も考える</b><p>日差しや風の当たり方は席で変わるので、自分が座りやすい位置を前提に考えるとズレにくいです。</p></div>
+        <div><b>試合前後も含める</b><p>入場待ちや帰り道まで暑いことが多いので、球場の中だけを想定しないほうが使いやすいです。</p></div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>関連記事</h2>
       <div class="cta-row"><a class="btn primary" href="/guide/mobile-battery.html">モバイルバッテリーへ</a><a class="btn secondary" href="/guide/rain-kansen.html">雨の日グッズへ</a><a class="btn secondary" href="/guide/">記事一覧へ戻る</a></div>

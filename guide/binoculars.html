@@ -30,6 +30,14 @@ ul.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -84,6 +92,26 @@ ul.check li{margin:.35rem 0;}
         <div><p><b>家族や友人と共有</b><br>誰でも扱いやすい重さやピント調整のしやすさを優先したほうが失敗しにくいです。</p></div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>双眼鏡の選び方早見表</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>内野席中心</b><p>重さと扱いやすさを優先しやすく、極端に強い倍率を求めすぎないほうが使いやすいです。</p></div>
+        <div class="quick-card"><b>外野席や上段席中心</b><p>遠さに対応しつつ、手ブレしにくい範囲で選ぶ考え方が大事です。</p></div>
+        <div class="quick-card"><b>ナイター観戦が多い</b><p>明るさと見やすさを優先し、数字だけで判断しないほうが満足しやすいです。</p></div>
+        <div class="quick-card"><b>初めて買う</b><p>倍率よりも、軽さ・見続けやすさ・荷物の負担を優先したほうが外しにくいです。</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>比較ポイントまとめ</h2>
+      <div class="compare-points">
+        <div><b>倍率だけでは決めない</b><p>観戦用途では、見続けやすさや安定感まで含めた総合バランスが重要です。</p></div>
+        <div><b>席の傾向を基準にする</b><p>よく座るエリアが決まっているなら、その距離感に合わせた選び方が失敗しにくいです。</p></div>
+        <div><b>持ち歩く時間を意識する</b><p>球場に着くまでの移動もあるので、重さの差は満足度にかなり響きます。</p></div>
+        <div><b>共有利用も考える</b><p>家族や友人と一緒に使うなら、ピント合わせやすさや扱いやすさも見ておくと便利です。</p></div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>関連記事</h2>
       <div class="cta-row"><a class="btn primary" href="/guide/kansen-mochimono.html">観戦の持ち物へ</a><a class="btn secondary" href="/guide/summer-kansen.html">夏の観戦グッズへ</a><a class="btn secondary" href="/guide/">記事一覧へ戻る</a></div>

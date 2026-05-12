@@ -30,6 +30,14 @@ ul.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -93,6 +101,26 @@ ul.check li{margin:.35rem 0;}
         <div><p><b>初観戦の同行あり</b><br>一人分だけでなく、相手の充電・飲み物・雨対策まで考えると、当日の不便がかなり減ります。</p></div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>持ち物の選び方早見表</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>まず最低限だけそろえたい</b><p>スマホまわり、飲み物、タオルを先に考えると大きく外しにくいです。</p></div>
+        <div class="quick-card"><b>夏のデーゲームに行く</b><p>飲み物に加えて、日差し対策と冷却グッズの優先度が一気に上がります。</p></div>
+        <div class="quick-card"><b>雨予報が少しでもある</b><p>雨具と荷物保護を先に入れておくと、現地での不便をかなり減らせます。</p></div>
+        <div class="quick-card"><b>打順や成績を見ながら観戦する</b><p>モバイルバッテリーと片手で扱いやすい荷物整理を重視すると使いやすいです。</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>比較ポイントまとめ</h2>
+      <div class="compare-points">
+        <div><b>優先度で分ける</b><p>必須、天候対応、快適性向上の順で分けると荷物が膨らみすぎません。</p></div>
+        <div><b>球場より移動も含めて考える</b><p>観戦中だけでなく、入場待ちや帰り道まで含めると必要な物が見えやすいです。</p></div>
+        <div><b>スマホ依存度を先に決める</b><p>電子チケットやデータ確認をするなら、充電対策はかなり上位に置いたほうが安心です。</p></div>
+        <div><b>あとから足せる物を後回しにする</b><p>双眼鏡やクッションは便利ですが、最初は不便を減らす物から固めたほうが失敗しにくいです。</p></div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>関連記事</h2>
       <div class="cta-row"><a class="btn primary" href="/guide/mobile-battery.html">モバイルバッテリーを見る</a><a class="btn secondary" href="/guide/binoculars.html">双眼鏡の選び方を見る</a><a class="btn secondary" href="/guide/">記事一覧へ戻る</a></div>

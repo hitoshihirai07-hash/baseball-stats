@@ -30,6 +30,14 @@ ul.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -84,6 +92,26 @@ ul.check li{margin:.35rem 0;}
         <div><p><b>複数試合を比較する</b><br>同じ書き方で記録をそろえると、後から傾向を見比べやすくなります。</p></div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>記録用品の選び方早見表</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>試合の流れを細かく残したい</b><p>スコアブック寄りで考えると、後から見返したときに試合展開を追いやすいです。</p></div>
+        <div class="quick-card"><b>打順や起用の気づきを自由に書きたい</b><p>野球ノートのほうが、自分なりの視点を残しやすくなります。</p></div>
+        <div class="quick-card"><b>現地観戦で使う</b><p>大きさや書きやすさ、荷物の中で取り出しやすい形を優先したほうが続きやすいです。</p></div>
+        <div class="quick-card"><b>複数試合を比較したい</b><p>同じ書式で積み上げやすい道具のほうが、後から傾向を見返しやすいです。</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>比較ポイントまとめ</h2>
+      <div class="compare-points">
+        <div><b>厳密さより続けやすさ</b><p>最初から細かく記録しすぎるより、自分が続けられる書き方を優先したほうが長く使えます。</p></div>
+        <div><b>何を残したいかを先に決める</b><p>配球なのか、打順の変化なのか、采配メモなのかで向く道具が変わります。</p></div>
+        <div><b>現地利用ならサイズが重要</b><p>机の広さが限られる球場では、書式の見やすさだけでなく扱いやすさも重要です。</p></div>
+        <div><b>データ閲覧と役割を分ける</b><p>数字はサイトで見て、仮説や感想はノートに残すと使い分けがしやすくなります。</p></div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>関連記事</h2>
       <p>打順分析や分析レポートを見ながら、自分で傾向メモを残したい人にとって、スコアブックや野球ノートはかなり相性が良い道具です。数字を見るだけで終わらせず、自分の視点を残しやすくなります。</p>

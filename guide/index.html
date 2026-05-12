@@ -30,6 +30,14 @@ ul.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -48,6 +56,18 @@ ul.check li{margin:.35rem 0;}
       <p>このサイトの主軸は成績・打順・分析データです。そのうえで、野球観戦や記録メモに役立つものを、データを見る人の延長線上で探しやすいようにまとめる入口として記事一覧ページとして追加しました。</p>
       <div class="note">本体ページに宣伝枠を増やさず、必要な人だけが読み進められる別ページにしています。</div>
     </div>
+
+    <div class="card">
+      <h2>まずどの記事から読むか</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>初めて現地観戦する人</b><p>まずは「初めての観戦持ち物」から読むと、最低限必要な物を優先順で整理しやすいです。</p></div>
+        <div class="quick-card"><b>座席からもっと見やすくしたい人</b><p>双眼鏡の記事から入ると、席種や距離感に合わせた考え方をつかみやすいです。</p></div>
+        <div class="quick-card"><b>データや打順を見ながら観戦する人</b><p>モバイルバッテリーやスコアブックの記事から入ると、観戦と記録の相性を整理しやすいです。</p></div>
+        <div class="quick-card"><b>季節や天気の不安がある人</b><p>夏の暑さ対策、雨の日対策の記事を先に読むと、当日の不便を減らしやすいです。</p></div>
+      </div>
+      <div class="note">記事数が増えても、まずは「持ち物」「天候」「記録」の3系統で探すと迷いにくい構成にしています。</div>
+    </div>
+
     <div class="card">
       <h2>公開中の記事</h2>
       <div class="grid">

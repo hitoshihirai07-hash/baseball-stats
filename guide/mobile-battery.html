@@ -30,6 +30,14 @@ ul.check,ol.check{padding-left:1.2rem;margin:.4rem 0 0;}
 ul.check li,ol.check li{margin:.35rem 0;}
 @media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}
 @media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.list-grid{grid-template-columns:1fr;}}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.quick-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}
+.quick-card b{color:#f8fafc;}
+.quick-card p{margin:.35rem 0 0;}
+.compare-points{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:.9rem;}
+.compare-points div{padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.16);background:rgba(245,158,11,.05);}
+.compare-points b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+@media (max-width:760px){.quick-grid,.compare-points{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -84,6 +92,26 @@ ul.check li,ol.check li{margin:.35rem 0;}
         <div><p><b>夏の観戦</b><br>暑さで電池の減り方が気になることもあるので、手元で管理しやすいサイズ感が便利です。</p></div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>モバイルバッテリーの選び方早見表</h2>
+      <div class="quick-grid">
+        <div class="quick-card"><b>日帰り観戦が中心</b><p>重すぎず、普段使いもしやすい容量を優先したほうが持ち歩きやすいです。</p></div>
+        <div class="quick-card"><b>遠征や移動が長い</b><p>球場の外でも電池を使うので、少し余裕のある容量を持つと安心です。</p></div>
+        <div class="quick-card"><b>写真や動画をよく撮る</b><p>消費が大きくなりやすいため、容量と充電のしやすさを両方見たほうが失敗しにくいです。</p></div>
+        <div class="quick-card"><b>荷物を軽くしたい</b><p>容量を盛りすぎず、必要十分で持ち歩きやすいサイズ感を優先すると使い続けやすいです。</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>比較ポイントまとめ</h2>
+      <div class="compare-points">
+        <div><b>容量と重さのバランス</b><p>観戦ではずっと持ち歩くので、数字の大きさだけでなく負担の少なさもかなり大事です。</p></div>
+        <div><b>端子の確認</b><p>本体だけでなく、使うスマホやケーブルとの相性まで先に見ておくと現地で困りにくいです。</p></div>
+        <div><b>試合中以外も想定する</b><p>入場、連絡、帰宅時の検索まで含めると、実際の電池消費は思ったより大きくなります。</p></div>
+        <div><b>データ閲覧を前提にする</b><p>打順や成績ページを見ながら観戦するなら、予備電源はかなり相性の良い道具です。</p></div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>関連記事</h2>
       <div class="cta-row"><a class="btn primary" href="/guide/kansen-mochimono.html">観戦の持ち物へ</a><a class="btn secondary" href="/guide/summer-kansen.html">夏の観戦グッズへ</a><a class="btn secondary" href="/guide/">記事一覧へ戻る</a></div>
