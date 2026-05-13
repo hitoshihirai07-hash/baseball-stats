@@ -264,11 +264,13 @@
             margin-left: auto;
         }
 
+        .career-wrap,
         .split-wrap,
         .normal-wrap {
             display: none;
         }
 
+        .career-wrap.active,
         .split-wrap.active,
         .normal-wrap.active {
             display: block;
@@ -1522,25 +1524,27 @@ header .logo span,.header .logo span{color:#f59e0b}
 </div>
 <div class="pg" id="bspg"></div>
 </div>
-<div class="normal-wrap" id="bat-career-wrap">
+
+<div class="career-wrap" id="bat-career-wrap">
 <div class="tw">
 <table>
 <thead>
 <tr>
 <th>#</th>
-<th onclick="srtCareer('b','name')">選手名</th>
-<th onclick="srtCareer('b','team')">チーム</th>
-<th onclick="srtCareer('b','position')">守備</th>
-<th onclick="srtCareer('b','games')">試合</th>
-<th onclick="srtCareer('b','avg')">打率</th>
-<th onclick="srtCareer('b','homeRuns')">HR</th>
-<th onclick="srtCareer('b','rbi')">打点</th>
-<th onclick="srtCareer('b','hits')">安打</th>
-<th onclick="srtCareer('b','steals')">盗塁</th>
-<th onclick="srtCareer('b','obp')">出塁率</th>
-<th onclick="srtCareer('b','slg')">長打率</th>
-<th onclick="srtCareer('b','ops')">OPS</th>
-<th onclick="srtCareer('b','pa')">打席</th>
+<th onclick="srtCareerBatting('name')">選手名</th>
+<th onclick="srtCareerBatting('team')">チーム</th>
+<th onclick="srtCareerBatting('position')">守備</th>
+<th onclick="srtCareerBatting('g')">試合</th>
+<th onclick="srtCareerBatting('pa')">打席</th>
+<th onclick="srtCareerBatting('ab')">打数</th>
+<th onclick="srtCareerBatting('avg')">打率</th>
+<th onclick="srtCareerBatting('hits')">安打</th>
+<th onclick="srtCareerBatting('hr')">本塁打</th>
+<th onclick="srtCareerBatting('rbi')">打点</th>
+<th onclick="srtCareerBatting('sb')">盗塁</th>
+<th onclick="srtCareerBatting('obp')">出塁率</th>
+<th onclick="srtCareerBatting('slg')">長打率</th>
+<th onclick="srtCareerBatting('ops')">OPS</th>
 </tr>
 </thead>
 <tbody id="bbc"></tbody>
@@ -1769,7 +1773,6 @@ header .logo span,.header .logo span{color:#f59e0b}
 <div class="fg"><label>表示</label><select class="mode-toggle" id="pm" onchange="updatePitchingMode()">
 <option value="normal">通常成績</option>
 <option value="split">対左右別被打</option>
-<option value="career">通算成績</option>
 </select></div>
 <div class="fg"><label>データ範囲</label><select id="pq" onchange="fp()">
 <option value="0">全選手表示</option>
@@ -1832,32 +1835,6 @@ header .logo span,.header .logo span{color:#f59e0b}
 </table>
 </div>
 <div class="pg" id="pspg"></div>
-</div>
-<div class="normal-wrap" id="pit-career-wrap">
-<div class="tw">
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th onclick="srtCareer('p','name')">選手名</th>
-<th onclick="srtCareer('p','team')">チーム</th>
-<th onclick="srtCareer('p','position')">区分</th>
-<th onclick="srtCareer('p','games')">登板</th>
-<th onclick="srtCareer('p','wins')">勝</th>
-<th onclick="srtCareer('p','losses')">敗</th>
-<th onclick="srtCareer('p','saves')">S</th>
-<th onclick="srtCareer('p','holds')">H</th>
-<th onclick="srtCareer('p','hp')">HP</th>
-<th onclick="srtCareer('p','era')">防御率</th>
-<th onclick="srtCareer('p','whip')">WHIP</th>
-<th onclick="srtCareer('p','strikeouts')">奪三振</th>
-<th onclick="srtCareer('p','innings')">投球回</th>
-</tr>
-</thead>
-<tbody id="pbc"></tbody>
-</table>
-</div>
-<div class="pg" id="pcpg"></div>
 </div>
 </div>
 
@@ -2180,21 +2157,19 @@ header .logo span,.header .logo span{color:#f59e0b}
         // DATA HOLDERS (Initialized for sync logic)
         window.BATTING_DATA = window.BATTING_DATA || [];
         window.PITCHING_DATA = window.PITCHING_DATA || [];
+        window.CAREER_BATTER_DATA = window.CAREER_BATTER_DATA || [];
+        window.CAREER_PITCHER_DATA = window.CAREER_PITCHER_DATA || [];
         window.TEAM_DATA = window.TEAM_DATA || [];
         window.ORDER_DATA = window.ORDER_DATA || [];
         window.ORDER_TOP3 = window.ORDER_TOP3 || {};
         window.SITE_SUMMARY = window.SITE_SUMMARY || null;
-        window.CAREER_BATTER_DATA = window.CAREER_BATTER_DATA || [];
-        window.CAREER_PITCHER_DATA = window.CAREER_PITCHER_DATA || [];
 
         // STATE
         let bF = [], pF = [], tF = [];
         let bsF = [], psF = [];
-        let bcF = [], pcF = [];
-        let bPage = 1, pPage = 1, tPage = 1, bsPage = 1, psPage = 1, bcPage = 1, pcPage = 1;
+        let bPage = 1, pPage = 1, tPage = 1, bsPage = 1, psPage = 1;
         let bSort = { c: -1, asc: false }, pSort = { c: -1, asc: false }, tSort = { c: -1, asc: false };
         let bsSort = { key: '', asc: false }, psSort = { key: '', asc: false };
-        let bcSort = { key: '', asc: false }, pcSort = { key: '', asc: false };
 
         // ============================================================
         // INIT: build year/team dropdowns
@@ -2697,23 +2672,184 @@ header .logo span,.header .logo span{color:#f59e0b}
             return map;
         }
 
+
+    const CAREER_BATTER_PA_THRESHOLD = 2000;
+    const CAREER_PITCHER_IP_THRESHOLD = 1000;
+
+    function isCareerBattingMode() {
+        return (document.getElementById('bm')?.value || 'normal') === 'career';
+    }
+
+    function isCareerPitchingMode() {
+        return (document.getElementById('pm')?.value || 'normal') === 'career';
+    }
+
+    function updateBattingRangeLabel() {
+        const option = document.querySelector('#bq option[value="1"]');
+        if (!option) return;
+        option.textContent = isCareerBattingMode() ? `通算${CAREER_BATTER_PA_THRESHOLD}打席以上(目安)` : '規定打席到達者(目安)';
+    }
+
+    function updatePitchingRangeLabel() {
+        const option = document.querySelector('#pq option[value="1"]');
+        if (!option) return;
+        option.textContent = isCareerPitchingMode() ? `通算${CAREER_PITCHER_IP_THRESHOLD}投球回以上(目安)` : '規定投球回以上';
+    }
+
+    function careerRateClass(value, type) {
+        if (type === 'avg') return value >= .330 ? 'vh' : value >= .290 ? 'vm' : '';
+        if (type === 'ops') return value >= .900 ? 'vh' : value >= .780 ? 'vm' : '';
+        if (type === 'era') return value > 0 && value <= 2.50 ? 'vh' : value > 0 && value <= 3.50 ? 'vm' : '';
+        if (type === 'whip') return value > 0 && value <= 1.10 ? 'vh' : value > 0 && value <= 1.25 ? 'vm' : '';
+        return '';
+    }
+
+    function qualifiesCareerBatter(row) {
+        return Number(row?.pa || 0) >= CAREER_BATTER_PA_THRESHOLD;
+    }
+
+    function qualifiesCareerPitcher(row) {
+        return Number(row?.ip || 0) >= CAREER_PITCHER_IP_THRESHOLD;
+    }
+
+    function applyCareerBattingSort() {
+        const key = bcSort.key;
+        bcF.sort((a, b) => {
+            const v1 = a?.[key];
+            const v2 = b?.[key];
+            if (v1 == null) return 1;
+            if (v2 == null) return -1;
+            if (typeof v1 === 'string' || typeof v2 === 'string') {
+                const res = String(v1).localeCompare(String(v2), 'ja');
+                return bcSort.asc ? res : -res;
+            }
+            return bcSort.asc ? (v1 < v2 ? -1 : v1 > v2 ? 1 : 0) : (v1 > v2 ? -1 : v1 < v2 ? 1 : 0);
+        });
+    }
+
+    function applyCareerPitchingSort() {
+        const key = pcSort.key;
+        pcF.sort((a, b) => {
+            const v1 = a?.[key];
+            const v2 = b?.[key];
+            if (v1 == null) return 1;
+            if (v2 == null) return -1;
+            if (typeof v1 === 'string' || typeof v2 === 'string') {
+                const res = String(v1).localeCompare(String(v2), 'ja');
+                return pcSort.asc ? res : -res;
+            }
+            return pcSort.asc ? (v1 < v2 ? -1 : v1 > v2 ? 1 : 0) : (v1 > v2 ? -1 : v1 < v2 ? 1 : 0);
+        });
+    }
+
+    function srtCareerBatting(key) {
+        if (bcSort.key === key) bcSort.asc = !bcSort.asc; else { bcSort.key = key; bcSort.asc = false; }
+        applyCareerBattingSort();
+        bcPage = 1;
+        rbc();
+    }
+
+    function srtCareerPitching(key) {
+        if (pcSort.key === key) pcSort.asc = !pcSort.asc; else { pcSort.key = key; pcSort.asc = false; }
+        applyCareerPitchingSort();
+        pcPage = 1;
+        rpc();
+    }
+
+    function rbc() {
+        const body = document.getElementById('bbc');
+        if (!body) return;
+        const rows = parseInt(document.getElementById('br').value) || 30;
+        const start = (bcPage - 1) * rows;
+        const page = bcF.slice(start, start + rows);
+        if (!page.length) {
+            body.innerHTML = '<tr><td colspan="15" style="text-align:center;color:var(--tx2)">該当する通算打撃成績がありません</td></tr>';
+            document.getElementById('bcpg').innerHTML = '';
+            return;
+        }
+        body.innerHTML = page.map((d, i) => {
+            const r = start + i + 1;
+            const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+            return `<tr>
+  <td class="${rc} rk">${r}</td>
+  <td class="pn"><span class="name-link" onclick="showP('${d.name.replace(/'/g, "\'")}','bat')">${d.name}</span></td>
+  <td>${ttag(d.team)}</td>
+  <td>${d.position || '-'}</td>
+  <td>${d.g}</td>
+  <td>${d.pa}</td>
+  <td>${d.ab}</td>
+  <td class="${careerRateClass(d.avg, 'avg')}">${fmtRate(d.avg)}</td>
+  <td>${d.hits}</td>
+  <td>${d.hr}</td>
+  <td>${d.rbi}</td>
+  <td>${d.sb}</td>
+  <td>${fmtRate(d.obp)}</td>
+  <td>${fmtRate(d.slg)}</td>
+  <td class="${careerRateClass(d.ops, 'ops')}">${fmtRate(d.ops)}</td>
+</tr>`;
+        }).join('');
+        pgn('bcpg', bcF.length, rows, bcPage, p => { bcPage = p; rbc(); });
+    }
+
+    function rpc() {
+        const body = document.getElementById('pbc');
+        if (!body) return;
+        const rows = parseInt(document.getElementById('pr').value) || 30;
+        const start = (pcPage - 1) * rows;
+        const page = pcF.slice(start, start + rows);
+        if (!page.length) {
+            body.innerHTML = '<tr><td colspan="18" style="text-align:center;color:var(--tx2)">該当する通算投手成績がありません</td></tr>';
+            document.getElementById('pcpg').innerHTML = '';
+            return;
+        }
+        body.innerHTML = page.map((d, i) => {
+            const r = start + i + 1;
+            const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
+            return `<tr>
+  <td class="${rc} rk">${r}</td>
+  <td class="pn"><span class="name-link" onclick="showP('${d.name.replace(/'/g, "\'")}','pit')">${d.name}</span></td>
+  <td>${ttag(d.team)}</td>
+  <td>${d.position || '-'}</td>
+  <td>${d.g}</td>
+  <td>${d.gs}</td>
+  <td>${d.w}</td>
+  <td>${d.l}</td>
+  <td>${d.sv}</td>
+  <td>${d.hold}</td>
+  <td>${d.hp}</td>
+  <td>${d.ip}</td>
+  <td class="${careerRateClass(d.era, 'era')}">${d.era ? Number(d.era).toFixed(2) : '0.00'}</td>
+  <td class="${careerRateClass(d.whip, 'whip')}">${d.whip ? Number(d.whip).toFixed(3) : '0.000'}</td>
+  <td>${d.so}</td>
+  <td>${d.bb}</td>
+  <td>${d.hr}</td>
+  <td>${d.pct ? Number(d.pct).toFixed(3) : '0.000'}</td>
+</tr>`;
+        }).join('');
+        pgn('pcpg', pcF.length, rows, pcPage, p => { pcPage = p; rpc(); });
+    }
+
         function updateBattingMode() {
             const mode = document.getElementById('bm')?.value || 'normal';
             const normal = document.getElementById('bat-normal-wrap');
             const split = document.getElementById('bat-split-wrap');
             const career = document.getElementById('bat-career-wrap');
             const note = document.getElementById('batting-mode-note');
+            const year = document.getElementById('by');
             if (normal) normal.classList.toggle('active', mode === 'normal');
             if (split) split.classList.toggle('active', mode === 'split');
             if (career) career.classList.toggle('active', mode === 'career');
-            if (note) note.textContent = mode === 'split'
-                ? '対左・対右の打率と左右差を表示中。'
-                : mode === 'career'
-                    ? '通算成績を表示中。年度は絞り込みに使わず、球団・リーグ・選手名で絞り込めます。'
-                    : '';
-            if (mode === 'split') rbs();
-            else if (mode === 'career') rbc();
-            else rb();
+            if (year) {
+                if (mode === 'career') year.value = '';
+                year.disabled = mode === 'career';
+            }
+            updateBattingRangeLabel();
+            if (note) {
+                if (mode === 'split') note.textContent = '対左・対右の打率と左右差を表示中。';
+                else if (mode === 'career') note.textContent = `通算打撃成績を表示中。規定は通算${CAREER_BATTER_PA_THRESHOLD}打席以上を目安に切り替えできます。`;
+                else note.textContent = '';
+            }
+            if (mode === 'split') rbs(); else if (mode === 'career') rbc(); else rb();
         }
 
         function updatePitchingMode() {
@@ -2722,17 +2858,21 @@ header .logo span,.header .logo span{color:#f59e0b}
             const split = document.getElementById('pit-split-wrap');
             const career = document.getElementById('pit-career-wrap');
             const note = document.getElementById('pitching-mode-note');
+            const year = document.getElementById('py');
             if (normal) normal.classList.toggle('active', mode === 'normal');
             if (split) split.classList.toggle('active', mode === 'split');
             if (career) career.classList.toggle('active', mode === 'career');
-            if (note) note.textContent = mode === 'split'
-                ? '対左・対右の被打率と左右差を表示中。'
-                : mode === 'career'
-                    ? '通算成績を表示中。年度は絞り込みに使わず、球団・リーグ・選手名で絞り込めます。'
-                    : '';
-            if (mode === 'split') rps();
-            else if (mode === 'career') rpc();
-            else rp();
+            if (year) {
+                if (mode === 'career') year.value = '';
+                year.disabled = mode === 'career';
+            }
+            updatePitchingRangeLabel();
+            if (note) {
+                if (mode === 'split') note.textContent = '対左・対右の被打率と左右差を表示中。';
+                else if (mode === 'career') note.textContent = `通算投手成績を表示中。規定は通算${CAREER_PITCHER_IP_THRESHOLD}投球回以上を目安に切り替えできます。`;
+                else note.textContent = '';
+            }
+            if (mode === 'split') rps(); else if (mode === 'career') rpc(); else rp();
         }
 
         function srtSplit(type, key) {
@@ -2759,7 +2899,8 @@ header .logo span,.header .logo span{color:#f59e0b}
         function getQIP(year) { return year === 2020 ? 120 : 143; }
 
         function fb() {
-            const y = document.getElementById('by').value;
+            const mode = document.getElementById('bm')?.value || 'normal';
+            const y = mode === 'career' ? '' : document.getElementById('by').value;
             const l = document.getElementById('bl').value;
             const t = document.getElementById('bt').value;
             const q = document.getElementById('bq').value;
@@ -2792,9 +2933,11 @@ header .logo span,.header .logo span{color:#f59e0b}
             bcF = (window.CAREER_BATTER_DATA || []).filter(d => {
                 if (l && tleague(d.team) !== l) return false;
                 if (t && d.team !== t) return false;
+                if (q === '1' && !qualifiesCareerBatter(d)) return false;
                 if (s && !String(d.name).toLowerCase().includes(s)) return false;
                 return true;
             });
+            applyCareerBattingSort();
             bPage = 1;
             bsPage = 1;
             bcPage = 1;
@@ -2863,7 +3006,8 @@ header .logo span,.header .logo span{color:#f59e0b}
         // FILTER & RENDER: Pitching
         // ============================================================
         function fp() {
-            const y = document.getElementById('py').value;
+            const mode = document.getElementById('pm')?.value || 'normal';
+            const y = mode === 'career' ? '' : document.getElementById('py').value;
             const l = document.getElementById('pl').value;
             const t = document.getElementById('pt').value;
             const q = document.getElementById('pq').value;
@@ -2896,9 +3040,11 @@ header .logo span,.header .logo span{color:#f59e0b}
             pcF = (window.CAREER_PITCHER_DATA || []).filter(d => {
                 if (l && tleague(d.team) !== l) return false;
                 if (t && d.team !== t) return false;
+                if (q === '1' && !qualifiesCareerPitcher(d)) return false;
                 if (s && !String(d.name).toLowerCase().includes(s)) return false;
                 return true;
             });
+            applyCareerPitchingSort();
             pPage = 1;
             psPage = 1;
             pcPage = 1;
@@ -2959,83 +3105,6 @@ header .logo span,.header .logo span{color:#f59e0b}
     </tr>`;
             }).join('');
             pgn('pspg', psF.length, rows, psPage, p => { psPage = p; rps(); });
-        }
-
-        function srtCareer(type, key) {
-            const state = type === 'b' ? bcSort : pcSort;
-            if (state.key === key) state.asc = !state.asc; else { state.key = key; state.asc = false; }
-            const arr = type === 'b' ? bcF : pcF;
-            arr.sort((a, b) => {
-                const v1 = a[key];
-                const v2 = b[key];
-                if (v1 == null || v1 === '') return 1;
-                if (v2 == null || v2 === '') return -1;
-                if (typeof v1 === 'string' || typeof v2 === 'string') {
-                    const res = String(v1).localeCompare(String(v2), 'ja');
-                    return state.asc ? res : -res;
-                }
-                return state.asc ? (v1 < v2 ? -1 : v1 > v2 ? 1 : 0) : (v1 > v2 ? -1 : v1 < v2 ? 1 : 0);
-            });
-            if (type === 'b') { bcPage = 1; rbc(); } else { pcPage = 1; rpc(); }
-        }
-
-        function rbc() {
-            const rows = parseInt(document.getElementById('br').value) || 30;
-            const start = (bcPage - 1) * rows;
-            const page = bcF.slice(start, start + rows);
-            document.getElementById('bbc').innerHTML = page.map((d, i) => {
-                const r = start + i + 1;
-                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
-                const avc = d.avg >= .330 ? 'vh' : d.avg >= .290 ? 'vm' : '';
-                const opc = d.ops >= .900 ? 'vh' : d.ops >= .780 ? 'vm' : '';
-                const hrc = d.homeRuns >= 30 ? 'vh' : d.homeRuns >= 20 ? 'vm' : '';
-                return `<tr>
-      <td class="${rc} rk">${r}</td>
-      <td class="pn"><span class="name-link" onclick="showP('${d.name}','bat')">${d.name}</span></td>
-      <td>${ttag(d.team)}</td>
-      <td>${d.position || '-'}</td>
-      <td>${d.games}</td>
-      <td class="${avc}">${Number(d.avg || 0).toFixed(3)}</td>
-      <td class="${hrc}">${d.homeRuns}</td>
-      <td>${d.rbi}</td>
-      <td>${d.hits}</td>
-      <td>${d.steals}</td>
-      <td>${Number(d.obp || 0).toFixed(3)}</td>
-      <td>${Number(d.slg || 0).toFixed(3)}</td>
-      <td class="${opc}">${Number(d.ops || 0).toFixed(3)}</td>
-      <td>${d.pa}</td>
-    </tr>`;
-            }).join('');
-            pgn('bcpg', bcF.length, rows, bcPage, p => { bcPage = p; rbc(); });
-        }
-
-        function rpc() {
-            const rows = parseInt(document.getElementById('pr').value) || 30;
-            const start = (pcPage - 1) * rows;
-            const page = pcF.slice(start, start + rows);
-            document.getElementById('pbc').innerHTML = page.map((d, i) => {
-                const r = start + i + 1;
-                const rc = r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : 'rk';
-                const eraClass = d.era <= 2.50 && d.innings >= 100 ? 'vh' : d.era <= 3.50 && d.innings >= 100 ? 'vm' : '';
-                const whipClass = d.whip <= 1.00 && d.innings >= 100 ? 'vh' : d.whip <= 1.20 && d.innings >= 100 ? 'vm' : '';
-                return `<tr>
-      <td class="${rc} rk">${r}</td>
-      <td class="pn"><span class="name-link" onclick="showP('${d.name}','pit')">${d.name}</span></td>
-      <td>${ttag(d.team)}</td>
-      <td>${d.position || '-'}</td>
-      <td>${d.games}</td>
-      <td>${d.wins}</td>
-      <td>${d.losses}</td>
-      <td>${d.saves}</td>
-      <td>${d.holds}</td>
-      <td>${d.hp}</td>
-      <td class="${eraClass}">${Number(d.era || 0).toFixed(2)}</td>
-      <td class="${whipClass}">${Number(d.whip || 0).toFixed(3)}</td>
-      <td>${d.strikeouts}</td>
-      <td>${d.innings}</td>
-    </tr>`;
-            }).join('');
-            pgn('pcpg', pcF.length, rows, pcPage, p => { pcPage = p; rpc(); });
         }
 
         // ============================================================
@@ -3184,43 +3253,6 @@ header .logo span,.header .logo span{color:#f59e0b}
         // RECORDS
         // ============================================================
         function renderRecords() {
-            const careerBat = [...(window.CAREER_BATTER_DATA || [])];
-            const careerPit = [...(window.CAREER_PITCHER_DATA || [])];
-            const careerAvgPool = careerBat.filter(d => d.ab >= 2000);
-            const careerOpsPool = careerBat.filter(d => d.pa >= 2000);
-            const careerEraPool = careerPit.filter(d => d.innings >= 1000 && d.era > 0);
-            const careerWhipPool = careerPit.filter(d => d.innings >= 1000 && d.whip > 0);
-
-            const bestCareerHits = careerBat.sort((a, b) => b.hits - a.hits)[0] || { name: '-', team: '-', hits: 0 };
-            const bestCareerHR = careerBat.sort((a, b) => b.homeRuns - a.homeRuns)[0] || { name: '-', team: '-', homeRuns: 0 };
-            const bestCareerRBI = careerBat.sort((a, b) => b.rbi - a.rbi)[0] || { name: '-', team: '-', rbi: 0 };
-            const bestCareerSB = careerBat.sort((a, b) => b.steals - a.steals)[0] || { name: '-', team: '-', steals: 0 };
-            const bestCareerAvg = careerAvgPool.sort((a, b) => b.avg - a.avg)[0] || { name: '-', team: '-', avg: 0 };
-            const bestCareerOPS = careerOpsPool.sort((a, b) => b.ops - a.ops)[0] || { name: '-', team: '-', ops: 0 };
-            const bestCareerG = careerPit.sort((a, b) => b.games - a.games)[0] || { name: '-', team: '-', games: 0 };
-            const bestCareerW = careerPit.sort((a, b) => b.wins - a.wins)[0] || { name: '-', team: '-', wins: 0 };
-            const bestCareerSv = careerPit.sort((a, b) => b.saves - a.saves)[0] || { name: '-', team: '-', saves: 0 };
-            const bestCareerHold = careerPit.sort((a, b) => b.holds - a.holds)[0] || { name: '-', team: '-', holds: 0 };
-            const bestCareerK = careerPit.sort((a, b) => b.strikeouts - a.strikeouts)[0] || { name: '-', team: '-', strikeouts: 0 };
-            const bestCareerERA = careerEraPool.sort((a, b) => a.era - b.era)[0] || { name: '-', team: '-', era: 0 };
-            const bestCareerWhip = careerWhipPool.sort((a, b) => a.whip - b.whip)[0] || { name: '-', team: '-', whip: 0 };
-
-            const careerRecs = [
-                { label: '通算安打トップ', val: bestCareerHits.hits + '本', name: bestCareerHits.name, detail: bestCareerHits.team, icon: '🏏', sub: '現役通算' },
-                { label: '通算本塁打トップ', val: bestCareerHR.homeRuns + '本', name: bestCareerHR.name, detail: bestCareerHR.team, icon: '💣', sub: '現役通算' },
-                { label: '通算打点トップ', val: bestCareerRBI.rbi + '点', name: bestCareerRBI.name, detail: bestCareerRBI.team, icon: '🎯', sub: '現役通算' },
-                { label: '通算盗塁トップ', val: bestCareerSB.steals + '個', name: bestCareerSB.name, detail: bestCareerSB.team, icon: '💨', sub: '現役通算' },
-                { label: '通算打率トップ', val: Number(bestCareerAvg.avg || 0).toFixed(3), name: bestCareerAvg.name, detail: bestCareerAvg.team, icon: '🥇', sub: '2000打数以上' },
-                { label: '通算OPSトップ', val: Number(bestCareerOPS.ops || 0).toFixed(3), name: bestCareerOPS.name, detail: bestCareerOPS.team, icon: '📊', sub: '2000打席以上' },
-                { label: '通算登板トップ', val: bestCareerG.games + '登板', name: bestCareerG.name, detail: bestCareerG.team, icon: '🧱', sub: '現役通算' },
-                { label: '通算勝利トップ', val: bestCareerW.wins + '勝', name: bestCareerW.name, detail: bestCareerW.team, icon: '🏆', sub: '現役通算' },
-                { label: '通算セーブトップ', val: bestCareerSv.saves + 'S', name: bestCareerSv.name, detail: bestCareerSv.team, icon: '🔒', sub: '現役通算' },
-                { label: '通算ホールドトップ', val: bestCareerHold.holds + 'H', name: bestCareerHold.name, detail: bestCareerHold.team, icon: '🤝', sub: '現役通算' },
-                { label: '通算奪三振トップ', val: bestCareerK.strikeouts + 'K', name: bestCareerK.name, detail: bestCareerK.team, icon: '⚡', sub: '現役通算' },
-                { label: '通算防御率トップ', val: Number(bestCareerERA.era || 0).toFixed(2), name: bestCareerERA.name, detail: bestCareerERA.team, icon: '🛡', sub: '1000投球回以上' },
-                { label: '通算WHIPトップ', val: Number(bestCareerWhip.whip || 0).toFixed(3), name: bestCareerWhip.name, detail: bestCareerWhip.team, icon: '📉', sub: '1000投球回以上' },
-            ];
-
             // Rate-based stats (Qualified batters only)
             const qualified = [...BATTING_DATA].filter(d => d[12] >= getQPA(d[1]));
             const bestAvg = qualified.sort((a, b) => b[4] - a[4])[0] || [null, 0, '-', 0, 0];
@@ -3228,6 +3260,7 @@ header .logo span,.header .logo span{color:#f59e0b}
             const bestSLG = qualified.sort((a, b) => b[11] - a[11])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0, 0, 0, 0];
             const bestOPS = qualified.sort((a, b) => b[9] - a[9])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0, 0];
 
+            // Count-based stats (All players)
             const allBat = [...BATTING_DATA];
             const bestHR = allBat.sort((a, b) => b[5] - a[5])[0] || [null, 0, '-', 0, 0, 0];
             const bestRBI = allBat.sort((a, b) => b[6] - a[6])[0] || [null, 0, '-', 0, 0, 0, 0];
@@ -3239,7 +3272,7 @@ header .logo span,.header .logo span{color:#f59e0b}
             const bestK = pitS.sort((a, b) => b[8] - a[8])[0] || [null, 0, '-', 0, 0, 0, 0, 0, 0];
             const bestSv = pitS.sort((a, b) => b[6] - a[6])[0] || [null, 0, '-', 0, 0, 0, 0];
 
-            const seasonRecs = [
+            const recs = [
                 { label: '打率トップ', val: Number(bestAvg[4]).toFixed(3), name: bestAvg[0], detail: `${bestAvg[1]}年 ${bestAvg[2]}`, icon: '🥇', sub: '規定以上' },
                 { label: '本塁打トップ', val: bestHR[5] + '本', name: bestHR[0], detail: `${bestHR[1]}年 ${bestHR[2]}`, icon: '💣', sub: '全体' },
                 { label: '打点トップ', val: bestRBI[6] + '点', name: bestRBI[0], detail: `${bestRBI[1]}年 ${bestRBI[2]}`, icon: '🎯', sub: '全体' },
@@ -3252,20 +3285,13 @@ header .logo span,.header .logo span{color:#f59e0b}
                 { label: '奪三振トップ', val: bestK[8] + 'K', name: bestK[0], detail: `${bestK[1]}年 ${bestK[2]}`, icon: '⚡', sub: '全体' },
                 { label: 'セーブトップ', val: bestSv[6] + 'S', name: bestSv[0], detail: `${bestSv[1]}年 ${bestSv[2]}`, icon: '🔒', sub: '全体' },
             ];
-
-            const renderCard = r => `
+            document.getElementById('recs').innerHTML = recs.map(r => `
     <div class="card">
       <div class="cl">${r.icon} ${r.label} <span style="font-size:.7rem;opacity:.6;margin-left:4px">(${r.sub})</span></div>
       <div class="cv">${r.val}</div>
       <div class="cn">${r.name}</div>
       <div class="cd">${r.detail}</div>
-    </div>`;
-
-            document.getElementById('recs').innerHTML = `
-    <div style="grid-column:1/-1;font-weight:800;font-size:1.05rem;margin-top:.15rem;">通算成績トップ</div>
-    ${careerRecs.map(renderCard).join('')}
-    <div style="grid-column:1/-1;font-weight:800;font-size:1.05rem;margin-top:1rem;">シーズン最高</div>
-    ${seasonRecs.map(renderCard).join('')}`;
+    </div>`).join('');
 
             // Champ bars
             const champMap = {};

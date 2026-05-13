@@ -10,8 +10,8 @@
         team: 'public-data/team/all.json',
         orderTop3: 'public-data/order/top3.json',
         orderYear: year => `public-data/order/by-year/${year}.json`,
-        careerBatter: 'career_record_batter.csv',
-        careerPitcher: 'career_record_pitcher.csv',
+        careerBatting: 'career_record_batter.csv',
+        careerPitching: 'career_record_pitcher.csv',
     };
 
     window.BATTING_DATA = window.BATTING_DATA || [];
@@ -23,7 +23,6 @@
     window.CAREER_BATTER_DATA = window.CAREER_BATTER_DATA || [];
     window.CAREER_PITCHER_DATA = window.CAREER_PITCHER_DATA || [];
 
-
     const NIPPON_SERIES_WINNERS = {
         2020: '福岡ソフトバンクホークス',
         2021: '東京ヤクルトスワローズ',
@@ -33,9 +32,16 @@
         2025: '福岡ソフトバンクホークス',
     };
 
-
     const state = {
-        loaded: { summary: false, batting: false, pitching: false, team: false, orderTop3: false },
+        loaded: {
+            summary: false,
+            batting: false,
+            pitching: false,
+            team: false,
+            orderTop3: false,
+            careerBatting: false,
+            careerPitching: false,
+        },
         orderYears: new Set(),
         promises: {},
     };
@@ -59,57 +65,63 @@
         return await response.json();
     }
 
+    async function loadText(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to load: ${url}`);
+        return await response.text();
+    }
+
     function parseCSVLine(line) {
         const out = [];
-        let cur = '';
+        let current = '';
         let inQuotes = false;
         for (let i = 0; i < line.length; i++) {
             const ch = line[i];
             if (ch === '"') {
                 if (inQuotes && line[i + 1] === '"') {
-                    cur += '"';
-                    i++;
+                    current += '"';
+                    i += 1;
                 } else {
                     inQuotes = !inQuotes;
                 }
             } else if (ch === ',' && !inQuotes) {
-                out.push(cur);
-                cur = '';
+                out.push(current);
+                current = '';
             } else {
-                cur += ch;
+                current += ch;
             }
         }
-        out.push(cur);
-        return out.map(v => v.trim());
+        out.push(current);
+        return out;
     }
 
-    async function loadCSV(url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to load: ${url}`);
-        const text = await response.text();
-        const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
+    function parseCSV(text) {
+        const lines = String(text || '').replace(/^\ufeff/, '').split(/\r?\n/).filter(line => line.trim() !== '');
         if (!lines.length) return [];
-        const header = parseCSVLine(lines[0]);
+        const headers = parseCSVLine(lines[0]).map(h => String(h || '').trim());
         return lines.slice(1).map(line => {
-            const cols = parseCSVLine(line);
+            const cells = parseCSVLine(line);
             const row = {};
-            header.forEach((key, idx) => row[key] = cols[idx] ?? '');
+            headers.forEach((header, index) => {
+                row[header] = (cells[index] ?? '').trim();
+            });
             return row;
         });
     }
 
     function toNumber(value) {
-        if (value === null || value === undefined || value === '') return 0;
-        const n = Number(String(value).replace(/,/g, ''));
-        return Number.isFinite(n) ? n : 0;
+        if (value == null || value === '') return 0;
+        const normalized = String(value).replace(/,/g, '').trim();
+        const num = Number(normalized);
+        return Number.isFinite(num) ? num : 0;
     }
 
-    function parseCareerBatterRows(rows) {
+    function normalizeCareerBatterRows(rows) {
         return rows.map(row => ({
-            team: row['所属正式名'] || '',
+            team: row['所属正式名'] || row['所属球団'] || row['球団'] || '',
             name: row['選手名'] || '',
-            position: row['主ポジション'] || '',
-            games: toNumber(row['試合']),
+            position: row['主ポジション'] || row['ポジション'] || '',
+            g: toNumber(row['試合']),
             pa: toNumber(row['打席']),
             ab: toNumber(row['打数']),
             avg: toNumber(row['打率']),
@@ -118,45 +130,45 @@
             hits: toNumber(row['安打']),
             doubles: toNumber(row['二塁打']),
             triples: toNumber(row['三塁打']),
-            homeRuns: toNumber(row['本塁打']),
-            steals: toNumber(row['盗塁']),
-            walks: toNumber(row['四球']),
-            strikeouts: toNumber(row['三振']),
-            sacrifices: toNumber(row['犠打']),
-            sacFlies: toNumber(row['犠飛']),
+            hr: toNumber(row['本塁打']),
+            sb: toNumber(row['盗塁']),
+            bb: toNumber(row['四球']),
+            so: toNumber(row['三振']),
+            sh: toNumber(row['犠打']),
+            sf: toNumber(row['犠飛']),
             obp: toNumber(row['出塁率']),
             slg: toNumber(row['長打率']),
             ops: toNumber(row['OPS'])
         })).filter(row => row.name);
     }
 
-    function parseCareerPitcherRows(rows) {
+    function normalizeCareerPitcherRows(rows) {
         return rows.map(row => ({
-            team: row['所属正式名'] || '',
+            team: row['所属正式名'] || row['所属球団'] || row['球団'] || '',
             name: row['選手名'] || '',
-            position: row['主ポジション'] || '',
-            games: toNumber(row['登板']),
-            starts: toNumber(row['先発']),
-            completeGames: toNumber(row['完投']),
-            shutouts: toNumber(row['完封勝']),
-            noWalk: toNumber(row['無四球']),
-            wins: toNumber(row['勝利']),
-            losses: toNumber(row['敗北']),
-            saves: toNumber(row['セーブ']),
-            holds: toNumber(row['ホールド']),
+            position: row['主ポジション'] || row['ポジション'] || '',
+            g: toNumber(row['登板']),
+            gs: toNumber(row['先発']),
+            cg: toNumber(row['完投']),
+            sho: toNumber(row['完封勝']),
+            shutoutNoBb: toNumber(row['無四球']),
+            w: toNumber(row['勝利']),
+            l: toNumber(row['敗北']),
+            sv: toNumber(row['セーブ']),
+            hold: toNumber(row['ホールド']),
             hp: toNumber(row['HP']),
-            innings: toNumber(row['投球回']),
+            ip: toNumber(row['投球回']),
             era: toNumber(row['防御率']),
             whip: toNumber(row['WHIP']),
-            winPct: toNumber(row['勝率']),
-            battersFaced: toNumber(row['打者']),
-            hitsAllowed: toNumber(row['安打']),
-            avgAllowed: toNumber(row['被打率']),
+            pct: toNumber(row['勝率']),
+            bf: toNumber(row['打者']),
+            hits: toNumber(row['安打']),
+            avg: toNumber(row['被打率']),
             runs: toNumber(row['失点']),
-            earnedRuns: toNumber(row['自責点']),
-            homeRunsAllowed: toNumber(row['被本塁打']),
-            strikeouts: toNumber(row['奪三振']),
-            walks: toNumber(row['与四球'])
+            er: toNumber(row['自責点']),
+            hr: toNumber(row['被本塁打']),
+            so: toNumber(row['奪三振']),
+            bb: toNumber(row['与四球'])
         })).filter(row => row.name);
     }
 
@@ -218,27 +230,6 @@
         });
     }
 
-
-    async function ensureCareerBatter() {
-        if (state.loaded.careerBatter) return window.CAREER_BATTER_DATA;
-        return once('careerBatter', async () => {
-            const rows = await loadCSV(PATHS.careerBatter);
-            window.CAREER_BATTER_DATA = parseCareerBatterRows(rows);
-            state.loaded.careerBatter = true;
-            return window.CAREER_BATTER_DATA;
-        });
-    }
-
-    async function ensureCareerPitching() {
-        if (state.loaded.careerPitching) return window.CAREER_PITCHER_DATA;
-        return once('careerPitching', async () => {
-            const rows = await loadCSV(PATHS.careerPitcher);
-            window.CAREER_PITCHER_DATA = parseCareerPitcherRows(rows);
-            state.loaded.careerPitching = true;
-            return window.CAREER_PITCHER_DATA;
-        });
-    }
-
     async function ensureTeam() {
         if (state.loaded.team) return window.TEAM_DATA;
         return once('team', async () => {
@@ -246,6 +237,26 @@
             window.TEAM_DATA = normalizeTeamRows(payload.rows || []);
             state.loaded.team = true;
             return window.TEAM_DATA;
+        });
+    }
+
+    async function ensureCareerBatting() {
+        if (state.loaded.careerBatting) return window.CAREER_BATTER_DATA;
+        return once('careerBatting', async () => {
+            const text = await loadText(PATHS.careerBatting);
+            window.CAREER_BATTER_DATA = normalizeCareerBatterRows(parseCSV(text));
+            state.loaded.careerBatting = true;
+            return window.CAREER_BATTER_DATA;
+        });
+    }
+
+    async function ensureCareerPitching() {
+        if (state.loaded.careerPitching) return window.CAREER_PITCHER_DATA;
+        return once('careerPitching', async () => {
+            const text = await loadText(PATHS.careerPitching);
+            window.CAREER_PITCHER_DATA = normalizeCareerPitcherRows(parseCSV(text));
+            state.loaded.careerPitching = true;
+            return window.CAREER_PITCHER_DATA;
         });
     }
 
@@ -281,18 +292,17 @@
     async function ensureSectionData(section) {
         await ensureSummary();
         if (section === 'home') return true;
-        if (section === 'batting') { await Promise.all([ensureBatting(), ensureCareerBatter()]); return true; }
+        if (section === 'batting') { await Promise.all([ensureBatting(), ensureCareerBatting()]); return true; }
         if (section === 'pitching') { await Promise.all([ensurePitching(), ensureCareerPitching()]); return true; }
         if (section === 'team') { await ensureTeam(); return true; }
         if (section === 'simulator') { await Promise.all([ensureBatting(), ensurePitching()]); return true; }
         if (section === 'myorder') { await Promise.all([ensureBatting(), ensurePitching(), ensureTeam()]); return true; }
-        if (section === 'records') { await Promise.all([ensureBatting(), ensurePitching(), ensureTeam(), ensureCareerBatter(), ensureCareerPitching()]); return true; }
-        if (section === 'pro-report') { await Promise.all([ensureBatting(), ensurePitching(), ensureTeam()]); return true; }
+        if (section === 'records' || section === 'pro-report') { await Promise.all([ensureBatting(), ensurePitching(), ensureTeam(), ensureCareerBatting(), ensureCareerPitching()]); return true; }
         if (section === 'order') { await ensureOrderTop3(); return true; }
         return true;
     }
 
     window.NIPPON_SERIES_WINNERS = NIPPON_SERIES_WINNERS;
-    window.DataStore = { YEARS, ensureSummary, ensureBatting, ensurePitching, ensureCareerBatter, ensureCareerPitching, ensureTeam, ensureOrderTop3, ensureOrderYear, ensureAllOrders, ensureSectionData, state };
+    window.DataStore = { YEARS, ensureSummary, ensureBatting, ensurePitching, ensureTeam, ensureCareerBatting, ensureCareerPitching, ensureOrderTop3, ensureOrderYear, ensureAllOrders, ensureSectionData, state };
     ensureSummary().catch(error => console.warn('summary load failed', error));
 })();
