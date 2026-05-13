@@ -2170,9 +2170,12 @@ header .logo span,.header .logo span{color:#f59e0b}
         // STATE
         let bF = [], pF = [], tF = [];
         let bsF = [], psF = [];
+        let bcF = [], pcF = [];
         let bPage = 1, pPage = 1, tPage = 1, bsPage = 1, psPage = 1;
+        let bcPage = 1, pcPage = 1;
         let bSort = { c: -1, asc: false }, pSort = { c: -1, asc: false }, tSort = { c: -1, asc: false };
         let bsSort = { key: '', asc: false }, psSort = { key: '', asc: false };
+        let bcSort = { key: 'hits', asc: false }, pcSort = { key: 'g', asc: false };
 
         // ============================================================
         // INIT: build year/team dropdowns

@@ -10,8 +10,8 @@
         team: 'public-data/team/all.json',
         orderTop3: 'public-data/order/top3.json',
         orderYear: year => `public-data/order/by-year/${year}.json`,
-        careerBatting: 'career_record_batter.csv',
-        careerPitching: 'career_record_pitcher.csv',
+        careerBatting: ['career_record_batter.csv', 'data/career_record_batter.csv'],
+        careerPitching: ['career_record_pitcher.csv', 'data/career_record_pitcher.csv'],
     };
 
     window.BATTING_DATA = window.BATTING_DATA || [];
@@ -69,6 +69,19 @@
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to load: ${url}`);
         return await response.text();
+    }
+
+    async function loadTextAny(urls) {
+        const list = Array.isArray(urls) ? urls : [urls];
+        let lastError = null;
+        for (const url of list) {
+            try {
+                return await loadText(url);
+            } catch (error) {
+                lastError = error;
+            }
+        }
+        throw lastError || new Error('Failed to load text');
     }
 
     function parseCSVLine(line) {
@@ -243,7 +256,7 @@
     async function ensureCareerBatting() {
         if (state.loaded.careerBatting) return window.CAREER_BATTER_DATA;
         return once('careerBatting', async () => {
-            const text = await loadText(PATHS.careerBatting);
+            const text = await loadTextAny(PATHS.careerBatting);
             window.CAREER_BATTER_DATA = normalizeCareerBatterRows(parseCSV(text));
             state.loaded.careerBatting = true;
             return window.CAREER_BATTER_DATA;
@@ -253,7 +266,7 @@
     async function ensureCareerPitching() {
         if (state.loaded.careerPitching) return window.CAREER_PITCHER_DATA;
         return once('careerPitching', async () => {
-            const text = await loadText(PATHS.careerPitching);
+            const text = await loadTextAny(PATHS.careerPitching);
             window.CAREER_PITCHER_DATA = normalizeCareerPitcherRows(parseCSV(text));
             state.loaded.careerPitching = true;
             return window.CAREER_PITCHER_DATA;
