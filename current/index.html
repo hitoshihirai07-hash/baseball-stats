@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <meta name="theme-color" content="#0f172a" />
-  <title>今年度トップ | NPB打順・成績分析ラボ</title>
-    <meta name="description" content="今年度の順位表と入口ページ。選手マスタ、成績、規定到達者、打順ページへ移動できます。">
-    <link rel="canonical" href="https://baseball-stats.pages.dev/current/">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<link href="/favicon.ico" rel="icon" sizes="any"/>
+<link href="/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="/apple-touch-icon.png" rel="apple-touch-icon"/>
+<meta content="#0f172a" name="theme-color"/>
+<title>今年度トップ | NPB打順・成績分析ラボ</title>
+<meta content="今年度の順位表と入口ページ。選手マスタ、成績、規定到達者、打順ページへ移動できます。" name="description"/>
+<link href="https://baseball-stats.pages.dev/current/" rel="canonical"/>
+<meta content="index,follow,max-image-preview:large" name="robots"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700;900&amp;display=swap" rel="stylesheet">
+<style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;--ac:#f59e0b;--ac2:#3b82f6;--tx:#f9fafb;--tx2:#9ca3af;--bd:#374151;--ok:#10b981}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
@@ -145,62 +146,57 @@ header .logo span,.header .logo span{color:#f59e0b}
 </style>
 </head>
 <body>
-  <header>
-  <div class="hi">
-    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
-    <nav class="site-nav" aria-label="主要ページ">
-      <a href="/index.html">ホーム</a> <a href="/current/" class="current">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">観戦・記録</a> <a href="/articles/">感想と考察</a> <a href="/about.html">このサイトについて</a>
-    </nav>
-  </div>
+<header>
+<div class="hi">
+<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
+<nav aria-label="主要ページ" class="site-nav">
+<a href="/index.html">ホーム</a> <a class="current" href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">観戦・記録</a> <a href="/articles/">感想と考察</a> <a href="/about.html">このサイトについて</a>
+</nav>
+</div>
 </header>
-
-  <section class="hero">
-    <div class="hero-in">
-      <h1>今年度 <em>トップ</em></h1>
-      <div class="page-tabs">
-        <a class="page-tab active" href="/current/">今年度トップ</a>
-        <a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
-        <a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
-        <a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
-        <a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
-      </div>
-    </div>
-  </section>
-
-  <main class="main grid">
-    <section class="card page-lead-card">
-      <h2>今年度トップ</h2>
-      <p>順位表と今年度ページの入口をまとめています。球団を選ぶと、選手マスタ・成績・規定到達者・打順へそのまま移動できます。</p>
-    </section>
-
-    <section class="card">
-      <h2>移動</h2>
-      <div class="filters">
-        <div class="fg"><label>球団</label><select id="current-team-jump"><option value="">全球団</option></select></div>
-      </div>
-      <div class="btn-grid">
-        <a class="link-card" data-team-link="/current-master/" href="/current-master/"><h3>選手マスタ</h3></a>
-        <a class="link-card" data-team-link="/current-stats/" href="/current-stats/"><h3>成績</h3></a>
-        <a class="link-card" data-team-link="/current-qualified/" href="/current-qualified/"><h3>規定到達者</h3></a>
-        <a class="link-card" data-team-link="/current-order/" href="/current-order/"><h3>打順</h3></a>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>順位表</h2>
-      <div class="summary-row"><div class="summary-chip" id="standings-summary">読込中</div></div>
-      <div id="standings-sections"></div>
-    </section>
-
-    <section class="card page-lead-card">
-      <h2>球団別1軍一覧</h2>
-      <p class="note">選手マスタの「1軍=TRUE」を使って、現時点の1軍登録選手を球団ごとにまとめています。球団選択中はその球団を先頭表示します。</p>
-      <div class="summary-row"><div class="summary-chip" id="first-team-summary">読込中</div></div>
-      <div id="first-team-team-list" class="first-team-grid"></div>
-    </section>
-  </main>
-
-  <script>
+<section class="hero">
+<div class="hero-in">
+<h1>今年度 <em>トップ</em></h1>
+<div class="page-tabs">
+<a class="page-tab active" href="/current/">今年度トップ</a>
+<a class="page-tab" data-team-link="/current-master/" href="/current-master/">選手マスタ</a>
+<a class="page-tab" data-team-link="/current-stats/" href="/current-stats/">成績</a>
+<a class="page-tab" data-team-link="/current-qualified/" href="/current-qualified/">規定到達者</a>
+<a class="page-tab" data-team-link="/current-order/" href="/current-order/">打順</a>
+</div>
+</div>
+</section>
+<main class="main grid">
+<section class="card page-lead-card"><h2>今年度トップ</h2>
+<p>2026年シーズンの順位表と、各球団の1軍登録選手を確認するための入口ページです。順位表だけでなく、選手マスタ・成績・規定到達者・打順履歴へすぐ移動できるようにしています。</p>
+<p>シーズン中は、順位や登録状況、スタメンの傾向が日々変わります。このページでは「今どの球団にどの選手がいるか」「成績や打順をどこから見ればよいか」を迷わず確認できることを重視しています。</p>
+<div class="summary-row"><span class="summary-chip">順位表</span><span class="summary-chip">1軍登録</span><span class="summary-chip">今年度データ入口</span></div>
+</section>
+<section class="card">
+<h2>移動</h2>
+<div class="filters">
+<div class="fg"><label>球団</label><select id="current-team-jump"><option value="">全球団</option></select></div>
+</div>
+<div class="btn-grid">
+<a class="link-card" data-team-link="/current-master/" href="/current-master/"><h3>選手マスタ</h3></a>
+<a class="link-card" data-team-link="/current-stats/" href="/current-stats/"><h3>成績</h3></a>
+<a class="link-card" data-team-link="/current-qualified/" href="/current-qualified/"><h3>規定到達者</h3></a>
+<a class="link-card" data-team-link="/current-order/" href="/current-order/"><h3>打順</h3></a>
+</div>
+</section>
+<section class="card">
+<h2>順位表</h2>
+<div class="summary-row"><div class="summary-chip" id="standings-summary">読込中</div></div>
+<div id="standings-sections"></div>
+</section>
+<section class="card page-lead-card">
+<h2>球団別1軍一覧</h2>
+<p class="note">選手マスタの「1軍=TRUE」を使って、現時点の1軍登録選手を球団ごとにまとめています。球団選択中はその球団を先頭表示します。</p>
+<div class="summary-row"><div class="summary-chip" id="first-team-summary">読込中</div></div>
+<div class="first-team-grid" id="first-team-team-list"></div>
+</section>
+</main>
+<script>
 window.CurrentPagesCommon = (function () {
   const TEAM_ORDER = [
     '読売ジャイアンツ','阪神タイガース','横浜DeNAベイスターズ','広島東洋カープ','中日ドラゴンズ','東京ヤクルトスワローズ',
@@ -288,7 +284,7 @@ window.CurrentPagesCommon = (function () {
   return {TEAM_ORDER, normalizeTeam, normalizeLoose, teamOrder, teamBadge, parseCSVLine, loadCSV, fillTeamSelect, getTeamFromQuery, updateTeamQuery, buildPageHref, syncPageLinks};
 })();
 </script>
-  <script>
+<script>
 (function () {
   const C = window.CurrentPagesCommon;
   const teamSelect = document.getElementById('current-team-jump');
@@ -475,18 +471,16 @@ window.CurrentPagesCommon = (function () {
   })();
 })();
 </script>
-
-  <footer class="site-footer">
-    <div class="site-footer-inner">
-      <p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
-      <div class="site-footer-nav">
-        <a href="/about.html">このサイトについて</a>
-        <a href="/privacy.html">プライバシーポリシー</a>
-        <a href="/support.html">データの見かた</a>
-        <a href="/contact.html">お問い合わせ</a>
-      </div>
-    </div>
-  </footer>
-
+<footer class="site-footer">
+<div class="site-footer-inner">
+<p>NPB打順・成績分析ラボ / 野球データを見やすく確認するための公開ページ</p>
+<div class="site-footer-nav">
+<a href="/about.html">このサイトについて</a>
+<a href="/privacy.html">プライバシーポリシー</a>
+<a href="/support.html">データの見かた</a>
+<a href="/contact.html">お問い合わせ</a>
+</div>
+</div>
+</footer>
 </body>
 </html>

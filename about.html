@@ -1,22 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <meta name="theme-color" content="#0f172a" />
-  <title>このサイトについて | NPB打順・成績分析ラボ</title>
-    <meta name="description" content="NPB打順・成績分析ラボで見られる内容、更新方針、使い方の入口をまとめた案内ページです。">
-    <link rel="canonical" href="https://baseball-stats.pages.dev/about.html">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="info-pages.css" />
-
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<link href="favicon.ico" rel="icon" sizes="any"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="apple-touch-icon.png" rel="apple-touch-icon"/>
+<meta content="#0f172a" name="theme-color"/>
+<title>このサイトについて | NPB打順・成績分析ラボ</title>
+<meta content="NPB打順・成績分析ラボで見られる内容、更新方針、使い方の入口をまとめた案内ページです。" name="description"/>
+<link href="https://baseball-stats.pages.dev/about.html" rel="canonical"/>
+<meta content="index,follow,max-image-preview:large" name="robots"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="info-pages.css" rel="stylesheet">
 <style id="shared-site-nav">
 header .hi,.header .hi{
   max-width:1400px;
@@ -75,41 +75,44 @@ header .logo span,.header .logo span{color:#f59e0b}
   .site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}
 }
 </style>
-
 </head>
 <body>
-  <header>
-  <div class="hi">
-    <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
-    <nav class="site-nav" aria-label="主要ページ">
-      <a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">観戦・記録</a> <a href="/articles/">感想と考察</a> <a href="/about.html" class="current">このサイトについて</a>
-    </nav>
-  </div>
+<header>
+<div class="hi">
+<a aria-label="NPB Stats ホームへ" class="logo" href="/index.html">⚾ NPB<span>Stats</span></a>
+<nav aria-label="主要ページ" class="site-nav">
+<a href="/index.html">ホーム</a> <a href="/current/">今年度</a> <a href="/batting.html">打撃成績</a> <a href="/pitching.html">投手成績</a> <a href="/simulator.html">シミュレーター</a> <a href="/order.html">オーダー</a> <a href="/myorder.html">俺のオーダー</a> <a href="/pro-report.html">分析レポート</a> <a href="/team.html">チーム成績</a> <a href="/records.html">成績記録</a> <a href="/guide/">観戦・記録</a> <a href="/articles/">感想と考察</a> <a class="current" href="/about.html">このサイトについて</a>
+</nav>
+</div>
 </header>
-  <section class="hero"><div class="wrap"><span class="kicker">ABOUT</span><h1>このサイトについて</h1><p>今年度の選手マスタを起点に、打撃成績・投手成績・打順履歴・オーダー分析を横断して見られるようにした野球データサイトです。</p></div></section>
-  <main class="wrap">
-    <div class="card">
-      <h2>このサイトで見られるもの</h2>
-      <div class="grid">
-        <div><p><b>打順分析</b><br>球団ごとのスタメン履歴と、打順別起用頻度をまとめて確認できます。</p></div>
-        <div><p><b>俺のオーダー</b><br>好きな並びを組んで、相手投手に対する得点期待値を試せます。</p></div>
-        <div><p><b>分析レポート</b><br>勝率トレンドや相関グラフから、表では見えにくい傾向を把握できます。</p></div>
-        <div><p><b>成績表</b><br>打撃成績・投手成績・チーム成績を年度ごとに比較できます。</p></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>データ構成</h2>
-      <p>今年度の選手マスタを土台にしつつ、既存の集計データも必要な情報から順に読み込む構成にしています。表示速度とのバランスも見ながら、段階的に拡張できる形です。</p>
-    </div>
-    <div class="card">
-      <h2>使い方の例</h2>
-      <p>まずは「今年度」で所属選手を確認し、気になった選手を成績表や打順分析で深掘りしていく使い方が分かりやすいです。</p>
-      <div class="cta-row">
-        <a class="btn primary" href="index.html">トップへ戻る</a>
-        <a class="btn secondary" href="support.html">データの見かた</a>
-      </div>
-    </div>
-  </main>
-  <footer class="footer"><div class="footer-inner"><p>NPB打順・成績分析ラボ</p><p><a href="privacy.html">プライバシーポリシー</a> / <a href="contact.html">お問い合わせ</a></p></div></footer>
+<section class="hero"><div class="wrap"><span class="kicker">ABOUT</span><h1>このサイトについて</h1><p>今年度の選手マスタを起点に、打撃成績・投手成績・打順履歴・オーダー分析を横断して見られるようにした野球データサイトです。</p></div></section>
+<main class="wrap">
+<div class="card">
+<h2>このサイトで見られるもの</h2>
+<div class="grid">
+<div><p><b>打順分析</b><br/>球団ごとのスタメン履歴と、打順別起用頻度をまとめて確認できます。</p></div>
+<div><p><b>俺のオーダー</b><br/>好きな並びを組んで、相手投手に対する得点期待値を試せます。</p></div>
+<div><p><b>分析レポート</b><br/>勝率トレンドや相関グラフから、表では見えにくい傾向を把握できます。</p></div>
+<div><p><b>成績表</b><br/>打撃成績・投手成績・チーム成績を年度ごとに比較できます。</p></div>
+</div>
+</div><div class="card">
+<h2>このサイトを作っている理由</h2>
+<p>野球の成績や打順は公式記録やニュースで確認できますが、年度別・球団別・打順別に見比べようとすると、複数のページを行き来する必要があります。</p>
+<p>このサイトでは、選手成績、打順履歴、チーム成績、今年度データを同じ流れで確認できるように整理しています。単に表を置くだけではなく、「どの選手がどの打順で使われているか」「今年度の成績と過去成績をどう見比べるか」「規定到達者だけを見た時にどう見えるか」を確認しやすくすることを目的にしています。</p>
+</div>
+<div class="card">
+<h2>データ構成</h2>
+<p>今年度の選手マスタを土台にしつつ、既存の集計データも必要な情報から順に読み込む構成にしています。表示速度とのバランスも見ながら、段階的に拡張できる形です。</p>
+</div>
+<div class="card">
+<h2>使い方の例</h2>
+<p>まずは「今年度」で所属選手を確認し、気になった選手を成績表や打順分析で深掘りしていく使い方が分かりやすいです。</p>
+<div class="cta-row">
+<a class="btn primary" href="index.html">トップへ戻る</a>
+<a class="btn secondary" href="support.html">データの見かた</a>
+</div>
+</div>
+</main>
+<footer class="footer"><div class="footer-inner"><p>NPB打順・成績分析ラボ</p><p><a href="privacy.html">プライバシーポリシー</a> / <a href="contact.html">お問い合わせ</a></p></div></footer>
 </body>
 </html>
