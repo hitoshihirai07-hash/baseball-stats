@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#0f172a" />
+  <title>成績と打順を一緒に見る理由 | 感想と考察 | NPB打順・成績分析ラボ</title>
+  <meta name="description" content="成績表だけでは分かりにくい打順や役割を、スタメン履歴と合わせて見る理由を整理した記事です。">
+  <link rel="canonical" href="https://baseball-stats.pages.dev/articles/stats-and-lineup-together.html">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/info-pages.css" />
+  <style id="shared-site-nav">
+header .hi,.header .hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:64px;}
+header .logo,.header .logo{display:inline-flex;align-items:center;gap:.6rem;font-size:1.25rem;font-weight:900;color:#f8fafc;text-decoration:none;white-space:nowrap;}
+header .logo span,.header .logo span{color:#f59e0b}.site-nav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.55rem;}
+.site-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.55rem .9rem;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#f8fafc;text-decoration:none;font-size:.85rem;font-weight:700;white-space:nowrap;transition:all .2s ease;}
+.site-nav a:hover{background:rgba(255,255,255,.12)}.site-nav a.current,.site-nav a.active{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.45);color:#fff;}
+.article-meta{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.95rem;color:#cbd5e1;font-size:.94rem;}.article-lead{font-size:1.03rem;line-height:1.95;color:#e5eefb;}.section-list{padding-left:1.2rem;margin:.65rem 0 0;}.section-list li{margin:.4rem 0;}.related-links{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}.related-card{padding:1rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);}.related-card b{display:block;margin-bottom:.35rem;color:#f8fafc;}
+.point-box{margin:1rem 0;padding:1rem;border-radius:14px;border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.07);color:#e5eefb;}
+@media (max-width:1100px){header .hi,.header .hi{align-items:flex-start;padding:.85rem 0}.site-nav{justify-content:flex-start}}@media (max-width:760px){header .logo,.header .logo{font-size:1.08rem}.site-nav a{font-size:.78rem;padding:.45rem .75rem;min-height:34px}.related-links{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hi">
+      <a class="logo" href="/index.html" aria-label="NPB Stats ホームへ">⚾ NPB<span>Stats</span></a>
+      <nav class="site-nav" aria-label="主要ページ">
+        <a href="/index.html">ホーム</a>
+        <a href="/current/">今年度</a>
+        <a href="/batting.html">打撃成績</a>
+        <a href="/pitching.html">投手成績</a>
+        <a href="/simulator.html">シミュレーター</a>
+        <a href="/order.html">オーダー</a>
+        <a href="/myorder.html">俺のオーダー</a>
+        <a href="/pro-report.html">分析レポート</a>
+        <a href="/team.html">チーム成績</a>
+        <a href="/records.html">成績記録</a>
+        <a href="/guide/">観戦・記録</a>
+        <a href="/articles/" class="current">感想と考察</a>
+        <a href="/about.html">このサイトについて</a>
+      </nav>
+    </div>
+  </header>
+  <section class="hero">
+    <div class="wrap">
+      <span class="kicker">ARTICLES</span>
+      <h1>成績と打順を一緒に見る理由</h1>
+      <p>成績表だけでは分かりにくい打順や役割を、スタメン履歴と合わせて見る理由を整理した記事です。</p>
+      <div class="article-meta"><span>カテゴリ：感想と考察</span><span>テーマ：成績と打順の見方</span></div>
+    </div>
+  </section>
+  <main class="wrap">
+    <article class="card">
+      <p class="article-lead">成績表だけを見ると、選手ごとの数字は分かりやすい一方で、その数字がどの打順で生まれているのかは見えにくくなります。打順履歴だけを見ると、起用の形は分かりますが、選手の状態までは追いにくいです。だから、このサイトでは成績と打順を行き来できる形にしています。</p>
+      <h2>数字は役割と一緒に見る</h2>
+      <p>同じ打率でも、1番打者と中軸打者では求められる役割が違います。出塁を求められる選手なのか、走者を返す役割なのか、下位でつなぐ役割なのかによって、見る数字の優先順位も変わります。</p>
+      <h2>打順はチーム状態のメモになる</h2>
+      <p>打順が大きく動いている時は、選手の状態や相手投手、ケガ、チーム事情などが反映されていることがあります。スタメン履歴を並べると、いつから固定されたのか、どこが入れ替わっているのかを確認しやすくなります。</p>
+      <h2>規定到達者と全選手一覧を使い分ける</h2>
+      <p>リーグ内で比較したい時は規定到達者、チーム内の状態を広く見たい時は全選手一覧が使いやすいです。どちらか片方だけではなく、目的によってページを分けて見ると、数字の受け取り方が変わります。</p>
+      <div class="point-box">「この選手は今どのくらい打っているか」と「どの打順で使われているか」を同時に見ると、チームの攻撃の形を考えやすくなります。</div>
+      <h2>このサイトでの確認順</h2>
+      <ul class="section-list"><li>今年度成績で現在の数字を見る</li><li>今年度打順で直近の起用を見る</li><li>打撃成績・投手成績で過去年度と比べる</li><li>分析レポートやチーム成績でチーム全体の流れを見る</li></ul>
+      <p>成績と打順を別々に見るのではなく、試合を見る前後に行き来できるようにしておくと、感想や考察を残す時にも便利です。</p>
+
+    </article>
+    <section class="card">
+      <h2>関連記事</h2>
+      <div class="related-links">
+        <div class="related-card"><b><a href="/articles/" style="color:inherit;text-decoration:none;">感想と考察の記事一覧</a></b><p>成績や打順の見方、試合後に気になった点をまとめていく記事一覧です。</p></div>
+        <div class="related-card"><b><a href="/current/" style="color:inherit;text-decoration:none;">今年度データ</a></b><p>順位表、選手マスタ、今年度成績、規定到達者、打順履歴を確認できます。</p></div>
+      </div>
+      <div class="cta-row"><a class="btn primary" href="/articles/">記事一覧へ戻る</a><a class="btn secondary" href="/index.html">トップへ戻る</a></div>
+    </section>
+  </main>
+  <footer class="footer"><div class="footer-inner"><p>NPB打順・成績分析ラボ</p><p><a href="/privacy.html">プライバシーポリシー</a> / <a href="/contact.html">お問い合わせ</a></p></div></footer>
+</body>
+</html>
